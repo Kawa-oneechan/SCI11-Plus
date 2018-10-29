@@ -38,6 +38,7 @@ The `EXT` version of SCI16 adds the following tricks:
 *  **Ensuring you're trying to run an SCI11 game** by sniffing the format of the `RESOURCE.MAP` file. This feature can be easily toggled out by editing `KAWA.H`.
 *  **DbugStr outputs to file** instead of a secondary mono monitor.
 *  **LDM/STM opcodes** as needed by the hottest new shit in SCI Companion.
+*  **Basic UTF-8 support**. Font files have 16-bit character counts, and using UTF-8 encoding is the most backwards-compatible way to reach them all. This feature can be easily toggled out by editing `KAWA.H`.
 
 ![Demonstration of color hacks.](http://helmet.kafuka.org/sci/.images/colorhaxdemo1.gif)
 ![Demonstration of stroked text.](http://helmet.kafuka.org/sci/.images/dsstroke.png)

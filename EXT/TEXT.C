@@ -6,7 +6,9 @@
 //KAWA WAS HERE
 //-------------
 // > General cleanup -- no ancient-style loose parameter type lists, // comments
+// > Basic UTF-8
 
+#include "kawa.h"
 #include "text.h"
 #include "types.h"
 #include "ctype.h"
@@ -109,7 +111,11 @@ global void RTextSize(RRect* r, strptr text, word font, word def)
 global int GetLongest(strptr* str, int max, int defaultFont)
 {
 	strptr last, first;
+#ifdef UTF8
+	short c;
+#else
 	char c;
+#endif
 	word count = 0, lastCount = 0;
 
 	first = last = *str;
@@ -118,6 +124,7 @@ global int GetLongest(strptr* str, int max, int defaultFont)
 	while (1)
 	{
 		c = *(*str);
+
 		if (c == 0x0d)
 		{
 			if (*(*str + 1) == 0x0a)
@@ -179,6 +186,18 @@ global int GetLongest(strptr* str, int max, int defaultFont)
 				return(lastCount);
 			}
 		}
+
+#ifdef UTF8
+		//Handle UTF8, doubles or nothing.
+		//TODO: this only allows up to U+7FF.
+		//We'll need triples to go up to U+FFFF.
+		if ((c & 0xE0) == 0xC0)
+		{
+			++count;
+			(*str)++;
+			c = ((c & 0x1F) << 6) | *(*str);
+		}
+#endif
 
 		//all is still cool
 		++count;
@@ -343,6 +362,9 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 	strptr chkParam;
 #endif
 	word TogRect;
+#ifdef UTF8
+	short utf8;
+#endif
 
 	TogRect  = 0;
 
@@ -451,7 +473,15 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 		}
 		else
 		{
+#ifdef UTF8
+			//Handle UTF8, doubles or nothing.
+			utf8 = *str++;
+			if ((utf8 & 0xE0) == 0xC0)
+				utf8 = ((utf8 & 0x1F) << 6) | (*str++ & 0x3F);
+			RDrawChar(utf8);
+#else
 			RDrawChar(*str++);
+#endif
 		}
 	}
 }

@@ -576,7 +576,8 @@ CharHeight endp
 
 RDrawChar proc cCode:word
 
-	and	word ptr cCode, 0ffh
+; KAWA - UTF support requires we do NOT cut off the high byte.
+;;;	and	word ptr cCode, 0ffh
 	mov	ax, cCode
 	call	ClearChar
 	call	StdChar

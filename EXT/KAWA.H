@@ -25,6 +25,9 @@
  *   parenthetical with lowercase characters or digits
  *   is reconsidered not a stage direction at all.
  *   SCI2 allows digits.
+ * UTF8
+ *   Allow all 65536 characters in a font file to be
+ *   used via UTF-8 encoding.
  */
 
 #define INTERNALERRORS
@@ -33,3 +36,4 @@
 #define ENSURESCI11
 #define MSG_FIXHEXDIGITS
 #define MSG_ALLOWDIGITSINDIRECTIONS
+#define UTF8
