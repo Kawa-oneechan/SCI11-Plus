@@ -1,9 +1,9 @@
-# SCI16, Kawa Edition
+# SCI11+ -- SCI With Bits On
 
-The `BASE` folder contains a cleaned-up version of the SCI16 interpreter source, ready to build. It has no extra features, only some warning-suppressing fixes and a lot of style changes. Oh, and no version stamp checks.
+The `BASE` folder contains a cleaned-up version of the SCI11 interpreter source, ready to build. It has no extra features, only some warning-suppressing fixes and a lot of style changes. Oh, and no version stamp checks.
 The `EXT` folder contains my personal project, which takes the base version and adds a bunch of new features to it.
 
-Included is a minimal copy of a very old MSVC, required to compile all this. To use this in DOSBox, mount `SCI16` as C: and run `GO.BAT`. `cd BASE` or `cd EXT`, then simply run `make` and sit back. If all goes well you should end up with two interpreter files, `SIERRA.EXE` and `SCI.EXE`. On a real MS-DOS machine, it's much the same as long as the directories match up.
+Included is a minimal copy of a very old MSVC, required to compile all this. To use this in DOSBox, mount `SCI11` as C: and run `GO.BAT`. `cd BASE` or `cd EXT`, then simply run `make` and sit back. If all goes well you should end up with two interpreter files, `SIERRA.EXE` and `SCI.EXE`. On a real MS-DOS machine, it's much the same as long as the directories match up.
 
 You may want to edit `INFO.C` to taste.
 
@@ -17,7 +17,7 @@ The following interpreters are available. Edit `MAKEFILE.MAK` line 26 to pick an
 
 ## Hacks
 
-The `EXT` version of SCI16 adds the following tricks:
+The `EXT` version of SCI11 adds the following tricks:
 
 *  **B800 text screen on exit** (aka `ENDOOM`). Given a vocab resource #184 (get it?), the interpreter will plonk this into video memory on exit, like various games of yore. This vocab should be your standard 80x25 binary textmode screen, with the cursor locations to put any custom quit messages (`SetQuitStr` kernel call) and where to leave the command prompt afterwards. Also to make it a proper resource you must add two header bytes on top, `86 00`. This feature can be easily toggled out by editing `KAWA.H`.
 *  **Internalized error messages**. Instead of having a separate `INTERP.ERR` file with all the error message text, these are all embedded to make for a cleaner directory. This feature can be easily toggled out by editing `KAWA.H`.

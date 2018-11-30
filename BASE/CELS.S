@@ -29,6 +29,10 @@
 
 ;-------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 include	macro.i
 include	cels.i
 include	graph256.i
@@ -45,27 +49,34 @@ objectOffset	dw	?
 ;celPtr		dword	?
 
 ;pointers to line buffers for drawcel
-endX		sword	?
-endY		sword	?
-leftOffset	word	?
-lineWidth	word	?
-realWidth	word	?
+endX			sword	?
+endY			sword	?
+leftOffset		word	?
+lineWidth		word	?
+realWidth		word	?
 currMappingIndex	word	?
 
 public remapTable
 remapTable	byte	512 dup (?)
 aLine		byte	320 dup (?)
+
 public remapOn
 remapOn		word	2 dup (0)
+
 public remapDepth
 remapDepth	byte	2 dup (0)
+
 public mirrored
 mirrored	byte	0
+
 ;public noScale
 ;noScale	byte	0
+
 scaled		byte	0
+
 public decodeError
 decodeError	byte	1
+
 penX		sword	?
 penY		sword	?
 ;hOff		sword	?
@@ -82,6 +93,7 @@ UNIQUE		equ	000h
 REMAPOFFSETINC	equ	0ffh
 
 .CODE
+
 
 ;----------------------------------------------------------------------------
 ; GetCelPointer
@@ -106,12 +118,12 @@ viewLoop:
 	mov	ax, es
 	or	ax, ax
 
-	.if zero?
+	.if	zero?
 		xor	dx, dx
 		ret
 	.endif
 
-	mov	di, si			; we need to save the view offset
+	mov	di, si		; we need to save the view offset
 assume	si:ptr View
 
 	; validate and address the requested loop
@@ -128,7 +140,7 @@ assume	si:ptr View
 
 	xor	ah, ah
 	mov	al, es:[si].loopHeaderSize
-	mul	bl			; find the loop header offset
+	mul	bl		; find the loop header offset
 
 	; calculate the cel header location based on the celHeaderSize and the
 	; cel number
@@ -136,17 +148,17 @@ assume	si:ptr View
 	mov	dl, es:[si].celHeaderSize
 
 	add	ax, es:[si].viewHeaderSize
-	add	ax, 2			; because the viewheadersize word not included in above
-	add	si, ax			; the loop header offset
+	add	ax, 2		; because the viewheadersize word not included in above
+	add	si, ax		; the loop header offset
 
 assume si:ptr Loop
 
 	; check to see if the loop is mirrored or shared
 
-	.if es:[si].altLoop != -1
+	.if	es:[si].altLoop != -1
 
 		; it is either mirrored or shared
-		.if es:[si].flags == 1
+		.if	es:[si].flags == 1
 			mov	mirrored, 1	; it's mirrored
 		.endif
 
@@ -160,10 +172,10 @@ assume si:ptr Loop
 	mov	al, es:[si].numCels
 	xor	ah, ah
 
-	.if cel < ax
+	.if	cel < ax
 		mov	ax, cel
 	.else
-		dec	al		; offset the cel number to 0
+		dec	al	; offset the cel number to 0
 	.endif
 
 	; al now has a valid cel number
@@ -174,8 +186,9 @@ assume si:ptr Loop
 	mov	dx, es
 
 assume	si:nothing
-	ret				; returning offset in ax, segment in dx
+	ret			; returning offset in ax, segment in dx
 GetCelPointer	endp
+
 
 ;------------------------------------------------------------------------
 ; BuildLine
@@ -183,7 +196,6 @@ GetCelPointer	endp
 ; Build a line of the cel to the buffer "aLine" from the rle data.
 ; This accomodates only scaled and non-mirrored non-scaled cels
 ; See BuildMirroredLine for non-scaled mirrored cels
-
 
 BuildLine	proc near	uses di cx
 LOCAL runX:word
@@ -195,19 +207,18 @@ LOCAL runX:word
 ; si points to control buffer
 ; dh high nibble has priority, low nibble f
 
-
 assume	si:nothing, di:nothing
 
 	; init loops vars
 
-	mov	ax, lineWidth			; the visual width of the cel which may (in the
-						; case of scaled views) be different from the
-						; cel width
+	mov	ax, lineWidth		; the visual width of the cel which may (in the
+					; case of scaled views) be different from the
+					; cel width
 
 	mov	runX, ax
 
 	xor	cx, cx
-	mov	di, offset aLine		; our destination buffer
+	mov	di, offset aLine	; our destination buffer
 
 lineLoop:
 
@@ -226,7 +237,7 @@ lineLoop:
 
 		.repeat
 
-			mov	al, es:[bx]		; get the color data
+			mov	al, es:[bx]	; get the color data
 			inc	bx
 			mov	[di], al
 			inc	di
@@ -238,7 +249,7 @@ lineLoop:
 
 			; it is repeated skip
 
-  			and	cl, 03fh
+ 			and	cl, 03fh
 			mov	al, skip
 
 			sub	runX, cx
@@ -254,7 +265,7 @@ lineLoop:
 
 		; here we have a repeat color situation
 
-		mov	al, es:[bx]		; get the color (only one for the sequence)
+		mov	al, es:[bx]	; get the color (only one for the sequence)
 		inc	bx
 		and	cl, 03fh
 
@@ -270,18 +281,19 @@ lineLoop:
 
 runDone:
 
-	or		runX, 0			; is the line done?
+	or	runX, 0		; is the line done?
 
-	.if sign?
-		invoke PanicMsgOutput, E_BUILD_LINE
+	.if	sign?
+		invoke	PanicMsgOutput, E_BUILD_LINE
 		mov	decodeError, 1
 	.endif
 
-	jg		lineLoop
+	jg	lineLoop
 
 	ret
 
 BuildLine endp
+
 
 ;------------------------------------------------------------------------
 ; BuildMirroredLine
@@ -289,11 +301,10 @@ BuildLine endp
 ; Build a line of the cel to the buffer "aLine" from the rle data in REVERSE
 ; order for mirroring
 
-; This accomodates only non-scaled and mirrored cel.  It is exactly the same
+; This accomodates only non-scaled and mirrored cel. It is exactly the same
 ; as BuildLine except that it starts at the end of the line and fills in
-; to the beginning of the line.  All in all it seems the easiest/fastest
+; to the beginning of the line. All in all it seems the easiest/fastest
 ; way of mirroring
-
 
 BuildMirroredLine proc near uses di cx
 LOCAL runX:word
@@ -313,7 +324,7 @@ assume	si:nothing, di:nothing
 	mov	runX, ax
 	xor	cx, cx
 	mov	di, offset aLine
-	add	di, ax				; mov the pointer to the end of the cels's data output
+	add	di, ax			; mov the pointer to the end of the cels's data output
 	dec	di
 
 mirroredLineLoop:
@@ -338,13 +349,13 @@ mirroredLineLoop:
 			dec	di
 		.untilcxz
 
-	.else				; it is either repeated color or repeated skip
+	.else			; it is either repeated color or repeated skip
 
 		.if	cl & REPSKIP
 
 			; it is repeated skip
 
-  			and	cl, 03fh
+ 			and	cl, 03fh
 			mov	al, skip
 
 			sub	runX, cx
@@ -376,10 +387,10 @@ mirroredLineLoop:
 
 mirroredRunDone:
 
-	or		runX, 0			; is the line done?
+	or	runX, 0		; is the line done?
 
 	.if	sign?
-		invoke PanicMsgOutput, E_MIRROR_BUILD
+		invoke	PanicMsgOutput, E_MIRROR_BUILD
 		mov	decodeError,3
 	.endif
 
@@ -402,7 +413,7 @@ StandardLine proc near uses si es ds bx
 	mov	ds, pcSeg
 
 	; set DI to base address of line
-	mov	di, ss:penY					; the screen line
+	mov	di, ss:penY			; the screen line
 	shl	di, 1
 	mov	di, ss:baseTable[di]		; get an offset for the line from a stored table
 	add	di, ss:penX			; plus offset to first pixel to be drawn
@@ -415,7 +426,7 @@ StandardLine proc near uses si es ds bx
 		inc	si
 
 		; check for priority and skip color to determine whether to draw it
-		.if  (al != ss:skip) && (dh >= [di]) && (al < REMAPCOLORSTART)
+		.if	(al != ss:skip) && (dh >= [di]) && (al < REMAPCOLORSTART)
 			and	byte ptr [di], ah
 			or	byte ptr [di], dl
 
@@ -428,13 +439,13 @@ StandardLine proc near uses si es ds bx
 			xor	bh,bh
 			mov 	bl, al
 			sub	bl, REMAPCOLORSTART
-			.if (ss:remapOn[bx] == 0)
+			.if	(ss:remapOn[bx] == 0)
 				jmp outloop1
 			.endif
-			.if (ss:remapDepth[bx])
+			.if	(ss:remapDepth[bx])
 				mov	al,dh
 				sub	al,ss:remapDepth[bx]
-				.if (al >= [di])
+				.if	(al >= [di])
 					jmp outloop1
 				.endif
 			.endif
@@ -466,7 +477,7 @@ StandardLine endp
 
 ; Since their is no direct way to tell when a cel line ends directly from
 ; the rle data, it is necessary to decode a line of data to bypass it and
-; advance the appropriate pointers.  This routine does that for all cel
+; advance the appropriate pointers. This routine does that for all cel
 ; types
 
 EatLine proc near uses di
@@ -476,7 +487,6 @@ LOCAL runX:word
 ; ds = ss
 ; bx points to color buffer at current offset
 ; si points to control buffer at current offset
-
 
 assume	si:nothing, di:nothing
 
@@ -495,15 +505,15 @@ eatLoop:
 	; decode RLE data
 	.if	!(al & REPEATC)
 		; do run of unique bytes
-		add	bx, ax	; use up al color bytes
+		add	bx, ax		; use up al color bytes
 	.else				; it is either repeated color or repeated skip
-		.if al & REPSKIP
-  			and	al, 03fh
+		.if	al & REPSKIP
+ 			and	al, 03fh
 			jmp	eatRunDone
-		.endif		; end of repeated skip
+		.endif			; end of repeated skip
 
 		; here we have a repeat color situation
-		inc	bx				; use one color byte
+		inc	bx		; use one color byte
 		and	al, 03fh
 	.endif
 
@@ -511,8 +521,8 @@ eatRunDone:
 
 	sub	runX, ax
 
-	.if sign?
-		invoke PanicMsgOutput, E_EAT_LINE
+	.if	sign?
+		invoke	PanicMsgOutput, E_EAT_LINE
 		mov	decodeError, 2
 	.endif
 
@@ -529,9 +539,8 @@ EatLine endp
 ; This routine is a utility functon for both DrawCel and ScaleDrawCel
 ; to setup the output rectangles and priority
 
-
 DrawSetup proc near
-LOCAL absPri:word		; priority value from caller, used for special stuff
+LOCAL absPri:word	; priority value from caller, used for special stuff
 
 ; on entry
 ; ES:SI points to cel
@@ -539,7 +548,6 @@ LOCAL absPri:word		; priority value from caller, used for special stuff
 ; BX is Y coord
 ; CX must be ZERO
 ; DX is priority
-
 
 assume	si:ptr Cel
 
@@ -582,7 +590,7 @@ assume	di:ptr RGrafPort
 		shl	dl, 1
 		shl	dl, 1
 		mov	dh, dl
-		or		dh, 0fh								; F in low nibble ensures it will be higher than any control
+		or	dh, 0fh		; F in low nibble ensures it will be higher than any control
 	.endif
 
 	.if	absPri == -1
@@ -601,15 +609,15 @@ assume	di:ptr RGrafPort
 	mov	ax, es:[si].xDim
 	mov	endX, ax
 
-	.if scaled
+	.if	scaled
 		mov	ax, ss:realWidth
 		mov	ss:lineWidth, ax
 	.else
 		mov	ss:lineWidth, ax
 	.endif
 
-	.if lineWidth > 320
-		invoke PanicMsgOutput, E_LINE_LENGTH
+	.if	lineWidth > 320
+		invoke	PanicMsgOutput, E_LINE_LENGTH
 	.endif
 
 	; do penY
@@ -619,7 +627,7 @@ assume	di:ptr RGrafPort
 
 	; point celPtr (double word) to data)
 	mov	bx, word ptr es:[si].colorOffset
-	add	bx, objectOffset							; adjust to point to cel absolute offset
+	add	bx, objectOffset			; adjust to point to cel absolute offset
 	mov	si, word ptr es:[si].dataOffset		; already points to cel absolute offset
 	add	si, objectOffset
 
@@ -627,12 +635,12 @@ assume	di:ptr RGrafPort
 	mov	ss:leftOffset,0
 
 	; clip left side once for the entire cel
-	.if cx < sword ptr theRect.left
+	.if	cx < sword ptr theRect.left
 		mov ax, theRect.left
 		sub ax, cx
 ;		neg ax
-		add	ss:endX, cx	; cx is negative
-		mov	ss:leftOffset, ax		; a positive value
+		add	ss:endX, cx		; cx is negative
+		mov	ss:leftOffset, ax	; a positive value
 		mov	ax, theRect.left
 		mov	penX, ax		; ususualy 0
 
@@ -643,7 +651,7 @@ assume	di:ptr RGrafPort
 	mov	ax, ss:penX
 	add	ax, ss:endX
 
-	.if ax > theRect.right
+	.if	ax > theRect.right
 		sub	ax, theRect.right
 		sub	ss:endX, ax
 	.endif
@@ -658,30 +666,30 @@ DrawSetup endp
 ; DrawCelZ is the main cel drawing loop for non-scaled views.
 ; It is called from DrawCel or DrawPicCel
 
-; DS:  default data segment
-; ES:  cel segment
-; SI:  cel offset
-; AX:  x coord
-; BX:  y coord
-; DX:  priority
+; DS: default data segment
+; ES: cel segment
+; SI: cel offset
+; AX: x coord
+; BX: y coord
+; DX: priority
 
 DrawCelZ proc
 
 
-	call	DrawSetup		; setup the cel rectangle, priorities, etc.
+	call	DrawSetup	; setup the cel rectangle, priorities, etc.
 
-	.if theViewNum == -1	; if it's a picture
+	.if	theViewNum == -1	; if it's a picture
 		mov	skip, 0ffh
 	.endif
 
-	mov	cx, endX			; check to see if we are drawing the cel at all
+	mov	cx, endX	; check to see if we are drawing the cel at all
 	or		cx, cx
-	.if sign? || zero?
+	.if	sign? || zero?
 		ret
 	.endif
 
-	.if theRect.top < 0 || theRect.bottom > 200
-		invoke Panic, E_BAD_RECT
+	.if	theRect.top < 0 || theRect.bottom > 200
+		invoke	Panic, E_BAD_RECT
 	.endif
 
 	mov	ax,ss:penY
@@ -689,42 +697,41 @@ DrawCelZ proc
 assume	si:nothing, di:nothing
 
 	; we have separate loops for mirrored and non-mirrored data in order
-	; to avoid a check for each line of the cel.  A little extra code, but
+	; to avoid a check for each line of the cel. A little extra code, but
 	; just a little faster
 
- 	.if mirrored
-
+ 	.if	mirrored
 
 		.while endY && ax < ss:theRect.bottom
 
-			.if ax >= theRect.top	; ax = penY - check if we're off the top
-				call BuildMirroredLine		; build a line of output data to aLine
+			.if	ax >= theRect.top		; ax = penY - check if we're off the top
+				call BuildMirroredLine	; build a line of output data to aLine
 				call StandardLine
 
 			.else
-				call EatLine	; won't be output so just advance indexes & counters
+				call EatLine		; won't be output so just advance indexes & counters
 			.endif
 
 			inc	ss:penY
-			dec	ss: endY	; linesToDo
+			dec	ss: endY		; linesToDo
 			mov	ax,ss:penY
 
 		.endw
 
-	.else				; Normal, non-mirrored, non-scaled cel
+	.else		; Normal, non-mirrored, non-scaled cel
 
 		.while endY && ax < ss:theRect.bottom
 
-			.if ax >= theRect.top	; ax = penY
+			.if	ax >= theRect.top	; ax = penY
 				call BuildLine		; build a line of output data to aLine
 		 		call StandardLine
 
 			.else
-				call EatLine	; won't be output so just advance indexes & counters
+				call EatLine		; won't be output so just advance indexes & counters
 			.endif
 
 			inc	ss:penY
-			dec	ss: endY	; linesToDo
+			dec	ss: endY		; linesToDo
 			mov	ax, ss:penY
 
 		.endw
@@ -732,7 +739,6 @@ assume	si:nothing, di:nothing
 	.endif
 
 	ret
-
 
 DrawCelZ endp
 
@@ -776,7 +782,7 @@ ScaledLine proc near uses si di bx cx es ds
 
 		; check for priority and skip color to determine whether to draw it
 
-		.if  (al != ss:skip) && (dh >= [di]) && (al < REMAPCOLORSTART)
+		.if	(al != ss:skip) && (dh >= [di]) && (al < REMAPCOLORSTART)
 			and	byte ptr [di], ah
 			or	byte ptr [di], dl
 
@@ -791,13 +797,13 @@ ScaledLine proc near uses si di bx cx es ds
 					xor	bh, bh
 			mov 	bl, al
 			sub	bl, REMAPCOLORSTART
-			.if (ss:remapOn[bx] == 0)
+			.if	(ss:remapOn[bx] == 0)
 				jmp outloop2
 			.endif
-			.if (ss:remapDepth[bx])
+			.if	(ss:remapDepth[bx])
 				mov	al,dh
 				sub	al,ss:remapDepth[bx]
-				.if (al >= [di])
+				.if	(al >= [di])
 					jmp outloop2
 				.endif
 			.endif
@@ -827,7 +833,7 @@ ScaledLine endp
 ;------------------------------------------------------------------------
 ; ScaleDraw
 
-; ScaleDraw is the main cel drawing loop for scaled views.  It corresponds
+; ScaleDraw is the main cel drawing loop for scaled views. It corresponds
 ; to DrawCelZ for non-scaled views
 
 ScaleDraw proc near
@@ -849,7 +855,7 @@ assume	si:nothing, di:nothing
 
 	mov	cx, endX		; check to see if we are drawing the cel at all
 	or	cx, cx
-	.if sign? || zero?
+	.if	sign? || zero?
 		ret
 	.endif
 
@@ -862,16 +868,16 @@ assume	si:nothing, di:nothing
 	.while ax < theRect.top
 		mov	cx, [di]	; get the scaled line number
 
-		.if cx == lineCounter
+		.if	cx == lineCounter
 
 			call EatLine
 
 			.while cx == ss:[di]
-				inc di
-				inc di
-				dec endY	; our count of lines to draw, not the cel height
+				inc	di
+				inc	di
+				dec	endY	; our count of lines to draw, not the cel height
 
-				.if !endY
+				.if	!endY
 					jmp	scaleDone
 				.endif
 
@@ -893,7 +899,7 @@ assume	si:nothing, di:nothing
 
 		mov	cx, [di]	; get the scaled line number
 
-		.if cx == lineCounter
+		.if	cx == lineCounter
 
 			call BuildLine
 			mov	ax, ss:penY
@@ -902,11 +908,11 @@ assume	si:nothing, di:nothing
 			.while cx == ss:[di] && ax < ss:theRect.bottom
 				call ScaledLine
 
-				inc di
-				inc di
-				dec endY	; our count of lines to draw, not the cel height
+				inc	di
+				inc	di
+				dec	endY	; our count of lines to draw, not the cel height
 
-				.if !endY
+				.if	!endY
 					jmp	scaleDone
 				.endif
 
@@ -966,7 +972,7 @@ DrawPicCel endp
 ; DrawCel
 ; Entry point for drawing non-scaled views
 
-DrawCel	proc	uses si di ,	view:word, loop:word, cel:word, pt:ptr RPoint, pri:word
+DrawCel	proc	uses si di,	view:word, loop:word, cel:word, pt:ptr RPoint, pri:word
 
 	;Draw requested cel of loop on color vMap in pri at X/Y
 	;offset pt to rThePort and clip drawing to the portRect
@@ -1005,6 +1011,7 @@ assume	di:nothing
 
 DrawCel	endp
 
+
 ;------------------------------------------------------------------------
 ; ScaleDrawCel
 ; Entry point for drawing scaled views
@@ -1014,7 +1021,7 @@ ScaleDrawCel	proc	uses si di,	view:word, loop:word, cel:word, pt:ptr RPoint, pri
 	;Scaled Draw requested cel of loop on color vMap in pri at X/Y
 	;offset pt to rThePort and clip drawing to the portRect
 
-;	.if noScale
+;	.if	noScale
 ;		ret
 ;	.endif
 
@@ -1134,7 +1141,7 @@ assume	di:ptr RRect
 	; now do vertical offset (moves it down) unsigned
 	mov	ax, es:[si].yOff
 	or	ax, ax		; set flags
-	.if sign?
+	.if	sign?
 ;		neg	ax
 		add	ax, 255
 	.endif
@@ -1251,7 +1258,7 @@ SetNewDim endp
 
 ;---------------------------------------------------------------------------
 
-DrawMagCursor proc uses es di  si magData:ptr MagCursorStruct,pCursor:ptr pseudoCursor, xpos:word, ypos:word
+DrawMagCursor proc uses es di si magData:ptr MagCursorStruct,pCursor:ptr pseudoCursor, xpos:word, ypos:word
 
 LOCAL cursorXPtr:word, cursorYPtr:word, bigPicXDim:word, \
 	videoXPtr:word, videoYPtr:word, hToDo:word, vToDo:word, \
@@ -1274,8 +1281,8 @@ assume	si:ptr MagCursorStruct
 	; calc cursorXPtr and videoXPtr
 	mov	ax, [si].curLeft	; cursorXPtr init
 	mov	bx, xpos
-	sub	bx,  [di].xHot		; videoXPtr init
-	.if sword ptr	bx < [si].curLeft
+	sub	bx, [di].xHot		; videoXPtr init
+	.if	sword ptr	bx < [si].curLeft
 		sub	ax, bx
 		mov	bx, [si].curLeft
 		mov	cursorXPtr, ax
@@ -1288,7 +1295,7 @@ assume	si:ptr MagCursorStruct
 	mov	ax, xpos
 	sub	ax, [si].curLeft
 	mul	[si].magLevel
-	sub	ax,  [di].xHot
+	sub	ax, [di].xHot
 	.if	sword ptr ax < 0
 		mov	magPtrX, 0
 	.else
@@ -1298,8 +1305,8 @@ assume	si:ptr MagCursorStruct
 	; calc cursorYPtr and videoYPtr
 	mov	ax, [si].curTop		; cursorYPtr init
 	mov	bx, ypos
-	sub	bx,  [di].yHot		; videoYPtr init
-	.if  sword ptr	bx < [si].curTop
+	sub	bx, [di].yHot		; videoYPtr init
+	.if	sword ptr	bx < [si].curTop
 		sub	ax, bx
 		mov	bx, [si].curTop
 		mov	cursorYPtr, ax
@@ -1312,7 +1319,7 @@ assume	si:ptr MagCursorStruct
 	mov	ax, ypos
 	sub	ax, [si].curTop
 	mul	[si].magLevel
-	sub	ax,  [di].yHot
+	sub	ax, [di].yHot
 	.if	sword ptr ax < 0
 		mov	magPtrY, 0
 	.else
@@ -1320,12 +1327,12 @@ assume	si:ptr MagCursorStruct
 	.endif
 
 	;calc hToDo
-	mov	ax,  [di].xHot
+	mov	ax, [di].xHot
 	sub	ax, cursorXPtr		; to do on left of Hot Spot
 	mov	bx, [si].curRight
 	sub	bx, xpos
  	mov	cx, [di].xDim
-	sub	cx,  [di].xHot		; to do on right of Hot Spot
+	sub	cx, [di].xHot		; to do on right of Hot Spot
 	cmp	bx, cx
 	jle	stdgotright
 	mov	bx, cx			; to do on right of Hot Spot
@@ -1334,12 +1341,12 @@ stdgotright:
 	mov	hToDo, ax
 
 	;calc vToDo
-	mov	ax,  [di].yHot
+	mov	ax, [di].yHot
 	sub	ax, cursorYPtr		; to do on top of Hot Spot
 	mov	bx, [si].curBottom
 	sub	bx, ypos
  	mov	cx, [di].yDim
-	sub	cx,  [di].yHot		; to do on bottom of Hot Spot
+	sub	cx, [di].yHot		; to do on bottom of Hot Spot
 	cmp	bx, cx
 	jle	stdgotbottom
 	mov	bx, cx			; to do on bottom of Hot Spot
@@ -1395,9 +1402,9 @@ stdgotbottom:
 		mov	dl, ss:magSkip
 		.while	cx > 0
 			lodsb
-	  		.if al !=  dh ;ss:curSkip	; Check for regular skip
-				.if al != dl ;ss:magSkip
-	  				stosb
+	 		.if	al != dh ;ss:curSkip	; Check for regular skip
+				.if	al != dl ;ss:magSkip
+	 				stosb
 				.else			; draw data from magnified data buffer
 					push	ds
 					mov	ds, ss:magSegment
@@ -1445,7 +1452,7 @@ assume	si:ptr Cel
 	add	bx, word ptr es:[si].colorOffset
 	add	di, word ptr es:[si].dataOffset
 	mov	si, di
-  mov	skip, cl
+	mov	skip, cl
 
 assume si:nothing
 
@@ -1462,14 +1469,14 @@ assume si:nothing
 	mov	si, offset aLine
 
 	; point to the relevant pixel
-	.if mirrored
+	.if	mirrored
 		add	si, lineWidth
 		sub	si, hOffset
 	.else
 		add	si, hOffset
 	.endif
 
-	.if cl == byte ptr ss:[si]
+	.if	cl == byte ptr ss:[si]
 		mov	ax, 1
 	.else
 		xor	ax,ax
@@ -1489,15 +1496,15 @@ local PalPtr:dword
 	invoke	GetCelPointer, view, 0, 0
 
 	or	dx, dx
-	.if zero?
+	.if	zero?
 		ret
 	.endif
 
-	mov	es, dx  		; the view's segment
+	mov	es, dx 		; the view's segment
 
 assume di:ptr View
 
-	.if word ptr es:[di].paletteOffset == 0  	; done if the view has no palette
+	.if	word ptr es:[di].paletteOffset == 0 	; done if the view has no palette
 		ret
 	.endif
 
@@ -1510,14 +1517,11 @@ assume di:ptr View
 
 assume di:ptr danPalette
 
-
-
 ; ret	 ; for LB2 Only - Can't Handle Assert Palette
 
-
-	.if !flag
+	.if	!flag
 		mov	ax, palStamp
-		.if word ptr es:[di].validStamp	== ax
+		.if	word ptr es:[di].validStamp == ax
 			ret
 		.endif
 	.endif
@@ -1535,13 +1539,13 @@ assume di:ptr View
 
 	invoke	RSetDanPalette, si
 
-	.if palVaryOn
-		invoke PaletteUpdate, NOSETCLUT, 0
+	.if	palVaryOn
+		invoke	PaletteUpdate, NOSETCLUT, 0
 	.endif
 
-	.if !picNotValid
-  		.if NumberColors == 16
-			invoke SetCLUT, addr sysPalette, ds, FALSE
+	.if	!picNotValid
+ 		.if	NumberColors == 16
+			invoke	SetCLUT, addr sysPalette, ds, FALSE
 		.endif
 	.endif
 
@@ -1551,12 +1555,9 @@ AssertViewPalette endp
 
 
 ;---------------------------------------------------------------------------
-
-
 DisplayBlock proc uses si di bp ds, theBuffer:far ptr, xOffset:word, yOffset:word, xDim:word, yDim:word
 
 RectDisplay equ 26
-
 
 	mov	di, word ptr theBuffer + 2
 	mov	si, word ptr theBuffer
@@ -1572,27 +1573,27 @@ RectDisplay equ 26
 
 DisplayBlock endp
 
-;---------------------------------------------------------------------------
 
+;---------------------------------------------------------------------------
 FillVideoPage proc uses si di bp ds, frame:far ptr
 
 RectDisplay equ 26
 
-
 	mov	ax, word ptr frame
 	mov	dx, word ptr frame + 2
 
-	mov	bp, 	RectDisplay
+	mov	bp, RectDisplay
 	call	dword ptr Display
 
 	ret
 
 FillVideoPage endp
+
+
 ;---------------------------------------------------------------------------
+SetVideoMode proc uses si di bp, mode:word
 
 SetMode equ 28
-
-SetVideoMode proc uses si di bp, mode:word
 
 	mov	dx, mode
 	mov	bp, SetMode
@@ -1600,11 +1601,12 @@ SetVideoMode proc uses si di bp, mode:word
 	ret
 
 SetVideoMode endp
+
+
 ;---------------------------------------------------------------------------
+ShowPage proc uses si di bp, pageOffset:word
 
 DisplayPageAddress equ 30
-
-ShowPage proc uses si di bp, pageOffset:word
 
 	mov	bx, pageOffset
 	mov	bp, DisplayPageAddress
@@ -1614,21 +1616,20 @@ ShowPage proc uses si di bp, pageOffset:word
 
 ShowPage endp
 
+
 ;---------------------------------------------------------------------------
-
-
 CopyPage proc uses si di bp, destPage:word, srcPage:word
 
 	mov	di, destPage
 	mov	si, srcPage
-	mov	bp, 32			; copy page routine
+	mov	bp, 32		; copy page routine
 	call	dword ptr Display
 	ret
 
 CopyPage endp
+
+
 ;---------------------------------------------------------------------------
-
-
 ;ReadPal proc uses ax bx cx dx es
 
 ;		mov	ax, ss
@@ -1643,13 +1644,13 @@ CopyPage endp
 
 ;ReadPal endp
 
-;---------------------------------------------------------------------------
 
+;---------------------------------------------------------------------------
 SetupVMap proc uses di bp, sourcePage:word
 
 	mov	bx, sourcePage
 	mov	dx, vSeg
-	mov	bp, 34				; Copy2Vmap
+	mov	bp, 34		; Copy2Vmap
 	call	dword ptr Display
 
 	; clear the priority/control map
@@ -1666,4 +1667,3 @@ SetupVMap endp
 
 
 	END
-
