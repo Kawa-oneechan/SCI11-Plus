@@ -4,6 +4,10 @@
 ; Low level code to handle debugging.
 ;-------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 include macro.i
 
 include debug.i
@@ -21,114 +25,116 @@ include string.i
 ;-------------------------------------------------------------------
 
 ifndef	DEBUG
-NoDebugError	proto		reason:word
+NoDebugError	proto	reason:word
 else
-PrintName		proto near
+PrintName	proto near
 endif
 
 ;-------------------------------------------------------------------
 
 ;Free list structure for pointers
 block	struc
-	bSize		word	?	;size of pointer
-	bNext		word	?	;pointer to next free block in list
+	bSize	word	?	;size of pointer
+	bNext	word	?	;pointer to next free block in list
 block	ends
 
 ;-------------------------------------------------------------------
-	.DATA
+.DATA
 
 ifdef	DEBUG
 
 debuggerIsOn		word	FALSE
 opTableSaveHandle	word	0
-freeMsg				byte	"%x@%x  ", 0	; DEBUGGING
+freeMsg			byte	"%x@%x	", 0	; DEBUGGING
 
 endif
 
 ;-------------------------------------------------------------------
 
-	.CODE		PM_TEXT
+.CODE	PM_TEXT
 
+
+;-----------------------------------------------------------------------
 DebugInit	proc
-
+;-----------------------------------------------------------------------
 ifdef	DEBUG
-	invoke	GetResHandle, 512					;256 * sizeof(memptr)
+	invoke	GetResHandle, 512	;256 * sizeof(memptr)
 	mov	opTableSaveHandle, ax
 endif
-
 	return
-
 DebugInit	endp
 
+
+;-----------------------------------------------------------------------
 RDebugger	proc	near
-;This code is called in lieu of the op-code when debugging is on.  We
+;-----------------------------------------------------------------------
+;This code is called in lieu of the op-code when debugging is on.	We
 ;save the relevant registers and call the debugger, then do the dispatch
 ;to the op-code.
-
+;-----------------------------------------------------------------------
 ifndef	DEBUG
-
-   invoke	NoDebugError, 11
-
+	invoke	NoDebugError, 11
 else
-
 	push	ax
 	push	cx
 	mov	cx, es
 	push	es
-	mov	di, opTableSaveHandle				;get handle to opCode storage
-	mov	ax, [di+_seg]							;get segment of opCode storage
+	mov	di, opTableSaveHandle	;get handle to opCode storage
+	mov	ax, [di+_seg]		;get segment of opCode storage
 	mov	es, ax
-	push	es:[bx]									;save address of op-code
+	push	es:[bx]			;save address of op-code
 
 	;Call the debugger
 	invoke	Debug, si, cx, bp
 	
 	;Restore everything and dispatch to the op-code.
-	pop	bx											;recover address of op-code
+	pop	bx			;recover address of op-code
 	pop	es
 	mov	di, scriptHandle
 assume	di:ptr hunkPtr
-  	mov   cx, [di].hSegment
+		mov	cx, [di].hSegment
 assume	di:nothing
 	.if	cx
-	  	mov   	es, cx
-		.endif
+			mov	es, cx
+	.endif
 	pop	cx
 	pop	ax
 	push	pmCodeSegment
 	push	bx
 
 endif
-
 	retf
-
 RDebugger	endp
 
-KStackUsage	proc	uses si di bp, funcPtr:word
 
+;-----------------------------------------------------------------------
+KStackUsage	proc	uses si di bp, funcPtr:word
+;-----------------------------------------------------------------------
 ifndef	DEBUG
-   invoke	NoDebugError, 12
+	invoke	NoDebugError, 12
 else
 	mov	si, funcPtr
-	invoke	StackUsage, [si+2]			;pass function
+	invoke	StackUsage, [si+2]	;pass function
 	mov	acc, ax
 endif
 	ret
-
 KStackUsage	endp
 
+
 ;-----------------------------------------------------------------------
-;         From here on only compiled if debugging enabled
+;			From here on only compiled if debugging enabled
 ;-----------------------------------------------------------------------
 ifdef	DEBUG
 
-DebugOn	proc	uses si di
 
-;Turn debugging on.  This is done by replacing the entries in the op-code
-;dispatch table in pmachine.s with the address of _Debugger.  The real
+;-----------------------------------------------------------------------
+DebugOn	proc	uses si di
+;-----------------------------------------------------------------------
+;Turn debugging on.	This is done by replacing the entries in the op-code
+;dispatch table in pmachine.s with the address of _Debugger.	The real
 ;addresses for the op-codes are squirreled away in storage allocated in
 ;hunk space.
-
+;-----------------------------------------------------------------------
 	;Don't turn debugger on if it already is on...
 	mov	ax, debuggerIsOn
 	.if	!ax
@@ -157,11 +163,13 @@ DebugOn	proc	uses si di
 
 DebugOn	endp
 
-DebugOff	proc	uses si di
 
+;-----------------------------------------------------------------------
+DebugOff	proc	uses si di
+;-----------------------------------------------------------------------
 ;Turn the debugger off by replacing the dispatch table for the op-codes
 ;with their true values.
-
+;-----------------------------------------------------------------------
 	; don't turn ourself off if we aren't on
 	mov	ax, debuggerIsOn
 	.if	ax
@@ -185,8 +193,10 @@ DebugOff	proc	uses si di
 
 DebugOff	endp
 
-StackUsage    	proc	uses si di bp, func:word
 
+;-----------------------------------------------------------------------
+StackUsage	 	proc	uses si di bp, func:word
+;-----------------------------------------------------------------------
 ;Return information on stack usage, depending on the value of 'function':
 ;	0	size of processor stack
 ;	1	maximum processor stack used
@@ -194,7 +204,7 @@ StackUsage    	proc	uses si di bp, func:word
 ;	3	size of PMachine stack
 ;	4	maximum PMachine stack used
 ;	5	current usage of PMachine stack
-
+;-----------------------------------------------------------------------
 	mov	ax, func
 
 	.if	!ax
@@ -220,7 +230,7 @@ StackUsage    	proc	uses si di bp, func:word
 		mov	ax, 0fffeh
 		sub	ax, sp
 		jmp	SUExit
-	.endif  
+	.endif	
 
 	dec	ax
 	.if	zero?
@@ -250,35 +260,36 @@ StackUsage    	proc	uses si di bp, func:word
 
 SUExit:
 	ret
+StackUsage	endp
 
-StackUsage		endp
 
 ifdef	PROFILER
 
-ProfileHandler	proc   uses es di si
-
+;-----------------------------------------------------------------------
+ProfileHandler	proc	uses es di si
+;-----------------------------------------------------------------------
 	mov	di, proBuffer
 	.if	(proOn == TRUE) && di
-		mov	ax, [di+2]			;get segment of profile buffer
+		mov	ax, [di+2]	;get segment of profile buffer
 		mov	es, ax
-		mov	di, proIndex		;get index into buffer
+		mov	di, proIndex	;get index into buffer
 		mov	si, ssPtr
 
-     mov   bx, [si]
+		mov	bx, [si]
 assume	bx:ptr Obj
-	   mov	ax, [bx].oInfo					;get the -info- property
-	   and	ax, CLONEBIT or NODISPOSE	;is this really a clone?
-	   .if	ax == CLONEBIT
-		   ;Object is a disposable clone, so save the
-        ;permanent object that was cloned
-        mov   ax, [bx].oSuper
-        stosw                         ; store object's super
-        add   si, 2                   ; point to selector
-        movsw
-     .else
-		   movsw							      ;put object in buffer
-  		movsw							      ;put selector in buffer
-     .endif
+		mov	ax, [bx].oInfo	;get the -info- property
+		and	ax, CLONEBIT or NODISPOSE	;is this really a clone?
+		.if	ax == CLONEBIT
+			;Object is a disposable clone, so save the
+			;permanent object that was cloned
+			mov	ax, [bx].oSuper
+			stosw		; store object's super
+			add	si, 2	; point to selector
+			movsw
+		.else
+			movsw		;put object in buffer
+			movsw		;put selector in buffer
+		.endif
 
 		.if	di >= proBufSize
 			xor	di, di
@@ -287,19 +298,21 @@ assume	bx:ptr Obj
 	.endif
 
 	return
-
 ProfileHandler	endp
 
+
+;-----------------------------------------------------------------------
 DoTrace		proc	uses es di
+;-----------------------------------------------------------------------
 ;ax = selector
 ;bx = object
-
+;-----------------------------------------------------------------------
 	mov	di, proBuffer
 	.if	di
 		;Get pointer to current buffer position
-		mov	di, [di+2]			;get segment of profile buffer
+		mov	di, [di+2]	;get segment of profile buffer
 		mov	es, di
-		mov	di, proIndex		;get index into buffer
+		mov	di, proIndex	;get index into buffer
 
 		;Compute depth of stack
 		push	ax
@@ -309,20 +322,20 @@ DoTrace		proc	uses es di
 		mov	es:[di], ax
 
 assume	bx:ptr Obj
-	   mov	ax, [bx].oInfo					;get the -info- property
-	   and	ax, CLONEBIT or NODISPOSE	;is this really a clone?
-	   .if	ax == CLONEBIT
-		   ;Object is a disposable clone, so save the
-        ;permanent object that was cloned
-        mov   ax, [bx].oSuper
-        mov   es:[di+2], ax           ; store object's super
-     .else
-  		mov	es:[di+2], bx           ;Put object in buffer
-     .endif
+		mov	ax, [bx].oInfo			;get the -info- property
+		and	ax, CLONEBIT or NODISPOSE	;is this really a clone?
+		.if	ax == CLONEBIT
+			;Object is a disposable clone, so save the
+			;permanent object that was cloned
+			mov	ax, [bx].oSuper
+			mov	es:[di+2], ax		; store object's super
+		.else
+			mov	es:[di+2], bx		;Put object in buffer
+		.endif
 
-     ;Put selector in buffer
-     pop   ax
-  	mov	es:[di+4], ax
+		;Put selector in buffer
+		pop	ax
+		mov	es:[di+4], ax
 
 		;Update buffer pointer
 		add	di, 6
@@ -338,9 +351,12 @@ DoTrace		endp
 
 endif
 
-ShowFreeList	proc	uses si di, where:word
-;Display the free list.
 
+;-----------------------------------------------------------------------
+ShowFreeList	proc	uses si di, where:word
+;-----------------------------------------------------------------------
+;Display the free list.
+;-----------------------------------------------------------------------
 	mov	si, freeList
 	.while	si
 		mov	di, where
@@ -353,18 +369,18 @@ assume	si:nothing
 	.endw
 
 	ret
-
 ShowFreeList	endp
+
 
 ;-------------------------------------------------------------------------------
 ;Display hunk space.
 ;-------------------------------------------------------------------------------
 if 0
 ShowHunks	proc	uses si di
-
+;-----------------------------------------------------------------------
 	invoke	printf, addr hunkHdr, hunkList
 
-	xor	si, si			;offset into hunk
+	xor	si, si		;offset into hunk
 	mov	di, hunkBase	;segment address of hunk
 	.while	di < hunkTop
 		mov	es, di
@@ -399,12 +415,13 @@ ShowHunks	proc	uses si di
 ShowHunks	endp
 endif
 
+
 ;-------------------------------------------------------------------------------
 ;Show the list of active handles and the hunks they reference.
 ;-------------------------------------------------------------------------------
 if 0
 ShowHandles	proc	uses si
-
+;-----------------------------------------------------------------------
 	invoke	printf, addr handleHdr, handleBase, nextHandle, lowHandle
 
 	mov	si, handleBase
