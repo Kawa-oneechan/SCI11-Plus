@@ -207,7 +207,7 @@ EMSFree endp
 
 ;---------------------------------------------------------------------------
 ; init	determine if EMS memory is available, and if so, how much.
-	allocate it all
+;	allocate it all
 ;
 ; entry:	nothing
 ; exit:		ax	= success

@@ -5,8 +5,10 @@
 ;                   segments.  Microsoft MASM 5.1.
 ;-------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
 
-;-------------------------------------------------------------------
 include	macro.i
 include	event.i
 
@@ -17,17 +19,16 @@ include	intrpt.i
 
 
 ;-------------------------------------------------------------------
+; Shift-Shift-D toggles debugger.
+debugKey	equ	'-'
+easyDebugKey	equ 	'`'
 
-	;Shift-Shift-D toggles debugger.
-	debugKey			equ	'-'
-	easyDebugKey	equ 	'`'
-
-debugMod		equ	3
+debugMod	equ	3
 eventSize	equ	type Event
 
 ;-------------------------------------------------------------------
 
-	.DATA
+.DATA
 
 keyEvent	Event	<>
 
@@ -36,9 +37,11 @@ keyEvent	Event	<>
 	.CODE
 
 
+;-------------------------------------------------------------------
 PollKeyboard	proc	uses si di bp
+;-------------------------------------------------------------------
 ; build a keyboard event 
-
+;-------------------------------------------------------------------
 	mov	si, offset @data:keyEvent
 	mov	keyEvent.modifiers, 0
 	mov	bp, INP_POLL
@@ -46,14 +49,14 @@ PollKeyboard	proc	uses si di bp
 	call	HandleEvent
 
 	ret
-
 PollKeyboard	endp
 
 
-
+;-------------------------------------------------------------------
 FlushKeyboard	proc	uses si di bp
+;-------------------------------------------------------------------
 ; flush events from keyboard buffer
-
+;-------------------------------------------------------------------
 assume	si:ptr Event
 
 	.repeat
@@ -69,9 +72,9 @@ assume	si:nothing
 FlushKeyboard	endp
 
 
-
+;-------------------------------------------------------------------
 KeyboardDriver	proc	uses si di, function:word, event:word
-
+;-------------------------------------------------------------------
 	mov	si, event
 	mov	bp, function
 	call	keyboard
@@ -81,9 +84,11 @@ KeyboardDriver	proc	uses si di, function:word, event:word
 KeyboardDriver	endp
 
 
-
+;-------------------------------------------------------------------
 GetModifiers	proc	uses si di bp
-;Return state of modifier keys (bottom 4 bits only )
+;-------------------------------------------------------------------
+; Return state of modifier keys (bottom 4 bits only )
+;-------------------------------------------------------------------
 
 	mov	bp, INP_MODIFIERS
 	call	keyboard
@@ -93,10 +98,11 @@ GetModifiers	proc	uses si di bp
 GetModifiers	endp
 	
 
-
+;-------------------------------------------------------------------
 PollJoystick	proc	uses si di bp
-
-	;Create an event record on the stack.
+;-------------------------------------------------------------------
+; Create an event record on the stack.
+;-------------------------------------------------------------------
 	sub	sp, eventSize
 	mov	si, sp
 
@@ -115,9 +121,9 @@ PollJoystick	proc	uses si di bp
 PollJoystick	endp
 
 
-
+;-------------------------------------------------------------------
 JoystickDriver	proc	uses si di, function:word, event:word
-
+;-------------------------------------------------------------------
 	mov	si, event
 	mov	bp, function
 	.if	word ptr joystick+_seg != 0
@@ -129,10 +135,11 @@ JoystickDriver	proc	uses si di, function:word, event:word
 JoystickDriver	endp
 
 
-
+;-------------------------------------------------------------------
 HandleEvent	proc	near
-;If appropriate, post the event in anEvent.  Event type is in the AX.
-
+;-------------------------------------------------------------------
+; If appropriate, post the event in anEvent.  Event type is in AX.
+;-------------------------------------------------------------------
 assume	si:ptr Event
 
 	.if	word ptr [si].eType == nullEvt
@@ -146,15 +153,15 @@ assume	si:ptr Event
 	mov	ax, mouseY
 	mov	[si].where.v, ax
 	call	GetModifiers
-	or		[si].modifiers, ax
+	or	[si].modifiers, ax
 	and	ax, debugMod
 	mov	bx, ax
 	pop	ax
 
 	.if	(ax == keyDown && \
-				(([si].message == debugKey && bx == debugMod) || \
-				(isDebugVersion && [si].message == easyDebugKey)) \
-			)
+		(([si].message == debugKey && bx == debugMod) || \
+		(isDebugVersion && [si].message == easyDebugKey)) \
+	)
 		cli
 		call	ToggleDebug
 		sti
@@ -169,3 +176,4 @@ assume	si:nothing
 HandleEvent	endp
 
 	end
+
