@@ -1,7 +1,7 @@
 ;	setjmp.i
 
 ifndef SETJMP_I
-SETJMP_H	equ 1
+SETJMP_H equ 1
 
 jmp_buf	struc
 	jmp_seg	word	?
@@ -13,8 +13,7 @@ jmp_buf	struc
 	jmp_es	word	?
 jmp_buf	ends
 
-setjmp	proto buf: jmp_buf
-longjmp	proto buf: jmp_buf, code: word
+setjmp	proto	buf: jmp_buf
+longjmp	proto	buf: jmp_buf, code: word
 
 endif
-

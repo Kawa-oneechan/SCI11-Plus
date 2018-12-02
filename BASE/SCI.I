@@ -2,9 +2,8 @@
 ;	sci.i
 ;-------------------------------------------------------------------
 ifndef SCI_I
-SCI_I	equ	1
+SCI_I equ 1
 
-main	proto argc: word, argv: ptr word
+main	proto	argc: word, argv: ptr word
 
 endif
-

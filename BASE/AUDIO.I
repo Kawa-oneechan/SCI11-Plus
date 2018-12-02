@@ -3,12 +3,10 @@
 ;-------------------------------------------------------------------
 
 ifndef	AUDIO_I
-
 AUDIO_I EQU 1
 
-
 ;Audio resource ID
-AUDIO			equ	8dh
+AUDIO		equ	8dh
 
 ;Codes to be sent to the audio driver (in BP).
 A_STAT		equ	1	; check status
@@ -20,6 +18,4 @@ externdef	audioDrv:word
 externdef	cdaudioDrv:word
 externdef	audNone:word
 
-
 endif
-

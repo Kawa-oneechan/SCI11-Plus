@@ -5,9 +5,8 @@
 ;	This also sets the model and processor types
 ;-------------------------------------------------------------------
 
-ifndef	MACRO_I
-
-MACRO_I	equ	1
+ifndef MACRO_I
+MACRO_I equ 1
 
 .model	medium, c, os_dos
 option	nokeyword:<loop>
@@ -15,41 +14,41 @@ option	nokeyword:<loop>
 ;; Maybe someday we can do this...
 ;; .286
 
-bool		typedef word
-wordPtr	typedef ptr word
-Func		typedef proto
-FuncPtr	typedef ptr Func
-HunkPtr	typedef far ptr byte
-Handle	typedef ptr HunkPtr
-memptr	typedef ptr byte
+bool	typedef	word
+wordPtr	typedef	ptr word
+Func	typedef	proto
+FuncPtr	typedef	ptr Func
+HunkPtr	typedef	far ptr byte
+Handle	typedef	ptr HunkPtr
+memptr	typedef	ptr byte
 
-NULL		equ	00h
-EOS		equ	00h
-LF 		equ	0ah
-CR	   	equ	0dh
+NULL	equ	00h
+EOS	equ	00h
+LF	equ	0ah
+CR	equ	0dh
 ESCCHAR	equ	1bh
-SPACE		equ	20h
+SPACE	equ	20h
 
-TRUE		equ	1
-FALSE		equ	0
+TRUE	equ	1
+FALSE	equ	0
 
 ;Offsets within a double-word of the segment/offset or high/low words
-_off		equ	0
-_ofs		equ	0
-_seg		equ	2
-lo 		equ	0
-hi	   	equ	2
+_off	equ	0
+_ofs	equ	0
+_seg	equ	2
+lo	equ	0
+hi	equ	2
 
 return	textequ	<ret>
 
 ;; Some macros to do the reverse of the les & lds op-codes.
 
-ses	macro		var, reg
+ses	macro	var, reg
 	mov	word ptr var[_ofs], reg
 	mov	word ptr var[_seg], es
 	endm
 
-sds	macro		var, reg
+sds	macro	var, reg
 	mov	word ptr var[_ofs], reg
 	mov	word ptr var[_seg], ds
 	endm
@@ -83,7 +82,7 @@ popall	macro
 ;else
 
 ;pushall	textequ	<pusha>
-;popall	textequ	<popa>
+;popall		textequ	<popa>
 
 ;endif
 
@@ -104,6 +103,4 @@ endif
 	int	21h
 	endm
 
-
 endif
-

@@ -1,3 +1,7 @@
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- tabs
+
 ifndef SOUND_I
 SOUND_I EQU 1
 
@@ -45,17 +49,16 @@ Sound		ENDS
 ;--------------------------------------------------------------------------
 
 ;System sound cue
-SND_DONE            equ  -1
-SND_START           equ   0
+SND_DONE	equ	-1
+SND_START	equ	0
 
 ;Sound states
-SND_NOTREADY        equ  0
-SND_READY           equ  1
-SND_BLOCKED         equ  2
-SND_ACTIVE          equ  3
+SND_NOTREADY	equ	0
+SND_READY	equ	1
+SND_BLOCKED	equ	2
+SND_ACTIVE	equ	3
 
 externdef	soundList:word
 externdef	reverbDefault:word
 
 ENDIF
-

@@ -3,8 +3,7 @@
 ;-------------------------------------------------------------------
 
 ifndef	STRING_I
-
-STRING_I		equ	1
+STRING_I equ 1
 
 strlen		proto	s:ptr byte
 strcpy		proto	dest:ptr byte, src:ptr byte
@@ -17,7 +16,7 @@ strncmp		proto	s1:ptr byte, s2:ptr byte, n:word
 strlwr		proto	s:ptr byte
 strchr		proto	s:ptr byte, chr:word
 strstr		proto	s1:ptr byte, s2:ptr byte
-	
+
 memcmp		proto	buf1:ptr byte, buf2:ptr byte, count:word
 memcpy		proto	to:ptr byte, from:ptr byte, count:word
 
@@ -26,6 +25,4 @@ strbcat		proto	dest:ptr byte, src:ptr byte, count:word
 reverse		proto	s:ptr byte
 IsPrintStr	proto	s:ptr byte
 
-
 endif
-

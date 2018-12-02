@@ -2,12 +2,9 @@
 ;	io.i
 ;-------------------------------------------------------------------
 
-
 ifndef	IO_I
-IO_I	equ	1
+IO_I equ 1
 
-lseek				proto		fd:word, file_ofs:dword, theOrg:word
-
+lseek	proto	fd:word, file_ofs:dword, theOrg:word
 
 endif
-

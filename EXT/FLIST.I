@@ -1,3 +1,4 @@
+ifndef	FLIST_I
 FLIST_I equ 1
 
 extrn	FIsFirstNode:proc
@@ -9,3 +10,4 @@ extrn	FAddToFront:proc
 extrn	FMoveToFront:proc
 extrn	FDeleteNode:proc
 
+endif
