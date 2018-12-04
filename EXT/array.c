@@ -163,6 +163,16 @@ void ArrayAtPut(int index, int count, void *values)
 
 void ArrayFill(int startIndex, int length, int value)
 {
+	int index;
+	int endIndex = -1;
+	if (length == -1)
+		length = array->size - startIndex;
+	if (length < 1)
+		return;
+	endIndex = startIndex + length;
+	for (index = startIndex; index <= endIndex; index++)
+		ArraySetAt(index, value);
+	/*
 	void* data;
 	int* intData;
 	char* charData;
@@ -180,7 +190,10 @@ void ArrayFill(int startIndex, int length, int value)
 			//*(unsigned char*)data = (unsigned char)value;
 			charData = (char*)data;
 			while (length--)
+			{
 				*charData++ = (char)value;
+				charData++;
+			}
 			break;
 		case 2:
 			intData = (int*)data;
@@ -194,6 +207,7 @@ void ArrayFill(int startIndex, int length, int value)
 			DoAlert("Weird array element size.");
 			break;
 	}
+	*/
 }
 
 void ArrayCopy(int destIndex, void* source, int srcIndex, int length)
@@ -248,7 +262,9 @@ global KERNEL(Array)
 			// arg(3) = array type
 			//TODO: strings
 			//if (arg(3) == STRARRAY) ...
-			acc = Pseudo(MakeArray(arg(2), arg(3)));
+			array = MakeArray(arg(2), arg(3));
+			ArrayFill(0, arg(2), 0);
+			acc = (int)array;
 			break;
 		case ARRAYSIZE:
 			acc = array->size;
