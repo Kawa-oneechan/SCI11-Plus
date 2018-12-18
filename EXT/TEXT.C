@@ -113,7 +113,7 @@ global int GetLongest(strptr* str, int max, int defaultFont)
 	strptr last, first;
 #ifdef UTF8
 	short c;
-	//char utf8middle, utf8trailer;
+	char utf8middle, utf8trailer;
 #else
 	char c;
 #endif
@@ -128,22 +128,24 @@ global int GetLongest(strptr* str, int max, int defaultFont)
 
 #ifdef UTF8
 		//Handle UTF-8
-		//TODO: Broken. Leaving this green just makes the window a little too wide.
-		/*
 		if ((c & 0xE0) == 0xC0)
 		{
-			utf8trailer = *(*++str) & 0x3F;
 			count++;
+			(*str)++;
+			utf8trailer = *(*str) & 0x3F;
 			c = ((c & 0x1F) << 6) | utf8trailer;
 		}
 		else if ((c & 0xF0) == 0xE0)
 		{
-			utf8middle = *(*++str) & 0x3F;
-			utf8trailer = *(*++str) & 0x3F;
 			count += 2;
-			c = ((c & 0x0F) << 12) | (utf8middle << 6) | utf8trailer;
+			(*str)++;
+			utf8middle = *(*str) & 0x3F;
+			(*str)++;
+			utf8trailer = *(*str) & 0x3F;
+			c = ((c & 0x1F) << 12) | (utf8middle << 6) | utf8trailer;
 		}
-		*/
+		if (c >= 0x2000 && c < 0x2070) //General Punctuation overlaps Combining Diacritic block
+			c = c - 0x2000 + 0x300;
 #endif
 
 		if (c == 0x0d)
@@ -374,7 +376,6 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 #ifdef UTF8
 	short utf8;
 	char utf8middle, utf8trailer;
-//	char utf8buffer[128];
 #endif
 
 	TogRect  = 0;
@@ -491,17 +492,15 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 			{
 				utf8trailer = *str++ & 0x3F;
 				utf8 = ((utf8 & 0x1F) << 6) | utf8trailer;
-				//sprintf(utf8buffer, "warning: double-byte sequence found, value U+%x", utf8);
-				//DoPanic(utf8buffer);
 			}
 			else if ((utf8 & 0xF0) == 0xE0)
 			{
 				utf8middle = *str++ & 0x3F;
 				utf8trailer = *str++ & 0x3F;
-				utf8 = ((utf8 & 0x0F) << 12) | (utf8middle << 6) | utf8trailer;
-				//sprintf(utf8buffer, "warning: triple-byte sequence found, value U+%x", utf8);
-				//DoPanic(utf8buffer);
+				utf8 = ((utf8 & 0x1F) << 12) | (utf8middle << 6) | utf8trailer;
 			}
+			if (utf8 >= 0x2000 && utf8 < 0x2070) //General Punctuation overlaps Combining Diacritic block
+				utf8 = utf8 - 0x2000 + 0x300;
 			RDrawChar(utf8);
 #else
 			RDrawChar(*str++);
