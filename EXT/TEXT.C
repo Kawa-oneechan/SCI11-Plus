@@ -113,6 +113,7 @@ global int GetLongest(strptr* str, int max, int defaultFont)
 	strptr last, first;
 #ifdef UTF8
 	short c;
+	//char utf8middle, utf8trailer;
 #else
 	char c;
 #endif
@@ -124,6 +125,26 @@ global int GetLongest(strptr* str, int max, int defaultFont)
 	while (1)
 	{
 		c = *(*str);
+
+#ifdef UTF8
+		//Handle UTF-8
+		//TODO: Broken. Leaving this green just makes the window a little too wide.
+		/*
+		if ((c & 0xE0) == 0xC0)
+		{
+			utf8trailer = *(*++str) & 0x3F;
+			count++;
+			c = ((c & 0x1F) << 6) | utf8trailer;
+		}
+		else if ((c & 0xF0) == 0xE0)
+		{
+			utf8middle = *(*++str) & 0x3F;
+			utf8trailer = *(*++str) & 0x3F;
+			count += 2;
+			c = ((c & 0x0F) << 12) | (utf8middle << 6) | utf8trailer;
+		}
+		*/
+#endif
 
 		if (c == 0x0d)
 		{
@@ -186,18 +207,6 @@ global int GetLongest(strptr* str, int max, int defaultFont)
 				return(lastCount);
 			}
 		}
-
-#ifdef UTF8
-		//Handle UTF8, doubles or nothing.
-		//TODO: this only allows up to U+7FF.
-		//We'll need triples to go up to U+FFFF.
-		if ((c & 0xE0) == 0xC0)
-		{
-			++count;
-			(*str)++;
-			c = ((c & 0x1F) << 6) | *(*str);
-		}
-#endif
 
 		//all is still cool
 		++count;
@@ -364,6 +373,8 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 	word TogRect;
 #ifdef UTF8
 	short utf8;
+	char utf8middle, utf8trailer;
+//	char utf8buffer[128];
 #endif
 
 	TogRect  = 0;
@@ -474,10 +485,23 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 		else
 		{
 #ifdef UTF8
-			//Handle UTF8, doubles or nothing.
+			//Handle UTF-8
 			utf8 = *str++;
 			if ((utf8 & 0xE0) == 0xC0)
-				utf8 = ((utf8 & 0x1F) << 6) | (*str++ & 0x3F);
+			{
+				utf8trailer = *str++ & 0x3F;
+				utf8 = ((utf8 & 0x1F) << 6) | utf8trailer;
+				//sprintf(utf8buffer, "warning: double-byte sequence found, value U+%x", utf8);
+				//DoPanic(utf8buffer);
+			}
+			else if ((utf8 & 0xF0) == 0xE0)
+			{
+				utf8middle = *str++ & 0x3F;
+				utf8trailer = *str++ & 0x3F;
+				utf8 = ((utf8 & 0x0F) << 12) | (utf8middle << 6) | utf8trailer;
+				//sprintf(utf8buffer, "warning: triple-byte sequence found, value U+%x", utf8);
+				//DoPanic(utf8buffer);
+			}
 			RDrawChar(utf8);
 #else
 			RDrawChar(*str++);
