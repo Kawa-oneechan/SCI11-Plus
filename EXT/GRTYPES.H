@@ -99,6 +99,7 @@ word RCharWidth(byte);
 word CharHeight(byte);
 word GetPointSize(void);
 void SetPointSize(word);
+word GetNumChars(void);
 
 Handle SaveBits(RRect*, uword);
 void RestoreBits(Handle);

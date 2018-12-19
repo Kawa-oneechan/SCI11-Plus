@@ -333,6 +333,29 @@ SetPointSize endp
 
 
 ;-------------------------------------------------------------------
+; KAWA: return number of chars in font of current port
+; (note: assumes lowChar is always zero
+;-------------------------------------------------------------------
+GetNumChars proc
+	
+	mov	bx, rThePort
+	mov	ax, (RGrafPort ptr [bx]).fontNum
+
+	invoke	ResLoad, RES_FONT, ax
+	.if	ax
+		; dereference the handle
+		mov	bx, ax
+		les	bx, [bx]
+		mov	ax, (Font ptr es:[bx]).highChar
+	.else
+		mov	ax, 128
+	.endif
+	ret
+
+GetNumChars endp
+
+
+;-------------------------------------------------------------------
 ; return the font number of the current port
 ;-------------------------------------------------------------------
 
@@ -996,5 +1019,3 @@ SetCursorData endp
 
 
 	end
-
-
