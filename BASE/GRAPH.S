@@ -1,25 +1,28 @@
 ;-------------------------------------------------------------------
-; GRAPH.S 
-; 
+; GRAPH.S
+;
 ; Routines herein provide manager level
 ; manipulation of the virtual bitmaps.
 ; low level graphics functions are located in GRFUNC.ASM
 ; Also provide C binding to device driver routine.
-; 
+;
 ; Started on 5-8-87
 ; by Robert E. Heitman
 ;
-; Modifications:  
+; Modifications:
 ;   04/03/90 Abdul.  Changed to use .MODEL directive and simplified
 ;                    segments.  Microsoft MASM 5.1.
 ;   09/03/90 Mickie Lee
 ;                  Adding Japanese Display routine
 ;-------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
 
 include	macro.i
 include	graph.i
-	
+
 include	fileio.i
 include	resource.i
 include	restypes.i
@@ -30,35 +33,30 @@ include	video.i
 include	text.i
 
 
-ClearChar		proto	near
-OffsetPoint		proto near
-SInsetRect		proto near
-InRect			proto near
-
-
+ClearChar	proto near
+OffsetPoint	proto near
+SInsetRect	proto near
+InRect		proto near
 
 
 .DATA
 
-Display		dword			?
-rThePort		GPPtr			?
+Display		dword		?
+rThePort	GPPtr		?
 defPort		RGrafPort	<>
-theRect		RRect			<>						; local normalized rectangle
-oldMode		word			?
+theRect		RRect		<>	; local normalized rectangle
+oldMode		word		?
 
-wordBits		word	0001h, 0002h, 0004h, 0008h, 0010h, 0020h, 0040h, 0080h
-				word	0100h, 0200h, 0400h, 0800h, 1000h, 2000h, 4000h, 8000h
+wordBits	word	0001h, 0002h, 0004h, 0008h, 0010h, 0020h, 0040h, 0080h
+		word	0100h, 0200h, 0400h, 0800h, 1000h, 2000h, 4000h, 8000h
 
 
 .CODE
 
-
 ;-------------------------------------------------------------------
 ; try to set the font of this port (do a ResLoad and check for error)
 ;-------------------------------------------------------------------
-
 RSetFont proc uses es, font:word
-
 	invoke	ResLoad, RES_FONT, font
 	.if	ax
 		; dereference the handle
@@ -75,18 +73,15 @@ assume	bx:nothing
 	.endif
 
 	ret
-	
+
 RSetFont endp
 
 
 ;-------------------------------------------------------------------
 ; passed a pointer to a RGrafPort, init all fields to defaults
 ;-------------------------------------------------------------------
-
 ROpenPort proc uses si di, gPort:GPPtr
-
 assume	di:ptr RGrafPort
-
 	; set the font to system font
 	push	rThePort
 	mov	di, gPort
@@ -113,9 +108,7 @@ assume	di:ptr RGrafPort
 	rep	movsw
 
 	ret
-
 assume	di:nothing
-
 ROpenPort endp
 
 
@@ -123,9 +116,7 @@ ROpenPort endp
 ; load video driver and do general initialization
 ; also set rThePort to fresh defPort
 ;-------------------------------------------------------------------
-
 CInitGraph proc	driver:word
-
 	; Load and lock the video driver
 	invoke	LoadHandle, driver
 	.if	ax
@@ -139,12 +130,12 @@ CInitGraph proc	driver:word
 		call	InitDisplay
 
 		.if ax == -1
-			xor	ax, ax		; error return (added for vesa driver)
+			xor	ax, ax	; error return (added for vesa driver)
 			ret
 		.endif
 
 		mov	oldMode, ax
-	
+
 		; call resolution specific initialization
 		call	InitGraph
 
@@ -159,21 +150,17 @@ CInitGraph proc	driver:word
 
 	; all done. AX is zero if we failed in any way
 	ret
-
 CInitGraph endp
 
 
 ;-------------------------------------------------------------------
 ; point passed pointer to rThePort
 ;-------------------------------------------------------------------
-
 RGetPort proc	pPtr:word
-
 	mov	bx, pPtr
 	mov	ax, rThePort
 	mov	[bx], ax
 	ret
-
 RGetPort endp
 
 
@@ -181,11 +168,9 @@ RGetPort endp
 ; point rThePort to passed address
 ;-------------------------------------------------------------------
 RSetPort proc	pPtr:word
-
 	mov	ax, pPtr
 	mov	rThePort, ax
 	ret
-
 RSetPort endp
 
 
@@ -193,11 +178,8 @@ RSetPort endp
 ; set the origin of rThePort to X/Y
 ; x must be even
 ;-------------------------------------------------------------------
-
 RSetOrigin proc x:word, y:word
-
 assume	bx:ptr RGrafPort
-
 	mov	ax, x
 	and	ax, not 1
 	mov	bx, rThePort
@@ -205,9 +187,7 @@ assume	bx:ptr RGrafPort
 	mov	ax, y
 	mov	[bx].origin.v, ax
 	ret
-
 assume	bx:nothing
-
 RSetOrigin endp
 
 
@@ -215,94 +195,73 @@ RSetOrigin endp
 ; move pen loc to x/y
 ;-------------------------------------------------------------------
 RMoveTo proc	x:word, y:word
-
 assume	bx:ptr RGrafPort
-
 	mov	bx, rThePort
 	mov	ax, x
 	mov	[bx].pnLoc.h, ax
 	mov	ax, y
 	mov	[bx].pnLoc.v, ax
 	ret
-
 assume	bx:nothing
-
 RMoveTo endp
 
 
 ;-------------------------------------------------------------------
 ; move penloc by delta x/y
 ;-------------------------------------------------------------------
-
 RMove proc	x:word, y:word
-
 assume	bx:GPPtr
-
 	mov	bx, rThePort
 	mov	ax, x
 	add	[bx].pnLoc.h, ax
 	mov	ax, y
 	add	[bx].pnLoc.v, ax
 	ret
-
 assume	bx:nothing
-
 RMove endp
 
 
 ;-------------------------------------------------------------------
 ; set pen's foreground color
 ;-------------------------------------------------------------------
-
 PenColor proc	mode:word
-
 	mov	bx, rThePort
 	mov	ax, mode
 	mov	(RGrafPort ptr [bx]).fgColor, ax
 	ret
-
 PenColor endp
 
-	
+
 ;-------------------------------------------------------------------
 ; set pen's background color
 ;-------------------------------------------------------------------
-
 RBackColor proc	mode:word
-
 	mov	bx, rThePort
 	mov	ax, mode
 	mov	(RGrafPort ptr [bx]).bkColor, ax
 	ret
-
 RBackColor endp
 
 
 ;-------------------------------------------------------------------
 ; set pen's transfer mode
 ;-------------------------------------------------------------------
-
 RPenMode proc	mode:word
-
 	mov	bx, rThePort
 	mov	ax, mode
 	mov	(RGrafPort ptr [bx]).pnMode, ax
 	ret
-
 RPenMode endp
 
 
 ;-------------------------------------------------------------------
 ; set txFace
 ;-------------------------------------------------------------------
-
 RTextFace proc	face:word
-
 	mov	bx, rThePort
 	mov	ax, face
 	mov	(RGrafPort ptr [bx]).txFace, ax
 	ret
-
 RTextFace endp
 
 
@@ -310,107 +269,82 @@ RTextFace endp
 ; return point size of port's current font or over ride
 ;-------------------------------------------------------------------
 GetPointSize proc
-	
 	mov	bx, rThePort
 	mov	ax, (RGrafPort ptr [bx]).fontSize
 	ret
-
 GetPointSize endp
 
 
 ;-------------------------------------------------------------------
 ; over ride the point setting of the current font
 ;-------------------------------------------------------------------
-
 SetPointSize proc	siz:word
-
 	mov	bx, rThePort
 	mov	ax, siz
 	mov	(RGrafPort ptr [bx]).fontSize, ax
 	ret
-
 SetPointSize endp
 
 
 ;-------------------------------------------------------------------
 ; return the font number of the current port
 ;-------------------------------------------------------------------
-
 GetFont proc
-
 	mov	bx, rThePort
 	mov	ax, (RGrafPort ptr [bx]).fontNum
 	ret
-
 GetFont endp
 
 
 ;-------------------------------------------------------------------
 ; end the graphics
 ;-------------------------------------------------------------------
-
 CEndGraph proc
-
 	call	EndGraph
 	invoke	EndDisplay, oldMode
 	ret
-
 CEndGraph endp
 
 
 ;-------------------------------------------------------------------
 ; call fill rect to xor white with current color
 ;-------------------------------------------------------------------
-
 RInvertRect proc	uses si, r:ptr RRect
-; call fill rect to xor white with current color
-
 assume	si:GPPtr
-
 	mov	si, rThePort
 	push	[si].pnMode
 	mov	[si].pnMode, srcInvert
 	invoke	RFillRect, r, VMAP, [si].fgColor, [si].bkColor, 0
 	pop	[si].pnMode
 	ret
-
 assume	si:nothing
-
 RInvertRect endp
 
 
 ;-------------------------------------------------------------------
 ; call fill rect to fill in foreground color
 ;-------------------------------------------------------------------
-
 RPaintRect proc	r:ptr RRect
-
 	mov	bx, rThePort
 	invoke	RFillRect, r, VMAP, (RGrafPort ptr [bx]).fgColor, 0, 0
 	ret
-
 RPaintRect endp
 
 
 ;-------------------------------------------------------------------
 ; call fill rect to fill in background color
 ;-------------------------------------------------------------------
-
 REraseRect proc	r:ptr RRect
-
 	mov	bx, rThePort
 	invoke	RFillRect, r, VMAP, (RGrafPort ptr [bx]).bkColor, 0, 0
 	ret
-
 REraseRect endp
 
 
 ;-------------------------------------------------------------------
 ; return total width of this text
 ;-------------------------------------------------------------------
-
 RTextWidth proc uses si di es, s:ptr byte, first:word, cnt:word, defaultFont:word
-	
 	; get a handle to current font
 	mov	di, rThePort
 	invoke	ResLoad, RES_FONT, (RGrafPort ptr [di]).fontNum
@@ -423,30 +357,27 @@ assume	di: ptr Font
 	; set up to add widths
 	mov	si, s
 	add	si, first
-	mov	dx, 0										; accumulated width
+	mov	dx, 0	; accumulated width
 	mov	cx, cnt
 	.if	cx
 		.repeat
 			lodsb
-			.if (al == CTRL_CHAR)				;Control code character
-				.if (cx > 1)						;Anything left to read?
+			.if (al == CTRL_CHAR)		;Control code character
+				.if (cx > 1)		;Anything left to read?
 					lodsb
 					dec	cx
 					cmp	al, CTRL_CHAR
-					je		AddCharWidth			;No control code found -> want CTRL_CHAR
+					je	AddCharWidth	;No control code found -> want CTRL_CHAR
+
 					.if ((al == 'f') && (cx > 1))	;Font change request?
-					
-						push	dx						;Save text width
+						push	dx	;Save text width
 
 						lodsb
 						dec	cx
 						.if (al == CTRL_CHAR)	;If no font given, use default
-
 							mov	bx, defaultFont
-
 						.else
-
-							mov	bx, 0				;Get font table index
+							mov	bx, 0	;Get font table index
 							.while ((al >= '0') && (al <= '9') && (cx > 1))
 								xor	ah, ah
 								sub	al, '0'
@@ -462,32 +393,31 @@ assume	di: ptr Font
 
 							shl	bx, 1
 							mov	bx, textFonts[bx]	;Get actual font requested
-
 						.endif
-						
-						push	ax						;Save last character
-						push	bx						;Save Font number
-						
+
+						push	ax	;Save last character
+						push	bx	;Save Font number
+
 						; Set new font
-						push	cx						;Save count
+						push	cx	;Save count
 						invoke	ResLoad, RES_FONT, bx
-						pop	cx						;Restore count
-							
+						pop	cx	;Restore count
+
 assume	di: nothing
 						; dereference the handle
 						mov	di, ax
 						les	di, [di]
 assume	di: ptr Font
-						pop	ax						;Restore font number
+						pop	ax	;Restore font number
 assume	bx:ptr RGrafPort
 						mov	bx, rThePort
 						mov	[bx].fontNum, ax
 						mov	ax, es:[di].pointSize
 						mov	[bx].fontSize, ax
 assume	bx:nothing
-						
-						pop	ax						;Restore last character
-						pop	dx						;Restore text width
+
+						pop	ax	;Restore last character
+						pop	dx	;Restore text width
 					.endif
 					.while ((al != CTRL_CHAR) && (cx > 1))	;Go to end of control code
 						lodsb
@@ -502,7 +432,7 @@ AddCharWidth:
 				; index to character and get width
 				shl	bx, 1
 				mov	bx, es: [di][bx].charRecs	; offset to offset
-				mov	al, byte ptr es: [di][bx] 	; offset to character record
+				mov	al, byte ptr es: [di][bx]	; offset to character record
 				cbw
 				add	dx, ax
 			.endif
@@ -513,20 +443,15 @@ AddCharWidth:
 	; return total width in AX
 	mov	ax, dx
 	ret
-
 assume	di:nothing
-
 RTextWidth endp
-
 
 
 ;-------------------------------------------------------------------
 ; return width in pixels of the character
 ;-------------------------------------------------------------------
 RCharWidth proc uses si es, cCode:word
-
 	and	word ptr cCode, 0ffh
-
 	mov	si, rThePort
 	invoke	ResLoad, RES_FONT, (RGrafPort ptr [si]).fontNum
 
@@ -539,19 +464,14 @@ RCharWidth proc uses si es, cCode:word
 	mov	al, es:[si]
 	xor	ah, ah
 	ret
-
 RCharWidth endp
-
 
 
 ;-------------------------------------------------------------------
 ; return height in pixels of the character
 ;-------------------------------------------------------------------
-
 CharHeight proc uses si es, cCode:word
-
-	and	word ptr cCode, 0ffh
-
+;	and	word ptr cCode, 0ffh
 	mov	si, rThePort
 	invoke	ResLoad, RES_FONT, (RGrafPort ptr [si]).fontNum
 
@@ -564,18 +484,14 @@ CharHeight proc uses si es, cCode:word
 	mov	al, es:[si + 1]
 	xor	ah, ah
 	ret
-
 CharHeight endp
-
 
 
 ;-------------------------------------------------------------------
 ; draw a graphics character into visual map at current pnLoc
 ; and advance pnLoc by characters width
 ;-------------------------------------------------------------------
-
 RDrawChar proc cCode:word
-
 	and	word ptr cCode, 0ffh
 	mov	ax, cCode
 	call	ClearChar
@@ -586,20 +502,15 @@ RDrawChar proc cCode:word
 	mov	bx, rThePort
 	add	(RGrafPort ptr [bx]).pnLoc.h, ax
 	ret
-
 RDrawChar endp
-
 
 
 ;-------------------------------------------------------------------
 ; draw a graphics character into visual map at current pnLoc
 ; show the bits and advance pnLoc
 ;-------------------------------------------------------------------
-
 ShowChar proc uses si, cCode:word
-
 assume	si:ptr RGrafPort
-
 	and	word ptr cCode, 0ffh
 	mov	ax, cCode
 	call	ClearChar
@@ -623,22 +534,17 @@ assume	si:ptr RGrafPort
 	add	bx, ax
 	mov	theRect.bottom, bx
 	invoke	ShowBits, addr theRect, VMAP
-	
+
 	ret
-
 assume	si:nothing
-
 ShowChar endp
-
 
 
 ;-------------------------------------------------------------------
 ; if pnMode = SRCCOPY we erase the rectangle
 ; it will occupy width by fontSize
 ;-------------------------------------------------------------------
-
 ClearChar proc near
-
 assume	bx:ptr RGrafPort
 	mov	bx, rThePort
 	.if	[bx].pnMode == SRCCOPY
@@ -661,17 +567,14 @@ assume	bx:ptr RGrafPort
 	.endif
 	ret
 assume	bx:nothing
-
 ClearChar endp
+
 
 ;-------------------------------------------------------------------
 ; high level entry
 ;-------------------------------------------------------------------
-
 ROffsetRect proc	r:ptr RRect, x:word, y:word
-
 assume	bx:ptr RRect
-
 	mov	bx, r
 	mov	ax, x
 	add	[bx].right, ax
@@ -680,21 +583,16 @@ assume	bx:ptr RRect
 	add	[bx].top, ax
 	add	[bx].bottom, ax
 	ret
-
 assume	bx:nothing
-
 ROffsetRect endp
 
 
 ;-------------------------------------------------------------------
 ; add the origin of port at DI to rectangle at SI
 ;-------------------------------------------------------------------
-
 SOffsetRect proc
-
 assume	di:GPPtr
 assume	si:ptr RRect
-
 	mov	ax, [di].origin.v
 	add	[si].top, ax
 	add	[si].bottom, ax
@@ -702,74 +600,56 @@ assume	si:ptr RRect
 	add	[si].left, ax
 	add	[si].right, ax
 	ret
-
 assume	di:nothing
 assume	si:nothing
-
 SOffsetRect endp
 
 
 ;-------------------------------------------------------------------
 ; add the origin of port at DI to point at SI
 ;-------------------------------------------------------------------
-
 OffsetPoint proc near
-
 assume	di:GPPtr
 assume	si:ptr RPoint
-
 	mov	ax, [di].origin.v
 	add	[si].v, ax
 	mov	ax, [di].origin.h
 	add	[si].h, ax
 	ret
-
 assume	di:nothing
 assume	si:nothing
-
 OffsetPoint endp
 
 
 ;-------------------------------------------------------------------
 ; inset (or outset) pointed to rect
 ;-------------------------------------------------------------------
-
 RInsetRect proc uses si, r:ptr RRect, x:word, y:word
-
 	mov	si, r
 	mov	ax, x
 	mov	bx, y
 	call	SInsetRect
 	ret
-
 RInsetRect endp
 
 
 ;-------------------------------------------------------------------
-
 SInsetRect proc near
-
 assume	si:ptr RRect
-
 	add	[si].left,  ax
 	sub	[si].right, ax
 	add	[si].top,    bx
 	sub	[si].bottom, bx
 	ret
-
 assume	si:nothing
-
 SInsetRect endp
 
 
 ;-------------------------------------------------------------------
 ; move rectangle so origin is at x/y
 ;-------------------------------------------------------------------
-
 MoveRect proc	uses si, r:ptr RRect, x:word, y:word
-
 assume	si:ptr RRect
-
 	mov	si, r
 	mov	ax, x
 	sub	ax, [si].left
@@ -780,43 +660,33 @@ assume	si:ptr RRect
 	add	[si].top, bx
 	add	[si].bottom, bx
 	ret
-
 assume	si:nothing
-
 MoveRect endp
 
 
 ;-------------------------------------------------------------------
 ; return true if point at SI is in RRect at di
 ;-------------------------------------------------------------------
-
 InRect proc near
-
 assume	si:ptr RPoint
 assume	di:ptr RRect
-
 	mov	ax, [si].v
 	mov	bx, [si].h
-	.if	ax >= [di].top && ax < [di].bottom && \
-			bx >= [di].left && bx < [di].right
+	.if	ax >= [di].top && ax < [di].bottom && bx >= [di].left && bx < [di].right
 		clc
 	.else
 		stc
 	.endif
 	ret
-
 assume	si:nothing
 assume	di:nothing
-
 InRect endp
 
 
 ;-------------------------------------------------------------------
 ; C interface to SectRect.  Return true if a valid rectangle remains
 ;-------------------------------------------------------------------
-
 CSectRect proc uses si di, r1:ptr RRect, r2:ptr RRect, r3:ptr RRect
-
 	mov	si, r1
 	mov	di, r2
 	mov	bx, r3
@@ -827,9 +697,8 @@ CSectRect proc uses si di, r1:ptr RRect, r2:ptr RRect, r3:ptr RRect
 	.if	carry?
 		inc	ax
 	.endif
-	
+
 	ret
-	
 CSectRect endp
 
 
@@ -839,14 +708,11 @@ CSectRect endp
 ; Logic: If source is inside clip, ok; else move clip to src
 ;start clipping	 with top/left
 ;-------------------------------------------------------------------
-
 RSectRect proc
-
 assume	ax:sword
 assume	si:ptr RRect
 assume	di:ptr RRect
 assume	bx:ptr RRect
-
 	mov	ax, [si].top
 	.if	ax < [di].top
 		mov	ax, [di].top
@@ -858,7 +724,7 @@ assume	bx:ptr RRect
 	mov	ax, [si].left
 	.if	ax < [di].left
 		mov	ax, [di].left
-	.elseif 	ax > [di].right
+	.elseif	ax > [di].right
 		mov	ax, [di].right
 	.endif
 	mov	[bx].left, ax
@@ -888,34 +754,29 @@ assume	bx:ptr RRect
 	.endif
 
 	ret
-
 assume	ax:nothing
 assume	bx:nothing
 assume	si:nothing
 assume	di:nothing
-
 RSectRect endp
 
 
 ;-------------------------------------------------------------------
 ; get an input rectangle into local (rect at SI)
 ;-------------------------------------------------------------------
-
 GetTheRect proc	uses si
-
 	lea	di, theRect
 	mov	cx, 4
 	rep	movsw
 	ret
-
 GetTheRect endp
 
 
-
-GetCursorData proc uses si di bp, data:word
+;-------------------------------------------------------------------
 ; Copy cursor data into passed buffer
 ; Buffer size should be the maximum cursor size (910 bytes).
-
+;-------------------------------------------------------------------
+GetCursorData proc uses si di bp, data:word
 	push	es
 	push	ds
 
@@ -931,16 +792,16 @@ GetCursorData proc uses si di bp, data:word
 	pop	di
 	pop	es
 
-	lodsw					; xDim
+	lodsw		; xDim
 	stosw
 	mov	dx, ax
-	lodsw					; yDim
+	lodsw		; yDim
 	stosw
-	mul	dx				; ax contains data size
+	mul	dx	; ax contains data size
 	mov	cx, 3
-	rep	movsw			; xOff, yOff, skip, unused
+	rep	movsw	; xOff, yOff, skip, unused
 	mov	cx, ax
-	rep	movsb			; copy data
+	rep	movsb	; copy data
 
 	pop	ds
 	pop	es
@@ -950,14 +811,13 @@ GetCursorData proc uses si di bp, data:word
 	call	Display
 
 	ret
-
 GetCursorData endp
 
 
-
-SetCursorData proc uses si di bp, data:word
+;-------------------------------------------------------------------
 ; Move data into cursor area, then redraw cursor
-
+;-------------------------------------------------------------------
+SetCursorData proc uses si di bp, data:word
 	push	es
 	push	ds
 
@@ -971,16 +831,16 @@ SetCursorData proc uses si di bp, data:word
 
 	pop	si
 
-	lodsw					; xDim
+	lodsw		; xDim
 	stosw
 	mov	dx, ax
-	lodsw					; yDim
+	lodsw		; yDim
 	stosw
-	mul	dx				; ax contains data size
+	mul	dx	; ax contains data size
 	mov	cx, 3
-	rep	movsw			; xOff, yOff, skip, unused
+	rep	movsw	; xOff, yOff, skip, unused
 	mov	cx, ax
-	rep	movsb			; copy data
+	rep	movsb	; copy data
 
 	pop	ds
 	pop	es
@@ -990,10 +850,7 @@ SetCursorData proc uses si di bp, data:word
 	call	Display
 
 	ret
-
 SetCursorData endp
 
 
-	end
-
-
+end

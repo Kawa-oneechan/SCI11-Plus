@@ -5,7 +5,6 @@
 // > General cleanup -- no ancient-style loose parameter type lists, // comments
 // > Disable stamp checking
 
-#include "errmsg.h"
 #include "language.h"
 #include "object.h"
 #include "pmachine.h"
