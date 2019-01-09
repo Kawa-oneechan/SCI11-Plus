@@ -111,10 +111,10 @@ typedef struct REventRecord
 #define	F9			0x4300
 #define	F10			0x4400
 
-extern REventRecord* evHead;
-extern REventRecord* evTail;
-extern REventRecord* evQueue;
-extern REventRecord* evQueueEnd;
+extern REventRecord *evHead;
+extern REventRecord *evTail;
+extern REventRecord *evQueue;
+extern REventRecord *evQueueEnd;
 extern Handle joyHandle;
 extern Hunkptr joystick;
 extern Handle kbdHandle;
@@ -122,9 +122,9 @@ extern Hunkptr keyboard;
 
 void InitEvent(word nEvents);
 void EndEvent(void);
-bool RGetNextEvent(word mask, REventRecord* rec);
+bool RGetNextEvent(word mask, REventRecord *rec);
 void RFlushEvents(word mask);
-bool REventAvail(word mask, REventRecord* rec);
+bool REventAvail(word mask, REventRecord *rec);
 bool RStillDown(void);
 void RPostEvent(REventRecord*);
 void MakeNullEvent(REventRecord*);

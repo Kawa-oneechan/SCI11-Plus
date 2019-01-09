@@ -36,12 +36,12 @@ extern strptr strchr(strptr, char);
 extern strptr strstr(strptr, strptr);
 
 #ifndef SCI
-extern int memcmp(void* buf1, void* buf2, unsigned int count);
+extern int memcmp(void *buf1, void *buf2, unsigned int count);
 #endif
 
 //extern void memcpy(memptr, memptr, int); //in memmgr.s
-extern void* memcpy(void* to, void* from, unsigned int count); //in memmgr.s
-extern void FarMemcpy(void far* dest, void far* src, int length);
+extern void* memcpy(void *to, void *from, unsigned int count); //in memmgr.s
+extern void FarMemcpy(void far *dest, void far *src, int length);
 
 //Our extensions:
 extern bool strtrn(strptr, strptr, strptr, strptr);

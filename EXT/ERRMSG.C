@@ -33,16 +33,16 @@ int	theViewNum, theLoopNum, theCelNum; // for debugging
 
 bool (*alertProc)(strptr) = (bool(*)(strptr))DoPanic;
 
-#if !defined(INTERNALERRORS)
+#ifndef INTERNALERRORS
 static char errMsgBuf[ERRBUFSIZE];
-static char* errMsgFile = "INTERP.ERR";
+static char *errMsgFile = "INTERP.ERR";
 
-static char* DoReadErrMsg(int errnum, char* textBuf, int msgfile);
+static char* DoReadErrMsg(int errnum, char *textBuf, int msgfile);
 static int OpenErrMsgFile(void);
 
 void InitErrMsgs()
 {
-	char* tmpBuf;
+	char *tmpBuf;
 	int	i, fd;
 
 	if ((fd = OpenErrMsgFile()) == -1)
@@ -152,9 +152,9 @@ global bool DoAlert(strptr text) //put up alert box and wait for a click
 	return (ret);
 }
 
-#if defined(INTERNALERRORS)
+#ifdef INTERNALERRORS
 
-const char* KawaErrors1 =
+const char *KawaErrors1 =
 	"DOS Error:\n%s\nENTER to retry\nESC to %s\0"
 	"cancel\0"
 	"quit\0"
@@ -220,7 +220,7 @@ const char* KawaErrors1 =
 	"Eat Line Error\0"
 	"Invalid Line Length\0"
 ;
-const char* KawaErrors2 =
+const char *KawaErrors2 =
 	"INVALID RECTANGLE!\0"
 	"\nError: invalid value in your \"%s\" file:\naudioSize = %s\n\0"
 	"Error: minHunk was not specified IN KILOBYTES in your \"%s\" file.\nExample: minHunk = 100k\n\0"
@@ -286,9 +286,9 @@ const char* KawaErrors2 =
 	"\0"
 ;
 
-char* ReadErrMsg(int errnum, char* textBuf)
+char* ReadErrMsg(int errnum, char *textBuf)
 {
-	char* tmpBuf;
+	char *tmpBuf;
 	int	j;
 	tmpBuf = (char*)KawaErrors1;
 	if (errnum > 64)
@@ -303,13 +303,13 @@ char* ReadErrMsg(int errnum, char* textBuf)
 
 #else
 
-static char* DoReadErrMsg(int errnum, char* textBuf, int msgfile)
+static char* DoReadErrMsg(int errnum, char *textBuf, int msgfile)
 {
 	int	num;
 	char fileBuf[FILEBUFSIZE];
-	char* filePtr = fileBuf;
-	char* linePtr = fileBuf;
-	char* textPtr = textBuf;
+	char *filePtr = fileBuf;
+	char *linePtr = fileBuf;
+	char *textPtr = textBuf;
 	int	count;
 
 	*textPtr = 0;
@@ -391,9 +391,9 @@ static int OpenErrMsgFile(void)
 }
 
 
-char* ReadErrMsg(int errnum, char* textBuf)
+char* ReadErrMsg(int errnum, char *textBuf)
 {
-	char* tmpBuf;
+	char *tmpBuf;
 	int	j;
 	int	fd;
 

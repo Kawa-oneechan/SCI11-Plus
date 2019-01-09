@@ -57,7 +57,7 @@ void SetMoviePalette(void);
 
 struct {
 	int pageOffset;
-	char far* buffer; //split into segement and offset in vga320.s
+	char far *buffer; //split into segement and offset in vga320.s
 	int dataOffset;
 	int xOffset;
 	int yOffset;
@@ -169,7 +169,7 @@ void RunMovie(int handle, Handle bufferHandle, int speed)
 void LoadFrame(char page, int handle, Handle bufferHandle)
 {
 	aCel theCel;
-	byte far* theBuffer;
+	byte far *theBuffer;
 	uint headerSize;
 	uint count;
 

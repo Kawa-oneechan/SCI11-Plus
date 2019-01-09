@@ -59,7 +59,7 @@ uint theResId;
 //return handle to resource
 Handle ResLoad(byte resType, uint resId)
 {
-	LoadLink far** scan;
+	LoadLink far **scan;
 	bool failflag;
 
 	switch (resType)
@@ -159,8 +159,8 @@ Handle ResLoad(byte resType, uint resId)
 //release this resource
 void ResUnLoad(byte resType, uword resId)
 {
-	LoadLink far** scan;
-	LoadLink far** tmp;
+	LoadLink far **scan;
+	LoadLink far **tmp;
 
 	if (resId != ALL_IDS)
 	{
@@ -189,8 +189,8 @@ void ResUnLoad(byte resType, uword resId)
 
 void ResLock(byte resType, uword resId, bool yes)
 {
-	LoadLink far** scan;
-	LoadLink far** tmp;
+	LoadLink far **scan;
+	LoadLink far **tmp;
 
 	if (resId != ALL_IDS)
 	{
@@ -219,7 +219,7 @@ void ResLock(byte resType, uword resId, bool yes)
 //Return TRUE if nothing can be purged.
 bool PurgeLast()
 {
-	LoadLink far** scan;
+	LoadLink far **scan;
 
 	//find last resource that is not locked or in ARM
 	for (scan = (LoadLink far**)Native(FLastNode(&loadList)); scan && ((*scan)->lock || (*scan)->altResMem); scan = (LoadLink far**)Native(FPrevNode(Pseudo(scan))))
@@ -241,7 +241,7 @@ bool PurgeLast()
 
 LoadLink far** FindResEntry(byte resType, uword resId)
 {
-	LoadLink far** scan;
+	LoadLink far **scan;
 
 	//search loadList for this type and id
 	for (scan = (LoadLink far**)Native(FFirstNode(&loadList)); scan; scan = (LoadLink far**)Native(FNextNode(Pseudo(scan))))
@@ -268,7 +268,7 @@ Handle GetResHandle(uword size)
 			if (GetHandle())
 			{
 #if defined(DEBUG)
-				LoadLink far** scan;
+				LoadLink far **scan;
 
 				theGame = 0; //Added to prevent Language error message
 				//make some room so that resources can be shown
@@ -415,7 +415,7 @@ void SetResCursor(ResCursor cursor)
 		0x20,0x20,0x01,0x01,0x04,0x04,0x05,0x01,0x20,0x20,0x20,0x20,0x20,0x20,
 		0x20,0x20,0x20,0x20,0x01,0x01,0x01,0x01,0x20,0x20,0x20,0x20
 	};
-	static char* cursors[] =
+	static char *cursors[] =
 	{
 		PrevIcon,
 		DiskIcon,
@@ -465,7 +465,7 @@ void SetResCursor(ResCursor cursor)
 
 int FindPatchEntry(byte resType, uword resId)
 {
-	ResPatchEntry far* entry;
+	ResPatchEntry far *entry;
 
 	if (!patches)
 		return -1;
@@ -553,7 +553,7 @@ void InitPatches()
 }
 
 
-void MakeName36(byte resType, char* fname, uint module, byte noun, byte verb, byte cond, byte sequ)
+void MakeName36(byte resType, char *fname, uint module, byte noun, byte verb, byte cond, byte sequ)
 {
 	if (resType == RES_SYNC)
 		fname[0] = '#';
@@ -569,7 +569,7 @@ void MakeName36(byte resType, char* fname, uint module, byte noun, byte verb, by
 }
 
 
-void ConvBase36(char* str, uint num10, int digits)
+void ConvBase36(char *str, uint num10, int digits)
 {
 	int n, t;
 

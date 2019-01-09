@@ -39,20 +39,20 @@
 
 #define PSTACKSIZE		0x01400
 
-extern Obj* theGame;
+extern Obj *theGame;
 extern bool gameStarted;
 extern fptr pmCode;
 extern memptr ip;
-extern uword* pmsp;
+extern uword *pmsp;
 extern word acc;
-extern uword* pStack;
-extern uword* pStackEnd;
-extern uword* globalVar;
-extern word* localVar;
-extern word* tempVar;
-extern word* parmVar;
+extern uword *pStack;
+extern uword *pStackEnd;
+extern uword *globalVar;
+extern word *localVar;
+extern word *tempVar;
+extern word *parmVar;
 extern word restArgs;
-extern Obj* object;
+extern Obj *object;
 extern Handle scriptHandle;
 extern uint numClasses;
 extern bool defaultES;
@@ -64,7 +64,7 @@ extern long verStamp;
 
 void PMachine(void);
 memptr GetDispatchAddr(uint, uint);
-void GetDispatchAddrInHeapFromC(word scriptNum, word entry, Obj** obj, Script** script);
+void GetDispatchAddrInHeapFromC(word scriptNum, word entry, Obj* *obj, Script* *script);
 
 #endif
 

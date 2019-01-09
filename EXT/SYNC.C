@@ -71,7 +71,7 @@ global KERNEL(DoSync)
 }
 
 
-global void StartSync(Obj* theSync, uint num)
+global void StartSync(Obj *theSync, uint num)
 {
 	IndexedProp(theSync, syncCue) = -1;
 	if ((syncHandle = ResLoad(RES_SYNC, num)) != NULL)
@@ -86,7 +86,7 @@ global void StartSync(Obj* theSync, uint num)
 }
 
 
-global void QueueSync(Obj* theSync, uint num)
+global void QueueSync(Obj *theSync, uint num)
 {
 	if (theSync)
 		IndexedProp(theSync, syncCue) = -1;
@@ -101,7 +101,7 @@ global void QueueSync(Obj* theSync, uint num)
 }
 
 
-global void StartSync36(Obj* theSync, uint module, byte noun, byte verb, byte cond, byte sequ)
+global void StartSync36(Obj *theSync, uint module, byte noun, byte verb, byte cond, byte sequ)
 {
 	int fd;
 	uint len, typeHdrlen;
@@ -142,7 +142,7 @@ global void StartSync36(Obj* theSync, uint module, byte noun, byte verb, byte co
 }
 
 
-global void QueueSync36(Obj* theSync, uint module, byte noun, byte verb, byte cond, byte sequ)
+global void QueueSync36(Obj *theSync, uint module, byte noun, byte verb, byte cond, byte sequ)
 {
 	int fd;
 	uint len, typeHdrlen;
@@ -183,12 +183,12 @@ global void QueueSync36(Obj* theSync, uint module, byte noun, byte verb, byte co
 }
 
 
-ulong FindSync36Entry(uint module, byte noun, byte verb, byte cond, byte sequ, uint* len)
+ulong FindSync36Entry(uint module, byte noun, byte verb, byte cond, byte sequ, uint *len)
 {
 	long offset;
 	Handle map;
-	char far* ptr36;
-	ResAud36Entry far* entry36;
+	char far *ptr36;
+	ResAud36Entry far *entry36;
 
 	if (audVolFd == CLOSED)
 		return((ulong)-1); //KAWA WAS HERE -- why was this -1L when the return type is ulong?
@@ -219,7 +219,7 @@ ulong FindSync36Entry(uint module, byte noun, byte verb, byte cond, byte sequ, u
 }
 
 
-global void NextSync(Obj* theSync)
+global void NextSync(Obj *theSync)
 {
 	Sync tsync;
 	Hunkptr	dp;

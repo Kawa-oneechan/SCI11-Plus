@@ -221,7 +221,7 @@ global KERNEL(SetCursor)
 	int smCelW, smCelH;
  	byte secondSkipCol;
 	Hunkptr bigViewData;
-	aCel far* celPtr;
+	aCel far *celPtr;
 
 	switch (argCount)
 	{
@@ -586,7 +586,7 @@ global KERNEL(Display)
 	strptr text;
 	char buffer[1000];
 	RRect r;
-	RRect far* sRect;
+	RRect far *sRect;
 	Handle bits;
  	uword arg1;
 	RGrafPort savePort;
@@ -940,21 +940,21 @@ global KERNEL(GetTime)
 
 global KERNEL(NumLoops)
 {
-	Obj* him = (Obj*)Native(arg(1));
+	Obj *him = (Obj*)Native(arg(1));
 	acc = GetNumLoops(ResLoad(RES_VIEW, GetProperty(him, s_view)));
 }
 
 
 global KERNEL(NumCels)
 {
-	Obj* him = (Obj*)Native(arg(1));
+	Obj *him = (Obj*)Native(arg(1));
 	acc = GetNumCels(ResLoad(RES_VIEW, GetProperty(him, s_view)), GetProperty(him, s_loop));
 }
 
 
 global KERNEL(SetNowSeen)
 {
-	Obj* him = (Obj*)Native(arg(1));
+	Obj *him = (Obj*)Native(arg(1));
 	GetCelRect(ResLoad(RES_VIEW, GetProperty(him, s_view)), GetProperty(him, s_loop), GetProperty(him, s_cel), GetProperty(him, s_x), GetProperty(him, s_y), GetProperty(him, s_z), (RRect *) GetPropAddr(him, s_nsTop));
 }
 
@@ -988,12 +988,12 @@ global KERNEL(CelHigh)
 //This code NOW checks controls AND base rect intersection
 global KERNEL(CantBeHere)
 {
-	Obj* him = (Obj*)Native(arg(1));
-	List* cast = (List*)Native(arg(2));
+	Obj *him = (Obj*)Native(arg(1));
+	List *cast = (List*)Native(arg(2));
 	ObjID node;
-	Obj* me;
+	Obj *me;
 	RRect r, *chkR;
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 
 	RGetPort(&oldPort);
 	RSetPort((RGrafPort*)picWind);
@@ -1051,7 +1051,7 @@ global KERNEL(CantBeHere)
 global KERNEL(OnControl)
 {
 	RRect r;
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 
 	RGetPort(&oldPort);
 	RSetPort((RGrafPort*)picWind);
@@ -1082,7 +1082,7 @@ global KERNEL(OnControl)
 
 global KERNEL(GetPort)
 {
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 	RGetPort(&oldPort);
 	acc = Pseudo(oldPort);
 }
@@ -1433,7 +1433,7 @@ global KERNEL(ReadNumber)
 
 global KERNEL(Clone)
 {
-	Obj* theClone;
+	Obj *theClone;
 	int	numArgs;
 
 	//Get a clone of the object.
@@ -1747,11 +1747,11 @@ global KERNEL(MemorySegment)
 */
 global KERNEL(AvoidPath)
 {
-	register Obj* him;
+	register Obj *him;
 	register ObjID it;
-	List* theList;
+	List *theList;
 	AvdPoint A, B, *P;
-	polygon* polylist;
+	polygon *polylist;
 	int size, i,opt;
 
 	A.x = arg(1);
@@ -1813,11 +1813,11 @@ global KERNEL(AvoidPath)
 
 KERNEL(MergePoly)
 {
-	register Obj* him;
+	register Obj *him;
 	register ObjID it;
-	List* theList;
-	AvdPoint* Poly;
-	polygon* polylist;
+	List *theList;
+	AvdPoint *Poly;
+	polygon *polylist;
 	int size, i;
 
 	size = arg(3);
@@ -1852,7 +1852,7 @@ KERNEL(MergePoly)
 
 global KERNEL(ListOps)
 {
-	register Obj* him;
+	register Obj *him;
 	register ObjID it;
 
 	switch (arg(1))
@@ -2044,7 +2044,7 @@ global KERNEL(FileIO)
 
 
 //a simple bubble sort
-void bsort(SortNode* theList, int size)
+void bsort(SortNode *theList, int size)
 {
 	int i, j;
 	SortNode tmp;
@@ -2066,13 +2066,13 @@ void bsort(SortNode* theList, int size)
 
 global KERNEL(Sort)
 {
-	register Obj* him;
+	register Obj *him;
 	register ObjID it;
-	register SortNode* sortArray;
+	register SortNode *sortArray;
 
 	List *theList, *retKList;
-	Obj* retList;
-	KNode* kNode;
+	Obj *retList;
+	KNode *kNode;
 	int size, i;
 
 	theList = (List*)Native(GetProperty((Obj*)Native(arg(1)), s_elements));
@@ -2372,7 +2372,7 @@ global KERNEL(ShowMovie)
 global KERNEL(SetVideoMode)
 {
 	int mode = (int)arg(1);
-	char far* ptr;
+	char far *ptr;
 	int k;
 	char lastMode = currentVideoMode;
 

@@ -65,7 +65,7 @@ short far get_line_incs (struct line_incs*, short);
 
 
 //Routine to obtain slope of our line
-short far get_line_incs(struct line_incs* li, short steps)
+short far get_line_incs(struct line_incs *li, short steps)
 {
 	char isneg = 0;
 
@@ -106,8 +106,8 @@ short far get_line_incs(struct line_incs* li, short steps)
 //Perform scaling by filling in tables that tell which pixels to draw when
 //actually drawing scaled cell into video ram
 void far vm_size(word oldW, word oldH, word oldXoff, word oldYoff,
-	word dxsize, word dysize ,word* newdxsize, word* newdysize,
-	word* newXoff, word* newYoff)
+	word dxsize, word dysize ,word *newdxsize, word *newdysize,
+	word *newXoff, word *newYoff)
 {
 	short xx, yy;
 
@@ -165,10 +165,10 @@ void far vm_size(word oldW, word oldH, word oldXoff, word oldYoff,
 
 
 //Get new scale factors for auto scaling based upon vanishing point
-void far GetNewScaleFactors(Obj* vId, int height, word* newScaleX, word* newScaleY)
+void far GetNewScaleFactors(Obj *vId, int height, word *newScaleX, word *newScaleY)
 {
 	int bottom, pixsHigh ,newPixsHigh, vanY, yPos, vanHeight,vanYDist;
-	Obj* theRoom;
+	Obj *theRoom;
 
 	yPos = IndexedProp(vId, actY);
 	bottom = rThePort->portRect.bottom;

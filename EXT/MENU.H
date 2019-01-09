@@ -41,7 +41,7 @@ typedef struct
 	RRect pageRect;
 	word items;
 	Handle ubits;
-	RMenuItem* item[1];
+	RMenuItem *item[1];
 } MenuPage;
 
 typedef struct
@@ -49,12 +49,12 @@ typedef struct
 	RRect bar;
 	word hidden;
 	word pages;
-	MenuPage* page[1];
+	MenuPage *page[1];
 } MenuBar;
 
-extern MenuBar* theMenuBar;
+extern MenuBar *theMenuBar;
 extern RGrafPort menuPortStruc;
-extern RGrafPort* menuPort;
+extern RGrafPort *menuPort;
 
 void InitMenu(void);
 void RDrawMenuBar(bool);

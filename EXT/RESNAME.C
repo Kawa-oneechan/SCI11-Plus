@@ -60,9 +60,9 @@ global char* ResNameMakeWildCard(int resType)
 }
 
 
-global int ResNameMatch(char* name)
+global int ResNameMatch(char *name)
 {
-	struct ResType* rp;
+	struct ResType *rp;
 
 	for (rp = resTypes; rp->name; rp++)
 		if (!strcmp(name, rp->name))
@@ -79,10 +79,10 @@ global char* ResName(int resType)
 
 //open a resource file using any of the resource's masks.
 //if successful, copies the full name to 'name', else nulls it
-global int ROpenResFile(int resType, uint resId, char* name)
+global int ROpenResFile(int resType, uint resId, char *name)
 {
 	char fullName[100];
-	char** mask;
+	char **mask;
 	int fd;
 
 	for (mask = resTypes[resType - RES_BASE].masks; *mask; mask++)
@@ -125,7 +125,7 @@ global char* addSlash(strptr dir)
  */
 static strptr near makeName(strptr dest, strptr mask, strptr name, uint resId)
 {
-	char* cp;
+	char *cp;
 	int dotIx;
 
 	if (name && *name && *(name + 1) == ':')

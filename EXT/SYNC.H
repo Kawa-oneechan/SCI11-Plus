@@ -30,11 +30,11 @@ enum syncFuncs
 };
 
 KERNEL(DoSync);
-void StartSync(Obj* theSync, uint num);
+void StartSync(Obj *theSync, uint num);
 void StartSync36(Obj*, uint, byte, byte, byte, byte);
-void QueueSync(Obj* theSync, uint num);
+void QueueSync(Obj *theSync, uint num);
 void QueueSync36(Obj*, uint, byte, byte, byte, byte);
-void NextSync(Obj* theSync);
+void NextSync(Obj *theSync);
 void StopSync(void);
 ulong FindSync36Entry(uint, byte, byte, byte, byte, uint*);
 

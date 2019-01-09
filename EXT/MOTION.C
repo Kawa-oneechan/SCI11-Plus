@@ -36,7 +36,7 @@ global KERNEL(BaseSetter)
 	Obj *actor;
 	int theY;
 	word scale;
-  	aView far* viewPtr;
+  	aView far *viewPtr;
 	Handle view;
 
 	actor = (Obj*)Native(arg(1));
@@ -73,7 +73,7 @@ global KERNEL(DirLoop)
 
 
 //This code correlates the desired direction to the proper loop.
-static void near DirLoop(Obj* actor, int angle)
+static void near DirLoop(Obj *actor, int angle)
 {
 	int loop, nLoops;
 
@@ -434,7 +434,7 @@ word		*args;
 //overflow errors.
 global KERNEL(SetJump)
 {
-	Obj* theJump;
+	Obj *theJump;
 	long DX, DY, denom;
 	int	gy, n, xStep, yStep;
 

@@ -149,7 +149,7 @@ KERNEL(Message)
 
 		case MSG_GETKEY:
 		{
-			int* ip = (int*)arg(2);
+			int *ip = (int*)arg(2);
 			ip[0] = curModule;
 			ip[1] = curNoun;
 			ip[2] = curVerb;
@@ -181,9 +181,9 @@ static void get(uint module, byte noun, byte verb, byte cond, byte seq, strptr b
 //else acc = 0 and if buffer supplied, copies an error message to it
 static void getNext(strptr buffer)
 {
-	IndexEntry far* indexEntry;
+	IndexEntry far *indexEntry;
 	MsgStack saveStack;
-	char far* msg;
+	char far *msg;
 	MsgEntry entry;
 
 	//save the stack if this is just a query
@@ -227,8 +227,8 @@ static void getNext(strptr buffer)
 static void showXlate()
 {
 	int len;
-	char far* cp;
-	char far* xmsg;
+	char far *cp;
+	char far *xmsg;
 	Handle bufferHandle;
 
 	if (xlate)
@@ -262,7 +262,7 @@ static void showXlate()
 static void getSize(uint module, byte noun, byte verb, byte cond, byte seq)
 {
 	MsgStack stack;
-	char far* cp;
+	char far *cp;
 
 	//use a local stack, since no need to save info across calls
 	initStack(&stack, module, noun, verb, cond, seq);
@@ -283,9 +283,9 @@ static void getSize(uint module, byte noun, byte verb, byte cond, byte seq)
 
 //set reference values for this message, returning FALSE if message not found.
 static bool
-getRefValues(uint module, byte noun, byte verb, byte cond, byte seq, byte* refNoun, byte* refVerb, byte* refCond)
+getRefValues(uint module, byte noun, byte verb, byte cond, byte seq, byte *refNoun, byte *refVerb, byte *refCond)
 {
-	IndexEntry far* indexEntry;
+	IndexEntry far *indexEntry;
 	MsgStack stack;
 
 	//use a local stack, since no need to save info across calls
@@ -305,12 +305,12 @@ getRefValues(uint module, byte noun, byte verb, byte cond, byte seq, byte* refNo
 //finds a message and returns far pointer to it and to its index entry
 //if found, else NULL
 //'deep' means whether reference chain is followed
-static char far* find(MsgStack* stack, IndexEntry far* * indexEntry, bool deep)
+static char far* find(MsgStack *stack, IndexEntry far ** indexEntry, bool deep)
 {
 	register uint i;
-	MsgData far* data = (MsgData far*) *ResLoad(RES_MSG, stack->module);
+	MsgData far *data = (MsgData far*) *ResLoad(RES_MSG, stack->module);
 	uint count = GetWord(data->count);
-	IndexEntry far* ip;
+	IndexEntry far *ip;
 
 	if (data->version < MessageMajorVersion)
 		Panic(E_BADMSGVERSION);
@@ -356,9 +356,9 @@ static char far* find(MsgStack* stack, IndexEntry far* * indexEntry, bool deep)
 static char far* findXlate()
 {
 	register uint i;
-	MsgData far* data = (MsgData far*) *(xlateHandle = ResLoad(RES_XLATE, curModule));
+	MsgData far *data = (MsgData far*) *(xlateHandle = ResLoad(RES_XLATE, curModule));
 	uint count = GetWord(data->count);
-	IndexEntry far* ip;
+	IndexEntry far *ip;
 
 	if (data->version < MessageMajorVersion)
 		Panic(E_BADMSGVERSION);
@@ -380,7 +380,7 @@ static char far* findXlate()
 //copies src into dst, deleting stage directions, which are phrases
 //in caps enclosed by parens; and interpreting escape sequences of
 //the form \xx, where x is a hex digit
-static void massageText(char far* dst, char far* src)
+static void massageText(char far *dst, char far *src)
 {
 #ifdef MSG_FIXHEXDIGITS
 	static char hexDigits[] = "0123456789ABCDEF";
@@ -388,13 +388,13 @@ static void massageText(char far* dst, char far* src)
 	static char hexDigits[] = "01234567890ABCDEF";
 #endif
 
-	char far* dp = dst;
+	char far *dp = dst;
 
 	for (; *src; src++)
 	{
 		if (*src == '\\')
 		{
-			char* cp;
+			char *cp;
 			int val = 0;
 			char c;
 
@@ -427,7 +427,7 @@ static void massageText(char far* dst, char far* src)
 		else if (*src == '(')
 		{
 			//find end of this stage direction (if it is) and set src to it
-			char far* end;
+			char far *end;
 			for (end = src; *end; end++)
 			{
 				if (*end == ')')
@@ -463,7 +463,7 @@ static void massageText(char far* dst, char far* src)
 
 
 //start a new stack
-static void initStack(MsgStack* stack, uint module, byte noun, byte verb, byte cond, byte seq)
+static void initStack(MsgStack *stack, uint module, byte noun, byte verb, byte cond, byte seq)
 {
 	stack->module = module;
 	stack->sp = -1;
@@ -472,7 +472,7 @@ static void initStack(MsgStack* stack, uint module, byte noun, byte verb, byte c
 
 
 //push a message onto stack
-static void push(MsgStack* stack, byte noun, byte verb, byte cond, byte seq)
+static void push(MsgStack *stack, byte noun, byte verb, byte cond, byte seq)
 {
 	if (++stack->sp >= MaxMsgStack)
 		Panic(E_MSGSTACKOVERFLOW, MaxMsgStack);
@@ -484,7 +484,7 @@ static void push(MsgStack* stack, byte noun, byte verb, byte cond, byte seq)
 
 
 //return the message on the top of stack, but don't pop it off
-static MsgEntry top(MsgStack* stack)
+static MsgEntry top(MsgStack *stack)
 {
 	MsgEntry entry;
 	entry.noun = stack->entries[stack->sp].noun;
@@ -496,14 +496,14 @@ static MsgEntry top(MsgStack* stack)
 
 
 //throw away top of stack
-static bool pop(MsgStack* stack)
+static bool pop(MsgStack *stack)
 {
 	return --stack->sp >= 0;
 }
 
 
 //increment the sequence number of the entry on the top of stack
-static void incSeq(MsgStack* stack)
+static void incSeq(MsgStack *stack)
 {
 	stack->entries[stack->sp].seq++;
 }
@@ -514,14 +514,14 @@ static void incSeq(MsgStack* stack)
 
 #define MaxStackStack 5
 
-static MsgStack* stackStack[MaxStackStack];
+static MsgStack *stackStack[MaxStackStack];
 static int stackSp = -1;
 
 
 //save current stack on stack stack
 static void pushStack()
 {
-	MsgStack* s;
+	MsgStack *s;
 
 	if (++stackSp >= MaxStackStack)
 		Panic(E_MSGSTACKSTACKOVERFLOW, MaxStackStack);
@@ -535,7 +535,7 @@ static void pushStack()
 //restore previous saved stack
 static void popStack()
 {
-	MsgStack* s;
+	MsgStack *s;
 
 	if (stackSp < 0)
 		Panic(E_MSGSTACKSTACKUNDERFLOW);

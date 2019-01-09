@@ -42,7 +42,7 @@ jmp_buf restartBuf;
 char whereDisk = '\0';
 char where[64 + 1] = {'\0'};
 
-static void	ReadCommandLineArgs(int	argc, char* argv[]);
+static void ReadCommandLineArgs(int	argc, char *argv[]);
 
 #ifdef ENSURESCI11
 //Based on SCI Companion's _DetectMapFormat
@@ -111,9 +111,9 @@ void KawaEnsureFormat()
 }
 #endif
 
-void main(int argc, char* argv[])
+void main(int argc, char *argv[])
 {
-	LoadLink far** scan;
+	LoadLink far **scan;
 
 	ReadCommandLineArgs(argc, argv);
 
@@ -213,7 +213,7 @@ char helpstr[] = "\
 version %s\n";
 #endif
 
-static void ReadCommandLineArgs(int argc, char* argv[])
+static void ReadCommandLineArgs(int argc, char *argv[])
 {
 	/* we read the command line arguments here, instead of in main, so we
 	 * can keep all argument processing in one place.  -v needs to be

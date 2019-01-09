@@ -73,7 +73,7 @@ global void InitResource(strptr where)
 
 #ifndef DEBUG
 	{
-		ResDirHdrEntry far* header;
+		ResDirHdrEntry far *header;
 
 		// Find trackable version stamp in resource map file
 		if (resourceMap)
@@ -119,7 +119,7 @@ global void InitResource(strptr where)
 
 
 //allocate buffer and load resource map into it
-global Handle LoadResMap(char* mapName)
+global Handle LoadResMap(char *mapName)
 {
 	/* For multiple capacity floppy support, we must determine the PROPER
 	 * resource map to load. This is because the current map structure aligns
@@ -338,7 +338,7 @@ global Handle DoLoad(byte resType, uint resId)
 
 //Search the alternate volume then the base volume for the
 //requested resType/resId; return offset and resource handle if found.
-global bool FindDirEntry(ulong* offset, byte resType, uword resId, int* resFd)
+global bool FindDirEntry(ulong *offset, byte resType, uword resId, int *resFd)
 {
 	if (altVolFd != CLOSED && alternateMap && FindDirEntryMap(offset, resType, resId, alternateMap))
 	{
@@ -354,7 +354,7 @@ global bool FindDirEntry(ulong* offset, byte resType, uword resId, int* resFd)
 }
 
 
-global bool FindDirEntryMap(ulong* offset, byte resType, uword resId, Handle resMap)
+global bool FindDirEntryMap(ulong *offset, byte resType, uword resId, Handle resMap)
 {
 	word firstOffset, lastOffset, midOffset;
 	register ResDirEntry far *entry;

@@ -17,20 +17,20 @@
 #define MAX_ON_EXIT	20
 
 //initialize explicitly because SCI won't have done it for us by now
-char* argv[10] = { 0 };
+char *argv[10] = { 0 };
 int	argc = 0;
 
 static int exitIndex;
 static fptr exitProcs[MAX_ON_EXIT];
 
-static void	WriteString(char* str);
+static void	WriteString(char *str);
 
 
-void MakeCommandLineArgs(char _far* cmdTail)
+void MakeCommandLineArgs(char _far *cmdTail)
 {
 	int nChars = *cmdTail++;
-	char* cp;
-	char far* fcp;
+	char *cp;
+	char far *fcp;
 	int i;
 
 	if (!nChars)
@@ -81,8 +81,8 @@ void exit(char code)
 	int i;
 #if defined(ENDOOM)
 	Handle hB800;
-	volatile char far* vidya = (volatile char far*)0xB8000000;
-	char far* b800;
+	volatile char far *vidya = (volatile char far*)0xB8000000;
+	char far *b800;
 	char x, y;
 #endif
 
@@ -107,7 +107,7 @@ void exit(char code)
 				WriteString(quitStr);
 			}
 			x = *b800++; y = *b800++;
-			gotoxy(x, y); //note: prompt appears at the *next* line.
+			gotoxy(x, y); //note: prompt appears at the *next *line.
 		}
 		else if (quitStr)
 			WriteString(quitStr);
@@ -125,7 +125,7 @@ void exit(char code)
 
 
 //write a text string to the screen on exit
-static void WriteString(char* str)
+static void WriteString(char *str)
 {
 	while (*str)
 	{

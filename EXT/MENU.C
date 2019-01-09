@@ -31,7 +31,7 @@
 #include "errmsg.h"
 
 RGrafPort menuPortStruc;
-RGrafPort* menuPort;
+RGrafPort *menuPort;
 
 static void near ClearBar(word);
 
@@ -76,7 +76,7 @@ global void InitMenu()
 //build text string from first parameter
 global KERNEL(DrawStatus)
 {
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 	word background = vWHITE;
 	word foreground = vBLACK;
 	strptr str = Native(arg(1));
@@ -112,7 +112,7 @@ global KERNEL(DrawStatus)
 //clear the menu bar to color
 static void near ClearBar(word color)
 {
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 	RRect r;
 
 	RGetPort(&oldPort);
@@ -136,8 +136,8 @@ global KERNEL(AddMenu)
 	args = args;
 	//Panic(E_ADDMENU); //KAWA WAS HERE -- silently just don't.
 #else
-	MenuPage* menu;
-	RMenuItem* item;
+	MenuPage *menu;
+	RMenuItem *item;
 	word m, i, key;
 	char valStr[10];
 	strptr data;
@@ -264,7 +264,7 @@ global KERNEL(SetMenu)
 	args = args;
 	//Panic(E_SETMENU); //KAWA WAS HERE -- silently just don't.
 #else
-	RMenuItem* item;
+	RMenuItem *item;
 	int i;
 
 	item = theMenuBar->page[arg(1) >> 8]->item[arg(1) & 255];
@@ -299,7 +299,7 @@ global KERNEL(GetMenu)
 	args = args;
 	acc = 0; //Panic(E_GETMENU); //KAWA WAS HERE -- silently just don't.
 #else
-	RMenuItem* item;
+	RMenuItem *item;
 
 	item = theMenuBar->page[arg(1) >> 8]->item[arg(1) & 255];
 	switch (arg(2))
@@ -333,11 +333,11 @@ global KERNEL(MenuSelect)
 	args = args;
 	acc = -1; //Panic(E_MENUSELECT); //KAWA WAS HERE -- silently just don't.
 #else
-	MenuPage* menu;
-	RMenuItem* item;
+	MenuPage *menu;
+	RMenuItem *item;
 	memptr saidSpec;
 	word type, message, m, i;
-	Obj* event = (Obj*)Native(arg(1));
+	Obj *event = (Obj*)Native(arg(1));
 	int blocks = TRUE;
 
 	acc = -1;
@@ -421,8 +421,8 @@ global KERNEL(MenuSelect)
 #if defined(TESTER)
 static void near DrawMenuBar(word show)
 {
-	MenuPage* menu;
-	RGrafPort* oldPort;
+	MenuPage *menu;
+	RGrafPort *oldPort;
 	word i;
 	word lastX = 8;
 
@@ -468,7 +468,7 @@ static word near KeySelect()
 	REventRecord event;
 	word done = 0, ret;
 	Handle uBits = 0;
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 	word menu, item; //here these are indexes
 
 	RGetPort(&oldPort);
@@ -567,7 +567,7 @@ static word near KeySelect()
 static word near MouseSelect()
 {
 	word menu, item; //here these are indexes
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 	RPoint mp;
 	Handle uBits = 0;
 
@@ -635,9 +635,9 @@ static word near MouseSelect()
 
 
 //return menu INDEX that mouse may be in
-static word near FindTitle(RPoint* mp)
+static word near FindTitle(RPoint *mp)
 {
-	MenuPage* menu;
+	MenuPage *menu;
 	word m;
 	RRect r;
 
@@ -657,10 +657,10 @@ static word near FindTitle(RPoint* mp)
 
 
 //return item INDEX that mouse may be in
-static word near FindItem(word m, RPoint* mp)
+static word near FindItem(word m, RPoint *mp)
 {
-	RMenuItem* item;
-	MenuPage* menu;
+	RMenuItem *item;
+	MenuPage *menu;
 	word i;
 
 	//don't bother with null menu
@@ -682,7 +682,7 @@ static word near FindItem(word m, RPoint* mp)
 //invert rectangle of this item
 static void near Invert(word m, word i)
 {
-	RMenuItem* item;
+	RMenuItem *item;
 
 	if (m && i)
 	{
@@ -697,8 +697,8 @@ static void near Invert(word m, word i)
 static void near DropDown(word m)
 {
 	word i, cnt;
-	MenuPage* menu = theMenuBar->page[m];
-	RMenuItem* item;
+	MenuPage *menu = theMenuBar->page[m];
+	RMenuItem *item;
 	RRect r;
 	word leftX, lastX, lastY = BARSIZE;
 	char text[10];
@@ -769,7 +769,7 @@ static void near DropDown(word m)
 //restore bits under this menu
 static void near PullUp(word m)
 {
-	MenuPage* menu = theMenuBar->page[m];
+	MenuPage *menu = theMenuBar->page[m];
 
 	if (m)
 	{
@@ -784,9 +784,9 @@ static void near PullUp(word m)
 
 
 //step through items to size menu page
-static void near SizePage(MenuPage* menu)
+static void near SizePage(MenuPage *menu)
 {
-	RMenuItem* item;
+	RMenuItem *item;
 	word hasAKey = 0; //length of longest key string
 	RRect workRect, r;
 	word lastY = BARSIZE;
@@ -884,8 +884,8 @@ static strptr near GetKeyStr(strptr str, word key)
 //unhighlight, move up, and re-highlight
 static word near PickUp(word m, word i)
 {
-	MenuPage* menu = theMenuBar->page[m];
-	RMenuItem* item;
+	MenuPage *menu = theMenuBar->page[m];
+	RMenuItem *item;
 
 	//we do nothing if we are at top
 	while (i)
@@ -919,8 +919,8 @@ static word near PickUp(word m, word i)
 //unhighlight, move down, and re-highlight
 static word near PickDown(word m, word i)
 {
-	MenuPage* menu = theMenuBar->page[m];
-	RMenuItem* item;
+	MenuPage *menu = theMenuBar->page[m];
+	RMenuItem *item;
 	word newI;
 
 	//we do nothing if we are at the bottom

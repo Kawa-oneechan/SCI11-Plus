@@ -15,7 +15,7 @@
 #define NARMTYPES 5
 
 typedef struct {
-	char* name;
+	char *name;
 	char debugPrefix;
 
 	bool (*init)(void);
@@ -34,11 +34,11 @@ extern int useAltResMem;
 
 //resource management functions (ALTRES.C)
 void AltResMemInit(void);
-ARMHandle AltResMemAlloc(uword size, ARMType** type);
-Handle AltResMemRead(LoadLink far** loadLink);
-bool AltResMemWrite(LoadLink far** loadLink);
-void AltResMemFree(LoadLink far** loadLink);
-char AltResMemDebugPrefix(LoadLink far** loadLink);
+ARMHandle AltResMemAlloc(uword size, ARMType* *type);
+Handle AltResMemRead(LoadLink far* *loadLink);
+bool AltResMemWrite(LoadLink far* *loadLink);
+void AltResMemFree(LoadLink far* *loadLink);
+char AltResMemDebugPrefix(LoadLink far* *loadLink);
 void AltResMemDebugSummary(strptr where);
 void AltResMemDebugKey(strptr where);
 void AltResMemTerm(void);

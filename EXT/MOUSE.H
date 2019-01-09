@@ -17,14 +17,14 @@ extern word mouseX;
 extern word mouseY;
 extern bool	mouseIsDebug;
 extern RRect restrict;
-extern RRect* restrictRecPtr;
+extern RRect *restrictRecPtr;
 extern word	buttonState;
 
 word CurMouse(RPoint*);
 void DisposeMouse(void);
 void InstallMouse(void);
 word RGetMouse(RPoint*);
-void SetMouse(RPoint* pt);
+void SetMouse(RPoint *pt);
 
 #endif
 

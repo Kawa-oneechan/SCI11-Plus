@@ -15,7 +15,7 @@ extern int newRoomNum;
 extern bool traceOn;
 extern bool trace;
 extern bool proOn;
-extern uword* lastSp;
+extern uword *lastSp;
 extern Handle proBuffer;
 extern bool isDebugVersion;
 extern uint proIndex;

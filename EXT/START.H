@@ -14,7 +14,7 @@
 #define MAX_QUITSTR	256
 
 extern int argc;
-extern char* argv[];
+extern char *argv[];
 extern char bssEnd;
 extern char bssStart;
 extern char commandLine[];

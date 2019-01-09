@@ -24,7 +24,7 @@ typedef struct sndStruc
 	int sPrev;
 	int sKey;
 	int sNumber;
-	char far* sPointer;
+	char far *sPointer;
 	unsigned int tIndex[16];
 	unsigned int tLoopPoint[16];
 	unsigned int tRest[16];

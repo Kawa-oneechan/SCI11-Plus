@@ -83,9 +83,9 @@ global RWindow* SizedWindow(strptr str, strptr title, bool wait)
 }
 
 
-static RWindow* DWindow(RRect* fr, strptr title, word type, word pri, word vis)
+static RWindow* DWindow(RRect *fr, strptr title, word type, word pri, word vis)
 {
-	RWindow* w;
+	RWindow *w;
 	uint oldBack, oldText;
 
 	oldBack = winTitleBackColor;
@@ -103,7 +103,7 @@ static RWindow* DWindow(RRect* fr, strptr title, word type, word pri, word vis)
 
 global RWindow* DebugWindow(strptr str, strptr title, int size, int x, int y, bool wait)
 {
-	RWindow* w;
+	RWindow *w;
 	RRect sr;
 	int titleWidth;
 	word oldFont;
@@ -154,7 +154,7 @@ global strptr ArgNameRead(strptr arg)
 
 
 //NoDebug stubs
-global void Debug(Hunkptr ip, uword* sp) { ip; sp; NoDebugError(1); }
+global void Debug(Hunkptr ip, uword *sp) { ip; sp; NoDebugError(1); }
 global KERNEL(InspectObj) { args; NoDebugError(3); }
 global KERNEL(Profiler) { NoDebugError(4); }
 global KERNEL(SetDebug) {args; NoDebugError(5); }
@@ -168,7 +168,7 @@ global void WriteResUse(int type, int id) { type; id; NoDebugError(10); }
 global void CheckHunkUse(uint paragLocked) { paragLocked; return; }
 
 #ifndef NOOOPS
-global void PError(char* ip, uword* sp, int errCode, uint arg1, uint arg2)
+global void PError(char *ip, uword *sp, int errCode, uint arg1, uint arg2)
 {
 	char title[25], msgTxt[400], msg[500];
 	TermSndDrv();
@@ -188,13 +188,13 @@ static strptr near GetSelectorName(register int id, register strptr str)
 		sprintf(str, "%x", id);
 	return str;
 }
-static strptr near GetObjName(Obj* obj)
+static strptr near GetObjName(Obj *obj)
 {
-	strptr* name = GetPropAddr(obj, s_name);
+	strptr *name = GetPropAddr(obj, s_name);
 	return name ? *name : NULL;
 }
 
-void PError(memptr ip, uword* sp, int errCode, uint arg1, uint arg2)
+void PError(memptr ip, uword *sp, int errCode, uint arg1, uint arg2)
 {
 	char str[300], msg[400];
 	char select[40];
@@ -284,7 +284,7 @@ typedef enum {
 	TRACE_RPT
 } ProCmd;
 
-static int MakeObjectsStr(strptr dest, bool showAddresses, Obj** firstObj, int nObjs);
+static int MakeObjectsStr(strptr dest, bool showAddresses, Obj **firstObj, int nObjs);
 static Obj* FindObject(strptr name);
 
 static void near ShowVersion(void);
@@ -341,12 +341,12 @@ static uword bpOfs = 0;
 static Handle bpHndle = 0;
 static uword bpScriptNum = 0;
 static uword bpScriptOff = 0;
-static Obj* bpObj;
+static Obj *bpObj;
 static int bpSelect;
 static uword sbpScriptNum = 0;
 static uword sbpScriptOff = 0;
-static int* WatchHeapAddr = 0;
-static char far* WatchHunkAddr = 0;
+static int *WatchHeapAddr = 0;
+static char far *WatchHunkAddr = 0;
 static int WatchHunk = 0;
 static int WatchHeap = 0;
 static int WatchHeapValue;
@@ -354,16 +354,16 @@ static int WatchHunkValue;
 static int WatchKernelOnce = 0;
 static int WatchKernelMany = 0;
 static int WatchKernelNumb;
-static Obj* sbpObj;
+static Obj *sbpObj;
 static int sbpSelect;
-static uword* bpSp;
+static uword *bpSp;
 static bool skipCurrent;
 
 static RRect dRect = { DBGTOP, 0, DBGTOP + Row(6) + YMARGIN, DBGWIDTH };
-static RWindow* debugWin;
-static RWindow* varWin;
-static RWindow* sendWin;
-static RWindow* errorWin;
+static RWindow *debugWin;
+static RWindow *varWin;
+static RWindow *sendWin;
+static RWindow *errorWin;
 
 static char useName[80] = { 0 };
 static char hunkUseName[80] = { 0 };
@@ -464,15 +464,15 @@ global void SetDebug(bool on)
 }
 
 
-global void Debug(Hunkptr ip, uword* sp)
+global void Debug(Hunkptr ip, uword *sp)
 {
 	register word arg;
 	register byte opCode, cmd;
 	char argStr[80];
 	uint esHunk;
 	char far *essiHunk;
-	Obj** theBpObj;
-	int* theBpSelect;
+	Obj **theBpObj;
+	int *theBpSelect;
 
 	--ip;
 	if (!trace && skipCurrent && !findRet && !IsScrBreakpoint(ip))
@@ -791,7 +791,7 @@ global void ShowSends(bool wait)
 	uword *sp, *ss;
 	char *stackMsg, select[80];
 	strptr mp;
-	Obj* object;
+	Obj *object;
 	register strptr namePtr, msgPtr;
 
 	//null out initial string
@@ -858,7 +858,7 @@ static void near ShowVersion(void)
 }
 
 
-void PError(memptr ip, uword* sp, int errCode, uint arg1, uint arg2)
+void PError(memptr ip, uword *sp, int errCode, uint arg1, uint arg2)
 {
 	char str[300];
 	char select[40];
@@ -931,7 +931,7 @@ void PError(memptr ip, uword* sp, int errCode, uint arg1, uint arg2)
 
 global KERNEL(ShowFree)
 {
-	char* str;
+	char *str;
 	str = MakeDebugBuf();
 	str[0] = '\0';
 	ShowFreeList(str);
@@ -973,7 +973,7 @@ static uint near lastRoomNum, thisRoomMax, maxScriptNum;
 
 global void CheckHunkUse(uint paragLocked)
 {
-	LoadLink far** scan;
+	LoadLink far **scan;
 	uword totalUnlocked, total;
 
 	if (!trackHunkUse)
@@ -1250,7 +1250,7 @@ static bool near IsWatchKernelBreakpoint(Hunkptr ip)
 
 static bool near GetInput(register strptr str, strptr title, int length)
 {
-	RWindow* wind;
+	RWindow *wind;
 	RRect r, box;
 	int cursor, width, oldFont, maxLen;
 	bool retVal, done;
@@ -1306,7 +1306,7 @@ static bool near GetInput(register strptr str, strptr title, int length)
 }
 
 
-static void near DebugInfo(Hunkptr ip, uword* sp)
+static void near DebugInfo(Hunkptr ip, uword *sp)
 {
 	char theStr[50];
 	strptr namePtr;
@@ -1444,8 +1444,8 @@ static void near ShowObjects(bool showAddresses)
 	char winTitle[25];
 	int numObjs;
 	int printedObjs = 0;
-	char* str = MakeDebugBuf();
-	Obj* curObj = 0;
+	char *str = MakeDebugBuf();
+	Obj *curObj = 0;
 
 	while (numObjs = MakeObjectsStr(str, showAddresses, &curObj, 50))
 	{
@@ -1483,20 +1483,20 @@ static void near ShowStackUsage()
 #define INSP_BUFF_SIZE 2000
 
 
-static bool near InspectObj(register Obj* obj)
+static bool near InspectObj(register Obj *obj)
 {
 	register int i;
 	Dictptr dict;
 	int numProps, val;
 	REventRecord event;
-	RWindow* win;
+	RWindow *win;
 	int top;
 	bool done;
 	bool ret;
 	char c, sepChar;
-	Obj* tmpObj;
+	Obj *tmpObj;
 	char title[60], selector[40]; /*, data[INSP_BUFF_SIZE];*/
-	char* data;
+	char *data;
 	static int inspectLevel;
 	#define TOPOFSHEX 30
 	#define TOPOFSOBJ 0
@@ -1645,15 +1645,15 @@ static bool near InspectObj(register Obj* obj)
 }
 
 
-static void near InspectHunk(char far* essiHunk)
+static void near InspectHunk(char far *essiHunk)
 {
 	register int i;
 	REventRecord event;
-	RWindow* win;
+	RWindow *win;
 	int top;
 	char c, sepChar;
 	char title[60];
-	char* data;
+	char *data;
 	static int inspectLevel;
 	#define TOPOFS 30
 	#define MAXINSPECT 3
@@ -1727,11 +1727,11 @@ static void near InspectHunk(char far* essiHunk)
 }
 
 
-static void near InspectList(register Obj* obj)
+static void near InspectList(register Obj *obj)
 {
-	List* theList;
+	List *theList;
 	register ObjID theNode;
-	word* elements;
+	word *elements;
 	strptr objName;
 	char msg[60], aName[60];
 
@@ -1764,7 +1764,7 @@ static void near InspectList(register Obj* obj)
 }
 
 
-static void near EditProperty(register Obj* obj, int edit)
+static void near EditProperty(register Obj *obj, int edit)
 {
 	char selStr[40];
 	register strptr objName;
@@ -1774,11 +1774,11 @@ static void near EditProperty(register Obj* obj, int edit)
 }
 
 
-static void near EditValue(register int* addr, strptr s1, strptr s2, byte edit)
+static void near EditValue(register int *addr, strptr s1, strptr s2, byte edit)
 {
 	char title[60], data[40];
 	int value;
-	register Obj* objAddr;
+	register Obj *objAddr;
 
 	if (addr == NULL)
 		return;
@@ -1836,11 +1836,11 @@ static void near EditValue(register int* addr, strptr s1, strptr s2, byte edit)
 }
 
 
-static int* near RequestPropAddr(Obj* obj, strptr objName, strptr selStr)
+static int* near RequestPropAddr(Obj *obj, strptr objName, strptr selStr)
 {
 	char title[60];
 	register int selNum;
-	int* propAddr;
+	int *propAddr;
 
 	selStr[0] = '\0';
 	if (!GetInput(selStr, "Selector", 40))
@@ -1859,8 +1859,8 @@ static int* near RequestPropAddr(Obj* obj, strptr objName, strptr selStr)
 
 static int near DebugHelp(int n)
 {
-	char* helpStr;
-	RWindow* w;
+	char *helpStr;
+	RWindow *w;
 	REventRecord event;
 	char name[13];
 	char path[100];
@@ -1910,9 +1910,9 @@ static void near DisposeDebugWin()
 }
 
 
-static strptr near GetObjName(Obj* obj)
+static strptr near GetObjName(Obj *obj)
 {
-	strptr* name = GetPropAddr(obj, s_name);
+	strptr *name = GetPropAddr(obj, s_name);
 	return name ? *name : NULL;
 }
 
@@ -1941,9 +1941,9 @@ KERNEL(Profiler)
 #ifdef PROFILER
 static void near Profiler(ProCmd command, strptr fileName, strptr comment)
 {
-	Obj* obj;
+	Obj *obj;
 	uint selector;
-	uint far* pb;
+	uint far *pb;
 	uint pi, pl, count, totalCount;
 	char str[100], selStr[30];
 	int fd;
@@ -2086,14 +2086,14 @@ global void Resources(void)
 
 	int maxLines;
 	int maxResourceLines;
-	char* buf;
-	char* bp;
+	char *buf;
+	char *bp;
 	RRect rect;
 	int entriesOnLine;
 	int type;
 	int printCount;
 	bool first;
-	char* title;
+	char *title;
 	LoadLink far **loadLink;
 	ulong sizes[NRESTYPES];
 	int nResourceTypes;
@@ -2237,7 +2237,7 @@ global void Resources(void)
 
 static uint near CountHandles()
 {
-	int* handle = (int*)handleBase;
+	int *handle = (int*)handleBase;
 	int i, j;
 	for (i = 0, j = 0; i < (signed)numHandles; ++handle, ++i) //KAWA WAS HERE
 	if ((*handle++ == 0) && (*handle == 0)) ++j;
@@ -2247,7 +2247,7 @@ static uint near CountHandles()
 
 global int CheckLoadLinks()
 {
-	LoadLink far** scan;
+	LoadLink far **scan;
 	for (scan = (LoadLink far**)Native(FFirstNode(&loadList)); scan; scan = (LoadLink far**)Native(FNextNode(Pseudo(scan))))
 	{
 		if ((*scan)->checkSum != 0x44)
@@ -2257,15 +2257,15 @@ global int CheckLoadLinks()
 }
 
 
-int MakeObjectsStr(char* dest, bool showAddresses, Obj** firstObj, int nObjs)
+int MakeObjectsStr(char *dest, bool showAddresses, Obj **firstObj, int nObjs)
 {
 	//make a string containing the names of 'nObjs' objects starting with
 	//'firstObj'. Include their addresses if 'showAddresses'.
 	//Return the number of objects in the string (0 == no more objects to
 	//display)
-	Obj* curObj = *firstObj;
-	int* cur;
-	word** nameProp;
+	Obj *curObj = *firstObj;
+	int *cur;
+	word **nameProp;
 	int nPrintedObjs = 0;
 
 	*dest = 0;
@@ -2316,13 +2316,13 @@ int MakeObjectsStr(char* dest, bool showAddresses, Obj** firstObj, int nObjs)
 }
 
 
-static Obj* FindObject(char* name)
+static Obj* FindObject(char *name)
 {
 	//find the object with 'name' or return NULL
 
-	Obj* curObj = (Obj*)&bssEnd;
-	int* cur;
-	word** nameProp;
+	Obj *curObj = (Obj*)&bssEnd;
+	int *cur;
+	word **nameProp;
 
 	while (1)
 	{

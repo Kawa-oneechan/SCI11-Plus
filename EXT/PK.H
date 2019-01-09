@@ -11,9 +11,9 @@
 
 extern Handle dcompBuffer;
 
-void pkExplode(int fd, byte far* dst, unsigned length);
-void pkImplode(int fd, byte far* src, unsigned length);
-uint pkImplode2Mem(byte far* dst, byte far* src, unsigned length);
+void pkExplode(int fd, byte far *dst, unsigned length);
+void pkImplode(int fd, byte far *src, unsigned length);
+uint pkImplode2Mem(byte far *dst, byte far *src, unsigned length);
 
 #endif
 

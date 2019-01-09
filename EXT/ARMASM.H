@@ -16,10 +16,10 @@
 #define PAGE2MEM 0
 #define MEM2PAGE 1
 
-ARMHandle ARMAlloc(ARMType* arm, unsigned size);
-int ARMCopy(int dir, ARMType* arm, ARMHandle handle, unsigned offset, unsigned size, byte far* data);
-long ARMMemAvail(ARMType* arm);
-void ARMFree(ARMType* arm, ARMHandle handle);
+ARMHandle ARMAlloc(ARMType *arm, unsigned size);
+int ARMCopy(int dir, ARMType *arm, ARMHandle handle, unsigned offset, unsigned size, byte far *data);
+long ARMMemAvail(ARMType *arm);
+void ARMFree(ARMType *arm, ARMHandle handle);
 bool ARMCritical(void);
 
 #define ARMRead(arm, handle, offset, size, data) \

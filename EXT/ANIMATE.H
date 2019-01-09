@@ -36,7 +36,7 @@
 #define ignrAct		0x4000	//can ignore other actors
 #define delObj		0x8000
 
-extern List* lastCast;
+extern List *lastCast;
 
 void DisposeLastCast(void);
 void ReAnimate(RRect*);
