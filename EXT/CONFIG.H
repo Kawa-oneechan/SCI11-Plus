@@ -25,6 +25,10 @@ extern int audioIRQ;
 extern uint minHunkSize;
 extern uint maxHunkUsed;
 
+#ifdef DBUGSTRFILE
+extern strptr logFile;
+#endif
+
 bool ReadConfigFile(strptr name, strptr defaultName);
 
 #endif

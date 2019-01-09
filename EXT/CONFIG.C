@@ -3,6 +3,7 @@
 // > General cleanup -- no ancient-style loose parameter type lists, // comments
 
 #include "config.h"
+#include "kawa.h"
 
 #include "resname.h"
 #include "types.h"
@@ -36,6 +37,10 @@ global int audioDMA = 0;
 global uint minHunkSize = 0x0000;
 
 global uint maxHunkUsed = 0;
+
+#ifdef DBUGSTRFILE
+global strptr logFile = "OUT.TXT";
+#endif
 
 static strptr near gettok(strptr line, strptr tok, strptr sepStr, int size);
 static strptr* near findConfigEntryType(strptr token);
@@ -203,6 +208,10 @@ static strptr* near findConfigEntryType(strptr token)
 		return &movieDir;
 	else if (!strcmp(token, "patchdir"))
 		return &patchDir[0];
+#ifdef DBUGSTRFILE
+	else if (!strcmp(token, "log"))
+		return &logFile;
+#endif
 	else
 		return NULL;
 }

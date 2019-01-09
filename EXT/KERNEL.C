@@ -9,6 +9,7 @@
 // > Added new kernel call with personal effects, KKawa.
 
 #include "kernel.h"
+#include "kawa.h"
 
 //SCI-specific header files
 #include "palette.h"
@@ -2421,8 +2422,9 @@ KERNEL(SetQuitStr)
 
 global KERNEL(DbugStr)
 {
-	//MonoStr((char far*)Native(arg(1)));
-
+#ifndef DBUGSTRFILE
+	MonoStr((char far*)Native(arg(1)));
+#else
 	//KAWA - Copied this from kFormat like a scrub
 	strptr text, format;
 	word i, n;
@@ -2478,15 +2480,16 @@ global KERNEL(DbugStr)
 	*text = 0;
 
 	//Now that we have our text, we can write it to file.
-	fd = open("out.txt", O_RDWR);
+	fd = open(logFile, O_RDWR);
 	if (fd == -1)
 	{
-		fd = creat("out.txt", 0);
+		fd = creat(logFile, 0);
 		if (fd == -1) return; //fuck it.
 	}
 	lseek(fd, 0L, LSEEK_END);
 	write(fd, buffer, strlen(buffer));
 	close(fd);
+#endif
 }
 
 

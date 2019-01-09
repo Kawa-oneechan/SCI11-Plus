@@ -28,6 +28,11 @@
  * UTF8
  *   Allow all 65536 characters in a font file to be
  *   used via UTF-8 encoding.
+ * DBUGSTRFILE
+ *   Instead of writing to a mono text screen, have
+ *   DbugStr write to a text file for later checking,
+ *   or for another program to read live. Also makes
+ *   DbugStr work with format strings.
  */
 
 #define INTERNALERRORS
@@ -37,3 +42,4 @@
 #define MSG_FIXHEXDIGITS
 #define MSG_ALLOWDIGITSINDIRECTIONS
 #define UTF8
+#define DBUGSTRFILE

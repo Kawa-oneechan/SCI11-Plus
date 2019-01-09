@@ -36,7 +36,7 @@ The `EXT` version of SCI11 adds the following tricks:
 *  **Button and edit controls respond to the `back` and `color` properties**. Draw any button in any color without going full custom.
 *  **Outlined text rendering**. The `Display` kernel command now has a `#stroke`/`dsSTROKE` parameter that takes a bitfield specifying which of eight parts of an outline to draw around the text.
 *  **Ensuring you're trying to run an SCI11 game** by sniffing the format of the `RESOURCE.MAP` file. This feature can be easily toggled out by editing `KAWA.H`.
-*  **DbugStr outputs to file** instead of a secondary mono monitor.
+*  **DbugStr outputs to file** instead of a secondary mono monitor. **New:** You can specify which file in `RESOURCE.CFG` via the `log` setting. Also I forgot to mention it takes format strings.
 *  **LDM/STM opcodes** as needed by the hottest new shit in SCI Companion.
 *  **Basic UTF-8 support**. Font files have 16-bit character counts, and using UTF-8 encoding is the most backwards-compatible way to reach them all. This feature can be easily toggled out by editing `KAWA.H`.
 
