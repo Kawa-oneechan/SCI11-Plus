@@ -39,7 +39,7 @@ global uint minHunkSize = 0x0000;
 global uint maxHunkUsed = 0;
 
 #ifdef DBUGSTRFILE
-global strptr logFile = "OUT.TXT";
+global strptr logFile = 0;
 #endif
 
 static strptr near gettok(strptr line, strptr tok, strptr sepStr, int size);

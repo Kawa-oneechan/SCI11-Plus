@@ -2432,6 +2432,8 @@ global KERNEL(DbugStr)
 	char c, *strArg, theStr[20], buffer[2000], temp[500];
 	int fd;
 
+	if (logFile == 0) return; //quit early if we're not loggin'
+
 	format = Native(arg(1));
 
 	if (Pseudo(format) < 1000)
