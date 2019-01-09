@@ -305,7 +305,7 @@ getRefValues(uint module, byte noun, byte verb, byte cond, byte seq, byte *refNo
 //finds a message and returns far pointer to it and to its index entry
 //if found, else NULL
 //'deep' means whether reference chain is followed
-static char far* find(MsgStack *stack, IndexEntry far ** indexEntry, bool deep)
+static char far* find(MsgStack *stack, IndexEntry far** indexEntry, bool deep)
 {
 	register uint i;
 	MsgData far *data = (MsgData far*) *ResLoad(RES_MSG, stack->module);

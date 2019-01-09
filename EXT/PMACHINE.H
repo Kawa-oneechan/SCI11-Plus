@@ -64,7 +64,7 @@ extern long verStamp;
 
 void PMachine(void);
 memptr GetDispatchAddr(uint, uint);
-void GetDispatchAddrInHeapFromC(word scriptNum, word entry, Obj* *obj, Script* *script);
+void GetDispatchAddrInHeapFromC(word scriptNum, word entry, Obj **obj, Script **script);
 
 #endif
 
