@@ -15,6 +15,7 @@
 bool gameStarted	= FALSE;
 Obj* theGame;
 
+/*
 #ifndef DEBUG
 long interpVerStamp;
 long gameVerStamp;
@@ -25,6 +26,7 @@ word stampFlag2 = 0x4552;
 word stampFlag3 = 0x5349;
 // end of order-dependent constants
 #endif
+*/
 
 void
 PMachine()

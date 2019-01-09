@@ -71,6 +71,7 @@ global void InitResource(strptr where)
 	resVolFd = open(volName, O_RDONLY);
 	resourceMap = LoadResMap(resMapName);
 
+/*
 #ifndef DEBUG
 	{
 		ResDirHdrEntry far* header;
@@ -86,6 +87,7 @@ global void InitResource(strptr where)
 		}
 	}
 #endif
+*/
 
 	//optional 'foreign language' map and resource files
 	//(per optional patchDir specification)
