@@ -16,7 +16,6 @@
 #include "config.h"
 #include "event.h"
 #include "fileio.h"
-#include "hfd.h"
 #include "memmgr.h"
 #include "resname.h"
 #include "resource.h"
