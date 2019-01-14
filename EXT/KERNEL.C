@@ -2585,7 +2585,7 @@ KERNEL(RemapColors)
 	}
 }
 
-
+extern int FLI_JustTryToPlay(char* file);
 KERNEL(Kawa)
 {
 	int i;
@@ -2617,6 +2617,9 @@ KERNEL(Kawa)
 #if TESTER
 			acc |= 2;
 #endif
+			break;
+		case 4: //KAWA_FLIC
+			FLI_JustTryToPlay((char*)arg(2));
 			break;
 	}
 }

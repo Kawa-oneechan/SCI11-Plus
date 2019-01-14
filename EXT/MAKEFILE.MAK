@@ -98,7 +98,7 @@ utils =
 #
 s1	= stdio.c stdioasm.s scifgets.c string.c stdlib.c ctype.c window.c
 s2	= io.s config.c event.c script.c list.c altres.c animate.c armasm.s
-s3	= math.s savevars.s restart.c sound.c motion.c flist.c
+s3	= math.s savevars.s restart.c sound.c motion.c flist.c fli.c
 s4	= savegame.c getpath.c midi.s fardata.c message.c trig.c audio.c
 s5	= aud.s sync.c errmsg.c platform.c info.c scale.c mono.s
 s6	= ems.s  eventasm.s extmem.s  dialog.c  fileio.s  intrpt.c  intasm.s language.c mouse.c xms.s mouseasm.s
@@ -347,7 +347,7 @@ Compile:
 #	we re-invoke make with the 'makeExe' flag set to true.  This
 #	then builds all executables with the new information in them.
 
-makeExe = TRUE
+makeExe = FALSE
 errors = FALSE
 
 lFlags = /NOI /MAP /NOE /CO
