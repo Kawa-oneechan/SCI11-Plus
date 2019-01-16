@@ -7,6 +7,7 @@
 //-------------
 // > General cleanup -- no ancient-style loose parameter type lists, // comments
 // > Allow menu kernel calls to silently fail instead of halting.
+// > Make the last DrawStatus call's colors echo in the menu.
 
 #include "menu.h"
 #include "start.h"
@@ -29,6 +30,8 @@
 #include "mouse.h"
 #include "window.h"
 #include "errmsg.h"
+
+#include "kawa.h"
 
 RGrafPort menuPortStruc;
 RGrafPort* menuPort;
@@ -57,6 +60,10 @@ static word altKey[] =
 	36, 37, 38, 50, 49, 24, 25, 16, 19, //j - r
 	31, 20, 22, 47, 17, 45, 21, 44 //s - z
 };
+
+#ifdef COLORFULMENU
+word lastDrawStatusFore = vBLACK, lastDrawStatusBack = vWHITE;
+#endif
 
 #endif
 
@@ -106,8 +113,12 @@ global KERNEL(DrawStatus)
 	}
 
 	RSetPort(oldPort);
-}
 
+#ifdef COLORFULMENU
+	lastDrawStatusFore = foreground;
+	lastDrawStatusBack = background;
+#endif
+}
 
 //clear the menu bar to color
 static void near ClearBar(word color)
@@ -432,8 +443,13 @@ static void near DrawMenuBar(word show)
 	if (show)
 	{
 		theMenuBar->hidden = FALSE;
+#ifdef COLORFULMENU
+		ClearBar(lastDrawStatusBack);
+		PenColor(lastDrawStatusFore);
+#else
 		ClearBar(vWHITE);
 		PenColor(vBLACK);
+#endif
 		//step through the menu titles and draw them
 		for (i = FIRST; i < theMenuBar->pages; i++)
 		{
@@ -711,8 +727,15 @@ static void near DropDown(word m)
 	SizePage(menu);
 
 	menu->ubits = SaveBits(&menu->pageRect, VMAP);
+#ifdef COLORFULMENU
+	RBackColor(lastDrawStatusBack);
+	PenColor(0);
+#endif
 	REraseRect(&menu->pageRect);
 	RFrameRect(&menu->pageRect);
+#ifdef COLORFULMENU
+	PenColor(lastDrawStatusFore);
+#endif
 	ShowBits(&menu->pageRect, (word) VMAP);
 	lastX = menu->pageRect.right - 1;
 	leftX = menu->pageRect.left + 1;

@@ -33,6 +33,9 @@
  *   DbugStr write to a text file for later checking,
  *   or for another program to read live. Also makes
  *   DbugStr work with format strings.
+ * COLORFULMENU
+ *   Menus, if enabled, are drawn in whatever colors
+ *   were last used by DrawStatus.
  */
 
 #define INTERNALERRORS
@@ -43,3 +46,4 @@
 #define MSG_ALLOWDIGITSINDIRECTIONS
 #define UTF8
 #define DBUGSTRFILE
+#define COLORFULMENU

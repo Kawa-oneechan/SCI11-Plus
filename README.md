@@ -39,6 +39,8 @@ The `EXT` version of SCI11 adds the following tricks:
 *  **DbugStr outputs to file** instead of a secondary mono monitor. **New:** You can specify which file in `RESOURCE.CFG` via the `log` setting. Also I forgot to mention it takes format strings.
 *  **LDM/STM opcodes** as needed by the hottest new shit in SCI Companion.
 *  **Basic UTF-8 support**. Font files have 16-bit character counts, and using UTF-8 encoding is the most backwards-compatible way to reach them all. This feature can be easily toggled out by editing `KAWA.H`.
+*  **Colorful menus**. Menus, if enabled, are drawn in whatever colors were last used by `DrawStatus`. This feature can be easily toggled out by editing `KAWA.H`.
 
 ![Demonstration of color hacks.](http://helmet.kafuka.org/sci/.images/colorhaxdemo1.gif)
 ![Demonstration of stroked text.](http://helmet.kafuka.org/sci/.images/dsstroke.png)
+![Demonstration of colorful menus.](http://helmet.kafuka.org/sci/.images/colormenus.png)
