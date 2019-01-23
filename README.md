@@ -7,13 +7,15 @@ Included is a minimal copy of a very old MSVC, required to compile all this. To 
 
 You may want to edit `INFO.C` to taste.
 
-The following interpreters are available. Edit `MAKEFILE.MAK` line 26 to pick and choose.
+The following interpreters are available. Invoke `make <target>` with one of the following:
 
 *  `sierra`: no debugger and no menu support.
 *  `sci`: debugger, stil no menu support.
 *  `sierram`: no debugger, but menu support is in.
 *  `scitestr`: both debugger and menu are in.
+*  `clean`: don't build but remove all objects, map files, and binaries.
 
+If no target is given, `sierra` is the default.
 
 ## Hacks
 

@@ -23,7 +23,15 @@ listing =
 # sci      debug
 # scitestr debug, menu bars enabled
 
-prod: sierra sci
+prod: sierra
+
+clean:
+	@+del *.o? > nul
+	@+del *.map > nul
+	@+del sierra.exe > nul
+	@+del sierram.exe > nul
+	@+del sci.exe > nul
+	@+del scitestr.exe > nul
 
 # Do not use builtins (default) dependencies or actions -- everything
 # is explicitly declared here.
