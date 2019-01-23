@@ -2,16 +2,16 @@
 //-------------
 // > General cleanup
 
-#if !defined(WINDOW_H)
+#ifndef WINDOW_H
 #define WINDOW_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
-#if !defined(GRTYPES_H)
+#ifndef GRTYPES_H
 	#include "grtypes.h"
 #endif
-#if !defined(LIST_H)
+#ifndef LIST_H
 	#include "list.h"
 #endif
 

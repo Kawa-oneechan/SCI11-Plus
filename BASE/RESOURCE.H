@@ -5,19 +5,19 @@
 //-------------
 // > General cleanup
 
-#if !defined(RESOURCE_H)
+#ifndef RESOURCE_H
 #define RESOURCE_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
-#if !defined(FLIST_H)
+#ifndef FLIST_H
 	#include "flist.h"
 #endif
-#if !defined(LIST_H)
+#ifndef LIST_H
 	#include "list.h"
 #endif
-#if !defined(RESTYPES_H)
+#ifndef RESTYPES_H
 	#include "restypes.h"
 #endif
 

@@ -5,10 +5,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(ALTRES_H)
+#ifndef ALTRES_H
 #define ALTRES_H
 
-#if !defined(RESOURCE_H)
+#ifndef RESOURCE_H
 	#include "resource.h"
 #endif
 

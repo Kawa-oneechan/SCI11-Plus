@@ -4,10 +4,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(SCI_H)
+#ifndef SCI_H
 #define SCI_H
 
-#if !defined(SETJMP_H)
+#ifndef SETJMP_H
 	#include "setjmp.h"
 #endif
 

@@ -4,13 +4,13 @@
 //-------------
 // > General cleanup
 
-#if !defined(SCRIPT_H)
+#ifndef SCRIPT_H
 #define SCRIPT_H
 
-#if !defined(MEMMGR_H)
+#ifndef MEMMGR_H
 	#include "memmgr.h"
 #endif
-#if !defined(LIST_H)
+#ifndef LIST_H
 	#include "list.h"
 #endif
 

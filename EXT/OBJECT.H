@@ -2,13 +2,13 @@
 //-------------
 // > General cleanup
 
-#if !defined(OBJECT_H)
+#ifndef OBJECT_H
 #define OBJECT_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
-#if !defined(SCRIPT_H)
+#ifndef SCRIPT_H
 	#include "script.h"
 #endif
 

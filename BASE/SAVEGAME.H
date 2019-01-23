@@ -2,10 +2,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(SAVEGAME_H)
+#ifndef SAVEGAME_H
 #define SAVEGAME_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

@@ -48,7 +48,7 @@ PMachine()
 		FillPtr(pStack, 'S');
 	}
 
-#if defined(DEBUG)
+#ifdef DEBUG
 	ssPtr = &sendStack[-2];
 #else
 //KAWA WAS HERE to disable stamping

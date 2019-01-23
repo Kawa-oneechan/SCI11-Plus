@@ -4,10 +4,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(FLIST_H)
+#ifndef FLIST_H
 #define FLIST_H
 
-#if !defined(MEMMGR_H)
+#ifndef MEMMGR_H
 	#include "memmgr.h"
 #endif
 

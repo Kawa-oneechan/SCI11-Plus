@@ -2,19 +2,19 @@
 //-------------
 // > General cleanup
 
-#if !defined(MENU_H)
+#ifndef MENU_H
 #define	MENU_H
 
-#if !defined(KERNEL_H)
+#ifndef KERNEL_H
 	#include "kernel.h"
 #endif
-#if !defined(PMACHINE_H)
+#ifndef PMACHINE_H
 	#include "pmachine.h"
 #endif
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
-#if !defined(GRTYPES_H)
+#ifndef GRTYPES_H
 	#include "grtypes.h"
 #endif
 

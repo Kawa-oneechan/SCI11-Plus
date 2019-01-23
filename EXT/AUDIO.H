@@ -4,10 +4,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(AUDIO_H)
+#ifndef AUDIO_H
 #define AUDIO_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

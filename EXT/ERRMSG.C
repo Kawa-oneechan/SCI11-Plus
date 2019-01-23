@@ -33,7 +33,7 @@ int	theViewNum, theLoopNum, theCelNum; // for debugging
 
 bool (*alertProc)(strptr) = (bool(*)(strptr))DoPanic;
 
-#if !defined(INTERNALERRORS)
+#ifndef INTERNALERRORS
 static char errMsgBuf[ERRBUFSIZE];
 static char* errMsgFile = "INTERP.ERR";
 
@@ -152,7 +152,7 @@ global bool DoAlert(strptr text) //put up alert box and wait for a click
 	return (ret);
 }
 
-#if defined(INTERNALERRORS)
+#ifdef INTERNALERRORS
 
 const char* KawaErrors1 =
 	"DOS Error:\n%s\nENTER to retry\nESC to %s\0"

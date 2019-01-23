@@ -5,10 +5,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(ARMASM_H)
+#ifndef ARMASM_H
 #define ARMASM_H
 
-#if !defined(ALTRES_H)
+#ifndef ALTRES_H
 	#include "altres.h"
 #endif
 

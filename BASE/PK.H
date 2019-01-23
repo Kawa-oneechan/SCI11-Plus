@@ -2,10 +2,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(PK_H)
+#ifndef PK_H
 #define PK_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

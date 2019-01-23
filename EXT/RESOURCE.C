@@ -41,7 +41,7 @@ word resourceCursorType = 0;
 static Handle patches = NULL;
 static bool getmemFailNonfatal = FALSE;
 
-#if defined(DEBUG)
+#ifdef DEBUG
 
 byte theResType;
 uint theResId;
@@ -267,7 +267,7 @@ Handle GetResHandle(uword size)
 				return(hndl);
 			if (GetHandle())
 			{
-#if defined(DEBUG)
+#ifdef DEBUG
 				LoadLink far** scan;
 
 				theGame = 0; //Added to prevent Language error message
@@ -319,7 +319,7 @@ Handle LoadHandle(strptr fileName)
 
 void SetResCursor(ResCursor cursor)
 {
-#if !defined(DEBUG)
+#ifndef DEBUG
 	cursor = cursor;
 #else
 	static char cursorSaved;

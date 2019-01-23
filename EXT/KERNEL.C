@@ -2614,7 +2614,7 @@ KERNEL(Kawa)
 		case 3: //KAWA_ISDEBUG
 			//(Kawa 3) ;Returns 1 if debug version, 2 if menu bars are enabled, 3 if both.
 			acc = isDebugVersion;
-#if TESTER
+#ifdef TESTER
 			acc |= 2;
 #endif
 			break;

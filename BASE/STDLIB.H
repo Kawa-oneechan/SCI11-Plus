@@ -2,10 +2,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(STDLIB_H)
+#ifndef STDLIB_H
 #define STDLIB_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

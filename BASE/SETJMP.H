@@ -2,10 +2,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(SETJMP_H)
+#ifndef SETJMP_H
 #define SETJMP_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

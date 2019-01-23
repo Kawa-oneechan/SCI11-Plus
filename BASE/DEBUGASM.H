@@ -4,7 +4,7 @@
 //-------------
 // > General cleanup
 
-#if !defined(DEBUGASM_H)
+#ifndef DEBUGASM_H
 #define DEBUGASM_H
 
 void DebugInit(void);

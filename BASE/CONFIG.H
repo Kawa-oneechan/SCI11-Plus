@@ -2,10 +2,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(CONFIG_H)
+#ifndef CONFIG_H
 #define CONFIG_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

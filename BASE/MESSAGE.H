@@ -4,10 +4,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(MESSAGE_H)
+#ifndef MESSAGE_H
 #define MESSAGE_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

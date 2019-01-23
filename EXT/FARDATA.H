@@ -4,10 +4,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(FARDATA_H)
+#ifndef FARDATA_H
 #define	FARDATA_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

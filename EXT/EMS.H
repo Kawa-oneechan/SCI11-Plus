@@ -5,7 +5,7 @@
 #ifndef EMS_H
 #define EMS_H
 
-#if !defined(ALTRES_H)
+#ifndef ALTRES_H
 	#include "altres.h"
 #endif
 

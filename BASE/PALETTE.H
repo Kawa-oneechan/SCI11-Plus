@@ -4,10 +4,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(PALETTE_H)
+#ifndef PALETTE_H
 #define PALETTE_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

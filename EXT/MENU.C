@@ -38,7 +38,7 @@ RGrafPort* menuPort;
 
 static void near ClearBar(word);
 
-#if defined(TESTER)
+#ifdef TESTER
 
 static strptr near GetKeyStr(strptr, word);
 static void near Invert(word, word);
@@ -145,7 +145,7 @@ static void near ClearBar(word color)
 //add a menu to the menubar
 global KERNEL(AddMenu)
 {
-#if !defined(TESTER)
+#ifndef TESTER
 	args = args;
 	//Panic(E_ADDMENU); //KAWA WAS HERE -- silently just don't.
 #else
@@ -262,7 +262,7 @@ global KERNEL(AddMenu)
 
 global KERNEL(DrawMenuBar)
 {
-#if !defined(TESTER)
+#ifndef TESTER
 	args = args;
 	//Panic(E_DRAWMENU); //KAWA WAS HERE -- silently just don't.
 #else
@@ -273,7 +273,7 @@ global KERNEL(DrawMenuBar)
 
 global KERNEL(SetMenu)
 {
-#if !defined(TESTER)
+#ifndef TESTER
 	args = args;
 	//Panic(E_SETMENU); //KAWA WAS HERE -- silently just don't.
 #else
@@ -308,7 +308,7 @@ global KERNEL(SetMenu)
 
 global KERNEL(GetMenu)
 {
-#if !defined(TESTER)
+#ifndef TESTER
 	args = args;
 	acc = 0; //Panic(E_GETMENU); //KAWA WAS HERE -- silently just don't.
 #else
@@ -342,7 +342,7 @@ global KERNEL(GetMenu)
 //is menu number, low byte is number of entry in menu.
 global KERNEL(MenuSelect)
 {
-#if !defined(TESTER)
+#ifndef TESTER
 	args = args;
 	acc = -1; //Panic(E_MENUSELECT); //KAWA WAS HERE -- silently just don't.
 #else
@@ -431,7 +431,7 @@ global KERNEL(MenuSelect)
 }
 
 
-#if defined(TESTER)
+#ifdef TESTER
 static void near DrawMenuBar(word show)
 {
 	MenuPage* menu;

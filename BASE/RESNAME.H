@@ -2,10 +2,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(RESNAME_H)
+#ifndef RESNAME_H
 #define RESNAME_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

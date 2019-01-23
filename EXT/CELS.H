@@ -2,13 +2,13 @@
 //-------------
 // > General cleanup
 
-#if !defined(CELS_H)
+#ifndef CELS_H
 #define CELS_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
-#if !defined(GRTYPES_H)
+#ifndef GRTYPES_H
 	#include "grtypes.h"
 #endif
 

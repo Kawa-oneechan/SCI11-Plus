@@ -2,13 +2,13 @@
 //-------------
 // > General cleanup
 
-#if !defined(GRAPH_H)
+#ifndef GRAPH_H
 #define GRAPH_H
 
-#if !defined(GRTYPES_H)
+#ifndef GRTYPES_H
 #include "grtypes.h"
 #endif
-#if !defined(PALETTE_H)
+#ifndef PALETTE_H
 #include "palette.h"
 #endif
 

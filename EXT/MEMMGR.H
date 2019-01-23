@@ -5,13 +5,13 @@
 // > General cleanup
 // > Removed 68000 code
 
-#if !defined(MEMMGR_H)
+#ifndef MEMMGR_H
 #define MEMMGR_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
-#if !defined(LIST_H)
+#ifndef LIST_H
 	#include "list.h"
 #endif
 

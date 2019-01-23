@@ -5,10 +5,10 @@
 // > General cleanup
 // > added #define MOUSE_H
 
-#if !defined(MOUSE_H)
+#ifndef MOUSE_H
 #define MOUSE_H
 
-#if !defined(GRTYPES_H)
+#ifndef GRTYPES_H
 	#include "grtypes.h"
 #endif
 

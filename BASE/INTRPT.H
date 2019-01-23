@@ -4,10 +4,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(INTRPT_H)
+#ifndef INTRPT_H
 #define INTRPT_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

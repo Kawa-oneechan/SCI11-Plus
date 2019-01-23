@@ -4,7 +4,7 @@
 //-------------
 // > General cleanup
 
-#if !defined(SAVEVARS_H)
+#ifndef SAVEVARS_H
 #define SAVEVARS_H
 
 extern byte saveStart;

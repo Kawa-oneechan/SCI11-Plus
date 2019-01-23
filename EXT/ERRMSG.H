@@ -5,10 +5,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(ERRMSG_H)
+#ifndef ERRMSG_H
 #define ERRMSG_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

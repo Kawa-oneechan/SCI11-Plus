@@ -79,7 +79,7 @@ void onexit(fptr func)
 void exit(char code)
 {
 	int i;
-#if defined(ENDOOM)
+#ifdef ENDOOM
 	Handle hB800;
 	volatile char far* vidya = (volatile char far*)0xB8000000;
 	char far* b800;
@@ -91,7 +91,7 @@ void exit(char code)
 
 	if (panicStr)
 		WriteString(panicStr);
-#if defined(ENDOOM)
+#ifdef ENDOOM
 	else
 	{
 		if (ResCheck(RES_VOCAB, 0xB8))

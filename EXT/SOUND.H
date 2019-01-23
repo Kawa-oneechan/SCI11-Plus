@@ -4,16 +4,16 @@
 //-------------
 // > General cleanup
 
-#if !defined(SOUND_H)
+#ifndef SOUND_H
 #define SOUND_H
 
-#if !defined(OBJECT_H)
+#ifndef OBJECT_H
 	#include "object.h"
 #endif
-#if !defined(DRIVER_H)
+#ifndef DRIVER_H
 	#include "driver.h"
 #endif
-#if !defined(LIST_H)
+#ifndef LIST_H
 	#include "list.h"
 #endif
 

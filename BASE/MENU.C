@@ -34,7 +34,7 @@ RGrafPort* menuPort;
 
 static void near ClearBar(word);
 
-#if defined(TESTER)
+#ifdef TESTER
 
 static strptr near GetKeyStr(strptr, word);
 static void near Invert(word, word);
@@ -131,7 +131,7 @@ static void near ClearBar(word color)
 //add a menu to the menubar
 global KERNEL(AddMenu)
 {
-#if !defined(TESTER)
+#ifndef TESTER
 	args = args;
 	Panic(E_ADDMENU);
 #else
@@ -248,7 +248,7 @@ global KERNEL(AddMenu)
 
 global KERNEL(DrawMenuBar)
 {
-#if !defined(TESTER)
+#ifndef TESTER
 	args = args;
 	Panic(E_DRAWMENU);
 #else
@@ -259,7 +259,7 @@ global KERNEL(DrawMenuBar)
 
 global KERNEL(SetMenu)
 {
-#if !defined(TESTER)
+#ifndef TESTER
 	args = args;
 	Panic(E_SETMENU);
 #else
@@ -294,7 +294,7 @@ global KERNEL(SetMenu)
 
 global KERNEL(GetMenu)
 {
-#if !defined(TESTER)
+#ifndef TESTER
 	args = args;
 	Panic(E_GETMENU);
 #else
@@ -328,7 +328,7 @@ global KERNEL(GetMenu)
 //is menu number, low byte is number of entry in menu.
 global KERNEL(MenuSelect)
 {
-#if !defined(TESTER)
+#ifndef TESTER
 	args = args;
 	Panic(E_MENUSELECT);
 #else
@@ -417,7 +417,7 @@ global KERNEL(MenuSelect)
 }
 
 
-#if defined(TESTER)
+#ifdef TESTER
 static void near DrawMenuBar(word show)
 {
 	MenuPage* menu;

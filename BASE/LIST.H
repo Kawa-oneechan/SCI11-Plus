@@ -4,10 +4,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(LIST_H)
+#ifndef LIST_H
 #define LIST_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 

@@ -4,13 +4,13 @@
 //-------------
 // > General cleanup
 
-#if !defined(PICTURE_H)
+#ifndef PICTURE_H
 #define PICTURE_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
-#if !defined(WINDOW_H)
+#ifndef WINDOW_H
 	#include "window.h"
 #endif
 

@@ -5,10 +5,10 @@
 //-------------
 // > General cleanup
 
-#if !defined(PMACHINE_H)
+#ifndef PMACHINE_H
 #define PMACHINE_H
 
-#if !defined(OBJECT_H)
+#ifndef OBJECT_H
 	#include "object.h"
 #endif
 

@@ -4,13 +4,13 @@
 //-------------
 // > General cleanup
 
-#if !defined(SYNC_H)
+#ifndef SYNC_H
 #define SYNC_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
-#if !defined(OBJECT_H)
+#ifndef OBJECT_H
 	#include "object.h"
 #endif
 

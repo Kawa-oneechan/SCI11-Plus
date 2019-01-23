@@ -6,13 +6,13 @@
 // > General cleanup
 // > Standardized kernel call arguments and definitions -- see TYPES.H
 
-#if !defined(KERNEL_H)
+#ifndef KERNEL_H
 #define KERNEL_H
 
-#if !defined(LIST_H)
+#ifndef LIST_H
 	#include "list.h"
 #endif
-#if !defined(OBJECT_H)
+#ifndef OBJECT_H
 	#include "object.h"
 #endif
 

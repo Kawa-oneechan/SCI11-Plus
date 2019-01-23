@@ -315,7 +315,7 @@ static char near GetCommand(strptr);
 static bool near GetInput(strptr, strptr, int);
 static void near WriteHunkUse(uint);
 
-#if defined(PROFILER)
+#ifdef PROFILER
 static void near Profiler(ProCmd command, strptr fileName, strptr comment);
 #endif
 

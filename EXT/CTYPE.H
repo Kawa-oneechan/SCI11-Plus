@@ -5,7 +5,7 @@
 #ifndef CTYPE_H
 #define CTYPE_H
 
-#if !defined(TYPES_H)
+#ifndef TYPES_H
 	#include "types.h"
 #endif
 
