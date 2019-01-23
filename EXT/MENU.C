@@ -114,9 +114,11 @@ global KERNEL(DrawStatus)
 
 	RSetPort(oldPort);
 
+#ifdef TESTER
 #ifdef COLORFULMENU
 	lastDrawStatusFore = foreground;
 	lastDrawStatusBack = background;
+#endif
 #endif
 }
 
