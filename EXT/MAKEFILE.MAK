@@ -7,16 +7,6 @@
 #
 ######################################################################
 
-#
-# Files to be compiled for debugging.  All others will be optimized.
-#
-debug =
-#
-# Files to be compiled with a listing.
-#
-listing = 
-
-
 ############ DEFAULT TARGETS ############
 # sierra   no debug
 # sierram  no debug, menu bars enabled
@@ -40,10 +30,6 @@ clean:
 # Execute commands directly, without invoking command.com.  
 .NOSHELL
 
-# Version control stuff will be done unless we set dovcs=FALSE on the
-# make command line.
-dovcs = FALSE
-
 .INIT:
 	#
 	# Do not use any Microsoft files for the interpreter
@@ -57,35 +43,10 @@ dovcs = FALSE
 	# -Cp		preserve case of all identifiers
 	# -nologo	supress NMAKE copyright message
 	# -W2		don't warn about extended jumps
-	#
-	# make sure our local clock agrees with network
-	#
-	@systime
 
 
 .DEINIT:
-#	#
-#	# If we successfully made the executables, increment the version number
-#	# and put a version number label in the vcs files.
-#	#
-#	%if !%status && $(errors) == FALSE && $(makeExe) == TRUE
-#		#
-#		# If there is a version file, do version control stuff.
-#		#
-#		%if %file($(verFile))
-#			#
-#			# If there is a VCS subdirectory, mark all files in it with
-#			# the current version number.
-#			#
-#			%if %exists(vcs) && !%file(vcs) && $(dovcs) == TRUE
-#				@%echo *** Stamping version control files with current version number.
-#				@+oneline vcs -vv@$(verFile)@ vcs\\*.* >___dovcs.bat
-#				@+___dovcs
-#			%endif
-#			@inc_it $(verFile)
-#		%endif
-#	%endif
-
+# lol
 
 
 #
@@ -93,12 +54,6 @@ dovcs = FALSE
 # optimized for space.
 #
 speed  = string.c list.c animate.c motion.c getpath.c resource.c altres.c
-
-#
-# Files which are used to make utilities.  These will use the default
-# libraries.
-#
-utils = 
 
 
 #
@@ -197,19 +152,15 @@ scitestrSetup:
 	@%do sciDbgTSetup
 
 sierra.exe: $(Objs)
-	@%set verFile = sci.ver
-	@%do Link 
+	@%do Link
 
 sierram.exe: $(tObjs)
-	@%set verFile = sci.ver
 	@%do Link 
 
 sci.exe: $(dObjs)
-	@%set verFile = sci.ver
 	@%do Link 
 
 scitestr.exe: $(dtObjs)
-	@%set verFile = sci.ver
 	@%do Link 
 
 
@@ -243,33 +194,17 @@ pmachasm.od:	[pmachasm.s]
 	@%do	Assemble
 
 Assemble:
-	@%set	srcFile = $<
-	@%set	objFile = $@
-#
-	%if %member($<, $(debug))
-		@%set masmFlags = $(masmFlags) -Zd -Zi
-		#	-Zd	put line number info in object file
-		#	-Zi	put CodeView info in object file
-	%endif
-#
-	%if %member($<, $(listing))
-		@%set masmFlags = $(masmFlags) -Sg
-		#	-Sg	turn on listing of assembly code
-	%endif
-#
-# KAWA WAS HERE to add that @ in front.
+	@%set srcFile = $<
+	@%set objFile = $@
 	@-:ml $(mDefs) $(masmFlags) -Fo$(objFile) -Ta$(srcFile)
 	%if %status
 		@%set errors = TRUE
 		@%exit 1
 	%endif
-	
-
-
 
 ###### C COMPILATION: conditionals and general rules######
 
-.DEFAULT.c:		#don't worry about trying to make .c files
+.DEFAULT.c:	# don't worry about trying to make .c files
 
 debug.od:	[debug.c]
 	%do Compile
@@ -306,54 +241,33 @@ Compile:
 #
 #	Set any debugging-related options
 #
-	@%set	srcFile = $<
-	@%set	objFile = $@
-	@%set cFlags = /Fm -c -DLINT_ARGS -DIBM -W3 -Gs -Zp -J -AM -nologo
-	# -c		compile only
-	# -DLINT_ARGS	define LINT_ARGS, to enable argument checking
-	# -DIBM		define IBM
-	# -W3		give maximum number of error messages
-	# -Gs		disable stack checking
-	# -Zp		pack all structures
-	# -J		chars are unsigned by default
+	@%set srcFile = $<
+	@%set objFile = $@
+	@%set cFlags = /Fm -AM -DLINT_ARGS -DIBM -Gs -J -W3 -Zl -Zp -c -nologo
 	# -AM		medium model (large code, small data)
+	# -DIBM		define IBM
+	# -DLINT_ARGS	define LINT_ARGS, to enable argument checking
+	# -Gs		disable stack checking
+	# -J		chars are unsigned by default
+	# -W3		give maximum number of error messages
+	# -Zl		generate references to standard libraries in object file
+	# -Zp		pack all structures
+	# -c		compile only
 	# -nologo	supress NMAKE copyright message (KAWA WAS HERE)
 	#
-	%if %member($<, $(debug))
-		@%set cFlags = $(cFlags) -Zi -Od
-		# -Zi	put CodeView info in object file
-		# -Od	disable optimizations
-	%elseif %member($<, $(speed))
+	%if %member($<, $(speed))
 		@%set cFlags = $(cFlags) -Oalt
 	%else
 		@%set cFlags = $(cFlags) -Os
 	%endif
-#
-	%if %member($<, $(listing))
-		@%set cFlags = $(cFlags) -Fc
-	%endif
-#
-	%if !%member($<, $(utils))
-		@%set cFlags = $(cFlags) -Zl
-		# -Zl	generate references to standard libraries in object file
-	%endif
-#
-# KAWA WAS HERE to add that @ in front.
 	@-:cl $(cDefs) $(cFlags) -Fo$(objFile) $(srcFile)
 	%if %status
 		@%set errors = TRUE
 		@%exit 1
 	%endif
-	
 
 
 ################### LINKING EXECUTABLES ######################
-#
-#	As a means of tracking who built an executable and when and
-#	where it was built, we generate the file 'info.c' when we're
-#	about to build the first executable.  Once that it is generated,
-#	we re-invoke make with the 'makeExe' flag set to true.  This
-#	then builds all executables with the new information in them.
 
 makeExe = TRUE
 errors = FALSE
@@ -366,20 +280,7 @@ lFlags = /NOI /MAP /NOE /CO
 # /CO 		generate codeview information
 
 Link:    
-# KAWA WAS HERE. FUCK THIS NOISE.
-	%if $(makeExe) == FALSE
-#		#
-#		# This is the primary invocation of make and we're about
-#		# to build an executable file.  Generate the information
-#		# file and re-invoke make to build all executables.
-#		#
-#		@%do BuildInfo
-#		&@:make makeExe=TRUE $(M_ARGS)
-	%else
-#		#
-#		# This is the recursive invocation of make to build all
-#		# executables.  Just do a normal link.
-#		#
+	%if $(makeExe) == TRUE
 		-:link $(lFlags) <@<
 $[s," +\n",$**]
 $*.exe
@@ -391,39 +292,3 @@ libh.lib implode.lib;
 			@%exit 1
 		%endif
 	%endif
-
-
-	
-############ SUBROUTINES ############
-
-#info.c:
-#	@%do	BuildInfo
-#
-#BuildInfo:
-#	#
-#	# Put the following information into a C file to be compiled and
-#	# linked into the interpreters being made with this invocation of make:
-#	#
-#	#	Current date and time
-#	#	The VCSID of the person doing the make
-#	#	The pathname of the directory in which the make is taking place
-#	#	The current version number (which will be auto-incremented if
-#	#		the make succeeds).
-#	#	The text from the file comment/comment, if it exists.
-#	#
-#	@+echo char makeDate[] = __DATE__; 								>info.c
-#	@+echo char makeTime[] = __TIME__;								>>info.c
-#	@+echo char maker[] = "$(VCSID)";								>>info.c
-#	@+echo char makeLocation[] = "$[t,\,/,$[l,$(CWD)]]";		>>info.c
-#	#
-#	%if %file($(verFile))
-#		@+oneline char version[] = "@sci.ver@";					>>info.c
-#	%else
-#		@+echo char version[] = "No version number";				>>info.c
-#	%endif
-#	#
-#	%if %exists(comment\comment)
-#		@+oneline char makeComment[] = "@comment\comment@";	>>info.c
-#	%else
-#		@+echo char makeComment[] = "Not a release version.";	>>info.c
-#	%endif
