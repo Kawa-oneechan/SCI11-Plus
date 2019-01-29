@@ -267,7 +267,7 @@ Handle GetResHandle(uword size)
 				return(hndl);
 			if (GetHandle())
 			{
-#if defined(DEBUG)
+#ifdef DEBUG
 				LoadLink far** scan;
 
 				theGame = 0; //Added to prevent Language error message

@@ -71,24 +71,6 @@ global void InitResource(strptr where)
 	resVolFd = open(volName, O_RDONLY);
 	resourceMap = LoadResMap(resMapName);
 
-/*
-#ifndef DEBUG
-	{
-		ResDirHdrEntry far *header;
-
-		// Find trackable version stamp in resource map file
-		if (resourceMap)
-		{
-			header = (ResDirHdrEntry far*)*resourceMap;
-			while (header->resType != 255)
-				++header;
-			++header;
-			gameVerStamp = *(long far*)header - VERSTAMPDELTA;
-		}
-	}
-#endif
-*/
-
 	//optional 'foreign language' map and resource files
 	//(per optional patchDir specification)
 	dirNum = 0;

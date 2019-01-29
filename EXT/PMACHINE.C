@@ -15,19 +15,6 @@
 bool gameStarted = FALSE;
 Obj *theGame;
 
-/*
-#ifndef DEBUG
-long interpVerStamp;
-long gameVerStamp;
-// STAMPVER.EXE uses the following particulars to locate the version stamp
-long verStamp = -0x1234;
-word stampFlag1 = 0x5241;
-word stampFlag2 = 0x4552;
-word stampFlag3 = 0x5349;
-// end of order-dependent constants
-#endif
-*/
-
 void PMachine()
 {
 	//Load the class table, allocate the p-machine stack
