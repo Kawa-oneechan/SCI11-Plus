@@ -40,12 +40,12 @@ typedef struct
 	uword scriptNum;	//script number
 } ClassEntry;
 
-extern ClassEntry* classTbl;
+extern ClassEntry *classTbl;
 extern int objOfs[];
 
 #ifdef DEBUG
 extern uword sendStack[];
-extern uword* ssPtr;
+extern uword *ssPtr;
 extern uword ssEnd;
 #endif
 

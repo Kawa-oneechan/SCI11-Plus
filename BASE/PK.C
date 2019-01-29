@@ -17,15 +17,15 @@
 Handle dcompBuffer;
 
 //variables used by pk mem functions
-static byte far* pkReadPtr;
-static byte far* pkWritePtr;
+static byte far *pkReadPtr;
+static byte far *pkWritePtr;
 static uint amountToRead;
 static int pkFd;
 
-static void far pascal pkWriteToMem(char far* buff, unsigned short far* size);
-static unsigned far pascal pkReadFromDisk(char far* buff, unsigned short int far* size);
-static void far pascal pkWriteToDisk(char far* buff, unsigned short far* size);
-static unsigned far pascal pkReadFromMem(char far* buff, unsigned short int far* size);
+static void far pascal pkWriteToMem(char far *buff, unsigned short far *size);
+static unsigned far pascal pkReadFromDisk(char far *buff, unsigned short int far *size);
+static void far pascal pkWriteToDisk(char far *buff, unsigned short far *size);
+static unsigned far pascal pkReadFromMem(char far *buff, unsigned short int far *size);
 
 
 void pkExplode(int fd, byte far * dst, unsigned length)
@@ -40,7 +40,7 @@ void pkExplode(int fd, byte far * dst, unsigned length)
 }
 
 
-void pkImplode(int fd, byte far* src, unsigned length)
+void pkImplode(int fd, byte far *src, unsigned length)
 {
 	uint type = CMP_BINARY; //Use BINARY compression
 	uint dsize = 4096; //Use 4K dictionary
@@ -59,7 +59,7 @@ void pkImplode(int fd, byte far* src, unsigned length)
 }
 
 
-uint pkImplode2Mem(byte far* dst, byte far* src, unsigned length)
+uint pkImplode2Mem(byte far *dst, byte far *src, unsigned length)
 {
 	uint type = CMP_BINARY; //Use BINARY compression
 	uint dsize = 1024; //Use 1K dictionary (fast compression for mem check)
@@ -80,7 +80,7 @@ uint pkImplode2Mem(byte far* dst, byte far* src, unsigned length)
 }
 
 
-static void far pascal pkWriteToMem(char far* buff, unsigned short far* size)
+static void far pascal pkWriteToMem(char far *buff, unsigned short far *size)
 {
 	//for output we will just be copying to the area allocated by the
 	//outHandle. However, in order to emulate the file position concept,
@@ -93,7 +93,7 @@ static void far pascal pkWriteToMem(char far* buff, unsigned short far* size)
 }
 
 
-static unsigned far pascal pkReadFromDisk(char far* buff, unsigned short int far* size)
+static unsigned far pascal pkReadFromDisk(char far *buff, unsigned short int far *size)
 {
 	uint theSize;
 
@@ -108,13 +108,13 @@ static unsigned far pascal pkReadFromDisk(char far* buff, unsigned short int far
 }
 
 
-static void far pascal pkWriteToDisk(char far* buff, unsigned short far* size)
+static void far pascal pkWriteToDisk(char far *buff, unsigned short far *size)
 {
 	WriteDos(pkFd, buff, *size);
 }
 
 
-static unsigned far pascal pkReadFromMem(char far* buff, unsigned short int far* size)
+static unsigned far pascal pkReadFromMem(char far *buff, unsigned short int far *size)
 {
 	uint theSize;
 

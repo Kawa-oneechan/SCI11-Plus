@@ -78,7 +78,7 @@ void EndCDAudio(void);
 
 bool AudARMInit(void);
 void AudARMTerm(void);
-bool AudARMRead(uint len, void far* buff);
+bool AudARMRead(uint len, void far *buff);
 bool AudARMWrite(int fd, ulong flen);
 
 extern Handle audioDrv;

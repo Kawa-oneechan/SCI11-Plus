@@ -13,7 +13,7 @@
 #include "start.h"
 
 bool gameStarted = FALSE;
-Obj* theGame;
+Obj *theGame;
 
 void PMachine()
 {

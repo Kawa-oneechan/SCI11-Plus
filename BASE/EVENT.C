@@ -71,10 +71,10 @@ void EndEvent()
 
 
 //return next event to user
-bool RGetNextEvent(word mask, REventRecord* event)
+bool RGetNextEvent(word mask, REventRecord *event)
 {
 	word ret = 0;
-	REventRecord* found;
+	REventRecord *found;
 
 	if (joyHandle)
 		PollJoystick();
@@ -120,7 +120,7 @@ void RFlushEvents(word mask)
 
 
 //return but don't remove
-bool REventAvail(word mask, REventRecord* event)
+bool REventAvail(word mask, REventRecord *event)
 {
 	word ret = 0;
 	REventRecord *found;
@@ -158,7 +158,7 @@ bool RStillDown()
 
 
 //add event to evQueue at evTail, bump evHead if == evTail
-void RPostEvent(REventRecord* event)
+void RPostEvent(REventRecord *event)
 {
 	event->when = RTickCount();
 	memcpy((memptr) evTail, (memptr) event, sizeof(REventRecord));
@@ -169,7 +169,7 @@ void RPostEvent(REventRecord* event)
 
 
 //give him current stuff
-void MakeNullEvent(REventRecord* event)
+void MakeNullEvent(REventRecord *event)
 {
 	event->type = 0;
 	CurMouse(&(event->where));
@@ -179,7 +179,7 @@ void MakeNullEvent(REventRecord* event)
 
 KERNEL(MapKeyToDir)
 {
-	Obj* SCIEvent;
+	Obj *SCIEvent;
 	REventRecord event;
 
 	SCIEvent = (Obj*)Native(*(args + 1));
@@ -190,14 +190,14 @@ KERNEL(MapKeyToDir)
 }
 
 
-REventRecord* MapKeyToDir(REventRecord* event)
+REventRecord* MapKeyToDir(REventRecord *event)
 {
 	KeyboardDriver(INP_MAP, event);
 	return event;
 }
 
 
-void EventToObj(REventRecord* evt, Obj* evtObj)
+void EventToObj(REventRecord *evt, Obj *evtObj)
 {
 	IndexedProp(evtObj, evType) = evt->type;
 	IndexedProp(evtObj, evMod) = evt->modifiers;
@@ -207,7 +207,7 @@ void EventToObj(REventRecord* evt, Obj* evtObj)
 }
 
 
-void ObjToEvent(Obj* evtObj, REventRecord* evt)
+void ObjToEvent(Obj *evtObj, REventRecord *evt)
 {
 	evt->type = IndexedProp(evtObj, evType);
 	evt->modifiers = IndexedProp(evtObj, evMod);
@@ -228,7 +228,7 @@ KERNEL(Joystick)
 
 
 //move evQueue pointer to next slot
-static REventRecord* near bump(REventRecord* ptr)
+static REventRecord* near bump(REventRecord *ptr)
 {
 	if (++ptr == evQueueEnd)
 		ptr = evQueue;

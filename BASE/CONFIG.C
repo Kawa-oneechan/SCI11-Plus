@@ -52,7 +52,7 @@ global bool ReadConfigFile(strptr name, strptr defaultName)
 	char tok[65];
 	char line[100 + 1];
 	strptr str;
-	strptr* pp;
+	strptr *pp;
 
 	//open either the name passed or the default name
 	if (!*name)
@@ -236,9 +236,9 @@ static strptr near storeStr(strptr str)
 static void near initResMasks(void)
 {
 	int nMasks;
-	ResType* rp;
-	char** mp;
-	char* cp;
+	ResType *rp;
+	char **mp;
+	char *cp;
 
 	for (rp = resTypes; rp->name; rp++)
 	{

@@ -43,7 +43,7 @@ typedef struct block_s
 	struct block_s*	next;	//pointer to next free block in list
 } block;
 
-extern block* freeList;
+extern block *freeList;
 extern size_t heapAvail;
 extern size_t hunkAvail;
 extern memptr heapBase;

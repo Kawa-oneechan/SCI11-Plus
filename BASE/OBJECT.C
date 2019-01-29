@@ -15,13 +15,13 @@
 
 int	objOfs[OBJOFSSIZE];
 
-static void near CheckObject(Obj* obj);
+static void near CheckObject(Obj *obj);
 
 
 //return pointer to copy of an object or class
-Obj* Clone(Obj* obj)
+Obj* Clone(Obj *obj)
 {
-	Obj* newObj;
+	Obj *newObj;
 	word size;
 	Script*	sp;
 
@@ -52,7 +52,7 @@ Obj* Clone(Obj* obj)
 
 
 //dispose of a clone of a class
-void DisposeClone(Obj* obj)
+void DisposeClone(Obj *obj)
 {
 	//is 'obj' an object?
 	CheckObject(obj);
@@ -60,7 +60,7 @@ void DisposeClone(Obj* obj)
 	//clear the object ID, decrement the script's reference count, and free the object's memory
 	if ((obj->info & (CLONEBIT | NODISPOSE)) == CLONEBIT)
 	{
-		Script* sp = (Script*)Native(obj->script);
+		Script *sp = (Script*)Native(obj->script);
 		obj->objID = 0;
 		sp->clones--;
 		DisposePtr(obj);
@@ -69,7 +69,7 @@ void DisposeClone(Obj* obj)
 
 
 //a pointer points to an object if it's non-NULL, not odd, and its objID field is OBJID
-bool IsObject(Obj* obj)
+bool IsObject(Obj *obj)
 {
 	//candidate for inlining
 	return obj && !((word)obj & 1) && obj->objID == OBJID;
@@ -77,9 +77,9 @@ bool IsObject(Obj* obj)
 
 
 //return whether 'selector' is a property or method of 'obj' or its superclasses
-bool RespondsTo(Obj* obj, uint selector)
+bool RespondsTo(Obj *obj, uint selector)
 {
-	word far* methodDict;
+	word far *methodDict;
 	int nMethods;
 
 	//is 'obj' an object?
@@ -92,7 +92,7 @@ bool RespondsTo(Obj* obj, uint selector)
 	//search the method dictionary hierarchy
 	do
 	{
-		Script* sp = (Script*)Native(obj->script);
+		Script *sp = (Script*)Native(obj->script);
 		methodDict = (word far*)(*sp->hunk + obj->methDict);
 		for (nMethods = *methodDict++; nMethods--; methodDict += 2)
 			if (*methodDict == (signed)selector) //KAWA WAS HERE
@@ -108,7 +108,7 @@ bool RespondsTo(Obj* obj, uint selector)
 void LoadPropOffsets()
 {
 	int i;
-	uword _far* op;
+	uword _far *op;
 
 	op = (uword far*)*ResLoad(RES_VOCAB, PROPOFS_VOCAB);
 	// Read and store each offset.
@@ -124,7 +124,7 @@ void LoadClassTbl()
 }
 
 
-static void near CheckObject(Obj* obj)
+static void near CheckObject(Obj *obj)
 {
 	if (!IsObject(obj))
 		PError(thisIP, pmsp, E_NOT_OBJECT, (uint)obj, 0);

@@ -12,7 +12,7 @@ word buttonState = 0;
 
 
 //Return interrupt level position in local coords of mouse in the point
-word RGetMouse(RPoint* pt)
+word RGetMouse(RPoint *pt)
 {
 	pt->v = mouseY - rThePort->origin.v;
 	pt->h = mouseX - rThePort->origin.h;
@@ -21,7 +21,7 @@ word RGetMouse(RPoint* pt)
 
 
 //Return interrupt level position in global coords of mouse in the point
-word CurMouse(RPoint* pt)
+word CurMouse(RPoint *pt)
 {
 	pt->v = mouseY;
 	pt->h = mouseX;

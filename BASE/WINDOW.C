@@ -57,10 +57,10 @@ global RWindow* RGetWmgrPort()
 
 
 //set up for a window update
-global void RBeginUpdate(RWindow* uWind)
+global void RBeginUpdate(RWindow *uWind)
 {
-	RWindow* wind;
-	RGrafPort* oldPort;
+	RWindow *wind;
+	RGrafPort *oldPort;
 
 	RGetPort(&oldPort);
 	RSetPort((RGrafPort*)RGetWmgrPort());
@@ -78,9 +78,9 @@ global void RBeginUpdate(RWindow* uWind)
 
 
 //end update phase of RWindow Manager
-global void REndUpdate(RWindow* uWind)
+global void REndUpdate(RWindow *uWind)
 {
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 	ObjID uWindObj;
 
 	RGetPort(&oldPort);
@@ -101,7 +101,7 @@ global void REndUpdate(RWindow* uWind)
 }
 
 
-static void near SaveBackground(RWindow* wind)
+static void near SaveBackground(RWindow *wind)
 {
 	Handle uBits;
 
@@ -122,16 +122,16 @@ static void near SaveBackground(RWindow* wind)
 
 
 //return true if this is front window
-global bool RFrontWindow(RWindow* wind)
+global bool RFrontWindow(RWindow *wind)
 {
 	return(wind == (RWindow*)Native(LastNode(&windowList)));
 }
 
 
 //put this window at end of list
-global void RSelectWindow(RWindow* wind)
+global void RSelectWindow(RWindow *wind)
 {
-	RWindow* uWind;
+	RWindow *uWind;
 	ObjID windObj;
 
 	RSetPort((RGrafPort*)wind);
@@ -148,12 +148,12 @@ global void RSelectWindow(RWindow* wind)
 
 
 //Open and return pointer to
-global RWindow* RNewWindow(register RRect* fr, register RRect* uFr, strptr title, word type, word pri, word vis)
+global RWindow* RNewWindow(register RRect *fr, register RRect *uFr, strptr title, word type, word pri, word vis)
 {
-	register RRect* wr;
+	register RRect *wr;
 	word mapSet = VMAP;
 	RRect frame;
-	RWindow* wind;
+	RWindow *wind;
 	int top, left;
 
 	//allocate a structure for the window and add it to front of list
@@ -269,10 +269,10 @@ global RWindow* RNewWindow(register RRect* fr, register RRect* uFr, strptr title
 
 
 //draw this window and set its visible flag
-global void RDrawWindow(RWindow* wind)
+global void RDrawWindow(RWindow *wind)
 {
 	RRect r;
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 	word oldPen;
 
 	if (!wind->visible)
@@ -354,7 +354,7 @@ global void RDrawWindow(RWindow* wind)
 
 
 //dispose window and all allocated storage
-global void RDisposeWindow(RWindow* wind, bool eraseOnly)
+global void RDisposeWindow(RWindow *wind, bool eraseOnly)
 {
 	RSetPort(wmgrPort);
 	RestoreBits(wind->vUnderBits); //frees handle
@@ -369,7 +369,7 @@ global void RDisposeWindow(RWindow* wind, bool eraseOnly)
 
 
 //draw a frame around this rect
-global void RFrameRect(RRect* r)
+global void RFrameRect(RRect *r)
 {
 	RRect rt;
 
@@ -395,10 +395,10 @@ global void RFrameRect(RRect* r)
 
 
 //center passed rectangle in wmgrPort
-global void CenterRect(RRect* r)
+global void CenterRect(RRect *r)
 {
 	word ch, cv;
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 
 	RGetPort(&oldPort);
 	RSetPort((RGrafPort*)RGetWmgrPort());
@@ -414,7 +414,7 @@ global void CenterRect(RRect* r)
 
 
 //make a rectangle from these values
-global void RSetRect(RRect* rc, word l, word t, word r, word b)
+global void RSetRect(RRect *rc, word l, word t, word r, word b)
 {
 	rc->left = l;
 	rc->right = r;
@@ -424,14 +424,14 @@ global void RSetRect(RRect* rc, word l, word t, word r, word b)
 
 
 //return true if this is an empty rectangle
-global bool REmptyRect(RRect* r)
+global bool REmptyRect(RRect *r)
 {
 	return((r->right <= r->left) || (r->bottom <= r->top));
 }
 
 
 
-global void RCopyRect(RRect* src, RRect* dst)
+global void RCopyRect(RRect *src, RRect *dst)
 {
 	*dst = *src;
 /*
@@ -444,7 +444,7 @@ global void RCopyRect(RRect* src, RRect* dst)
 
 
 //set ru to a rectangle encompassing both
-global void RUnionRect(RRect* r1, RRect* r2, RRect* ru)
+global void RUnionRect(RRect *r1, RRect *r2, RRect *ru)
 {
 	if (r1->top < r2->top)
 		ru->top = r1->top;
@@ -468,7 +468,7 @@ global void RUnionRect(RRect* r1, RRect* r2, RRect* ru)
 
 
 //true if point is in rect
-global bool RPtInRect(RPoint* p, RRect* r)
+global bool RPtInRect(RPoint *p, RRect *r)
 {
 	if (p->v < r->bottom && p->v >= r->top && p->h < r->right && p->h >= r->left)
 		return(1);
@@ -478,7 +478,7 @@ global bool RPtInRect(RPoint* p, RRect* r)
 
 
 //return pseudo angle 0-359
-global int RPtToAngle(RPoint* sp, RPoint* dp)
+global int RPtToAngle(RPoint *sp, RPoint *dp)
 {
 	return(ATan(dp->v, sp->h, sp->v, dp->h));
 }

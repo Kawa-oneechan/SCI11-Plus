@@ -22,7 +22,7 @@ extern byte textColors[];
 extern uint textFonts[];
 extern byte lastTextColor;
 extern byte lastTextFont;
-extern word* newRect;
+extern word *newRect;
 extern word rectIndex;
 
 extern KERNEL(TextColors);

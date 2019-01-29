@@ -66,7 +66,7 @@ global void InitDialog(boolfptr proc)
 }
 
 
-global void DrawCursor(RRect* box, strptr textBuf, int cursor)
+global void DrawCursor(RRect *box, strptr textBuf, int cursor)
 {
 	strptr text;
 
@@ -120,7 +120,7 @@ static void near SetFlash()
 }
 
 
-global word EditControl(Obj* item, Obj* evt)
+global word EditControl(Obj *item, Obj *evt)
 {
 	word oldFont;
 
@@ -172,7 +172,7 @@ global word EditControl(Obj* item, Obj* evt)
 
 
 //hilight (or un-highlight) the control
-global void RHiliteControl(Obj* item)
+global void RHiliteControl(Obj *item)
 {
 	RRect r;
 
@@ -199,12 +199,12 @@ global void RHiliteControl(Obj* item)
 
 
 //draw this control
-global word* DrawControl(Obj* item)
+global word* DrawControl(Obj *item)
 {
 	RRect r, ur;
 	strptr text;
 	int font, oldFont, type, state;
-	word* nRect;
+	word *nRect;
 
 	nRect = NULL;
 
@@ -311,7 +311,7 @@ global word* DrawControl(Obj* item)
 }
 
 
-static void near DrawSelector(Obj* item)
+static void near DrawSelector(Obj *item)
 {
 	int oldTop, i;
 	RRect r;
@@ -376,21 +376,21 @@ static void near DrawSelector(Obj* item)
 }
 
 
-void RGlobalToLocal(RPoint* mp) //make this global coord local
+void RGlobalToLocal(RPoint *mp) //make this global coord local
 {
 	mp->h -= rThePort->origin.h;
 	mp->v -= rThePort->origin.v;
 }
 
 
-void RLocalToGlobal(RPoint* mp) //make this local coord global
+void RLocalToGlobal(RPoint *mp) //make this local coord global
 {
 	mp->h += rThePort->origin.h;
 	mp->v += rThePort->origin.v;
 }
 
 
-static void near TextEdit(Obj* item, Obj* evt)
+static void near TextEdit(Obj *item, Obj *evt)
 {
 	int cursor;
 	RRect box;
@@ -404,7 +404,7 @@ static void near TextEdit(Obj* item, Obj* evt)
 }
 
 
-int EditText(RRect* box, strptr text, int cursor, int max, REventRecord* evt)
+int EditText(RRect *box, strptr text, int cursor, int max, REventRecord *evt)
 {
 	RPoint mp;
 	int msg;

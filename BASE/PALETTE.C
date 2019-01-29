@@ -37,9 +37,9 @@ static struct PaletteCycleStruct
 } palCycleTable;
 
 
-void CopyNew2OldPalette(RPalette far* destPal, danPalette far* thePal)
+void CopyNew2OldPalette(RPalette far *destPal, danPalette far *thePal)
 {
-	byte far* theData;
+	byte far *theData;
 	int hasFlag;
 	unsigned int i, j; //KAWA WAS HERE to unsign these
 	byte theFlag;
@@ -111,7 +111,7 @@ global void RemapByPercent(int index)
 	for (i = 1; i < 236; i++)
 	{
 		//the remapPercent is limited to 255 so multiplying in an unsigned int
-		//should be sufficient to avoid overflow (255 * 255) < 2 ** 16
+		//should be sufficient to avoid overflow (255 * 255) < 2  **16
 		red = ((uint)sysPalette.gun[i].r * remapPercent[index] / 100U);
 		green = ((uint)sysPalette.gun[i].g * remapPercent[index] / 100U);
 		blue = ((uint)sysPalette.gun[i].b * remapPercent[index] / 100U);
@@ -166,9 +166,9 @@ global void RemapToPercentGray(int index)
 }
 
 
-void SubmitPalette(danPalette far* thePal)
+void SubmitPalette(danPalette far *thePal)
 {
-	byte far* theData;
+	byte far *theData;
 	int hasFlag;
 	unsigned int i, j; //KAWA WAS HERE to unsign these
 	byte theFlag;
@@ -352,7 +352,7 @@ global KERNEL(Palette)
 }
 
 
-global void SetPalIntensity(RPalette far* palette, int first, int last, int intensity)
+global void SetPalIntensity(RPalette far *palette, int first, int last, int intensity)
 {
 	int i;
 	//protect first and last entry
@@ -403,7 +403,7 @@ void RSetDanPalette(Handle srcPal)
 
 
 //add this palette to system palette
-global void RSetPalette(RPalette far* srcPal, int mode)
+global void RSetPalette(RPalette far *srcPal, int mode)
 {
 	long valid;
 
@@ -434,7 +434,7 @@ global void RSetPalette(RPalette far* srcPal, int mode)
 //Integrate this palette into the current system palette
 //observing the various rules of combination expressed by
 //the "flags" element of each palette color value & mode.
-void InsertPalette(RPalette far* srcPal, RPalette far* dstPal)
+void InsertPalette(RPalette far *srcPal, RPalette far *dstPal)
 {
 	int i;
 	char flags;
@@ -463,7 +463,7 @@ void InsertPalette(RPalette far* srcPal, RPalette far* dstPal)
 	}
 }
 
-static int near Match(Guns far* theGun, RPalette far* pal, unsigned long leastDist)
+static int near Match(Guns far *theGun, RPalette far *pal, unsigned long leastDist)
 {
 	return(FastMatch(pal, theGun->r, theGun->g, theGun->b, PAL_CLUT_SIZE, (uword) leastDist));
 }
@@ -479,7 +479,7 @@ uint PalMatch(uint r, uint g, uint b)
 }
 
 
-static void near ResetPaletteFlags(RPalette far* pal, int first, int last, byte flags)
+static void near ResetPaletteFlags(RPalette far *pal, int first, int last, byte flags)
 {
 	int i;
 	for (i = first ; i < last; i++)
@@ -489,7 +489,7 @@ static void near ResetPaletteFlags(RPalette far* pal, int first, int last, byte 
 	}
 }
 
-static void near SetPaletteFlags(RPalette far* pal, int first, int last, byte flags)
+static void near SetPaletteFlags(RPalette far *pal, int first, int last, byte flags)
 {
 	int i;
 	for (i = first ; i < last; i++)

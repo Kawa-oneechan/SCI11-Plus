@@ -14,7 +14,7 @@ global strptr sci_fgets(strptr str, int len, int fd)
 {
 	int count = 0;
 	char c;
-	char* cp = str;
+	char *cp = str;
 
 	--len; //account for trailing 0
 	while (count < len)

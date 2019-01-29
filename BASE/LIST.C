@@ -96,7 +96,7 @@
 #include "memmgr.h"
 
 
-global bool DeleteNode(List* list, ObjID node)
+global bool DeleteNode(List *list, ObjID node)
 {
 	if (IsFirstNode(node))
 		FirstNode(list) = NextNode(node);
@@ -112,7 +112,7 @@ global bool DeleteNode(List* list, ObjID node)
 }
 
 
-ObjID AddAfter(List* list, ObjID node, ObjID element, ...)
+ObjID AddAfter(List *list, ObjID node, ObjID element, ...)
 {
 	va_list	key;
 	va_start(key, element);
@@ -137,7 +137,7 @@ ObjID AddAfter(List* list, ObjID node, ObjID element, ...)
 }
 
 
-ObjID AddBefore(List* list, ObjID node, ObjID element, ...)
+ObjID AddBefore(List *list, ObjID node, ObjID element, ...)
 {
 	va_list	key;
 	va_start(key, element);
@@ -162,7 +162,7 @@ ObjID AddBefore(List* list, ObjID node, ObjID element, ...)
 }
 
 
-ObjID AddToFront(List* list, ObjID element, ...)
+ObjID AddToFront(List *list, ObjID element, ...)
 {
 	va_list	key;
 	va_start(key, element);
@@ -187,7 +187,7 @@ ObjID AddToFront(List* list, ObjID element, ...)
 }
 
 
-global ObjID MoveToFront(List* list, ObjID node)
+global ObjID MoveToFront(List *list, ObjID node)
 {
 	if (!IsFirstNode(node))
 	{
@@ -208,7 +208,7 @@ global ObjID MoveToFront(List* list, ObjID node)
 	return (node);
 }
 
-ObjID AddToEnd(List* list, ObjID element, ...)
+ObjID AddToEnd(List *list, ObjID element, ...)
 {
 	va_list	key;
 	va_start(key, element);
@@ -233,7 +233,7 @@ ObjID AddToEnd(List* list, ObjID element, ...)
 }
 
 
-global ObjID MoveToEnd(List* list, ObjID node)
+global ObjID MoveToEnd(List *list, ObjID node)
 {
 	if (!IsLastNode(node))
 	{
@@ -255,7 +255,7 @@ global ObjID MoveToEnd(List* list, ObjID node)
 }
 
 
-global ObjID FindKey(List* list, ObjID key)
+global ObjID FindKey(List *list, ObjID key)
 {
 	ObjID node;
 
@@ -268,7 +268,7 @@ global ObjID FindKey(List* list, ObjID key)
 }
 
 
-global ObjID DeleteKey(List* list, ObjID key)
+global ObjID DeleteKey(List *list, ObjID key)
 {
 	ObjID node;
 

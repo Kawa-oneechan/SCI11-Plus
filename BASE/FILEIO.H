@@ -78,19 +78,19 @@ enum fileFuncs
 extern bool criticalError;
 
 size_t readfar(int handle, Handle buffer, size_t length);
-uint ReadDos (int fd, byte far* buffer, int len);
-size_t WriteDos(int handle, void far* buffer, size_t length);
+uint ReadDos (int fd, byte far *buffer, int len);
+size_t WriteDos(int handle, void far *buffer, size_t length);
 ulong filelength(int handle);
 int unlink(strptr name);
-bool firstfile(strptr spec, int atr, DirEntry* dta);
-bool nextfile(DirEntry* dta);
+bool firstfile(strptr spec, int atr, DirEntry *dta);
+bool nextfile(DirEntry *dta);
 strptr getcwd(strptr dir);
 bool existdrive(char);
 void ResetDisk(void);
 ulong RGetFreeSpace(char drive);
 int Exists(strptr);
 int drivecheck(strptr);
-int rename(char* oldname, char* newname);
+int rename(char *oldname, char *newname);
 
 #endif
 

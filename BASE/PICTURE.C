@@ -13,7 +13,7 @@
 #include "window.h"
 #include "resource.h"
 
-RWindow* picWind;
+RWindow *picWind;
 RRect picRect = { 10, 0, 200, 320 };
 word picNotValid = 0;
 word showStyle = 0;
@@ -46,7 +46,7 @@ global void InitPicture() { }
 global void ShowPic(word mapSet, word style)
 {
 	RRect r;
-	RGrafPort* oldPort;
+	RGrafPort *oldPort;
 	int i;
 	RPalette workPalette;
 
@@ -207,7 +207,7 @@ global word PriCoord(int p)
 
 
 //Each priority band to be set in the table is specified in data
-global void PriBands(uint far* priPtr)
+global void PriBands(uint far *priPtr)
 {
 	int	priBands;
 	int	priority;
@@ -448,7 +448,7 @@ static void near Shutter(int hDir, int vDir, int mapSet, int black)
 }
 
 
-static void near ShowBlackBits(RRect* r, word mapSet)
+static void near ShowBlackBits(RRect *r, word mapSet)
 {
 	Handle saveBits;
 

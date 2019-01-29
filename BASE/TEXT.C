@@ -1,5 +1,5 @@
 /*
-** TEXT - Miscellaneous text routines.
+ **TEXT - Miscellaneous text routines.
 **
 */
 
@@ -25,7 +25,7 @@ byte textColors[MAXTEXTCOLORS];
 uint textFonts[MAXTEXTFONTS];
 byte lastTextColor;
 byte lastTextFont;
-word* newRect;
+word *newRect;
 word rectIndex;
 
 
@@ -54,7 +54,7 @@ global KERNEL(TextFonts)
 #define DEFWIDE	192
 
 //make r large enough to hold text
-global void RTextSize(RRect* r, strptr text, word font, word def)
+global void RTextSize(RRect *r, strptr text, word font, word def)
 {
 	word length, longest, count, height, oldFont, defaultFont;
 	strptr str, first;
@@ -106,7 +106,7 @@ global void RTextSize(RRect* r, strptr text, word font, word def)
 
 
 //return count of chars that fit in pixel length
-global int GetLongest(strptr* str, int max, int defaultFont)
+global int GetLongest(strptr *str, int max, int defaultFont)
 {
 	strptr last, first;
 	char c;
@@ -245,7 +245,7 @@ global int GetHighest(strptr str, int cnt, int defaultFont)
 
 
 //put the text to the box in mode requested
-global word *RTextBox(strptr text, int show, RRect* box, word mode, word font)
+global word* RTextBox(strptr text, int show, RRect *box, word mode, word font)
 {
 	strptr first, str;
 	word length, height = 0, wide, xPos, count, oldFont, curFont, pointSize;
