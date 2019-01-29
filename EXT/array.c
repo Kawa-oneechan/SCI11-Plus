@@ -43,11 +43,11 @@ int arrayElementSizes[] =
 	4  // DWORDARRAY
 };
 
-arrayHdr* array;
+arrayHdr *array;
 
 void* ArrayCalc(int index)
 {
-	char* base = (char*)array;
+	char *base = (char*)array;
 	if (index < 0 || index >= array->size)
 		DoPanic("Index out of range.");
 	return base + sizeof(arrayHdr) + (array->elementSize * index);
@@ -55,9 +55,9 @@ void* ArrayCalc(int index)
 
 void ArrayResize(int newSize)
 {
-	arrayHdr* ret;
-	char* i;
-	char* j;
+	arrayHdr *ret;
+	char *i;
+	char *j;
 	int oldByteSize, newByteSize;
 	if (newSize < 0)
 		DoPanic("ArrayResize: passed size is negative.");
@@ -80,7 +80,7 @@ void ArrayResize(int newSize)
 
 arrayHdr* MakeArray(int size, int type)
 {
-	arrayHdr* ret = NeedPtr(sizeof(arrayHdr) + (size * arrayElementSizes[type]));
+	arrayHdr *ret = NeedPtr(sizeof(arrayHdr) + (size * arrayElementSizes[type]));
 	ret->elementSize = arrayElementSizes[type];
 	ret->size = size;
 	return ret;
@@ -173,9 +173,9 @@ void ArrayFill(int startIndex, int length, int value)
 	for (index = startIndex; index <= endIndex; index++)
 		ArraySetAt(index, value);
 	/*
-	void* data;
-	int* intData;
-	char* charData;
+	void *data;
+	int *intData;
+	char *charData;
 	int endIndex = -1;
 	if (length == -1)
 		length = array->size - startIndex;
@@ -210,12 +210,12 @@ void ArrayFill(int startIndex, int length, int value)
 	*/
 }
 
-void ArrayCopy(int destIndex, void* source, int srcIndex, int length)
+void ArrayCopy(int destIndex, void *source, int srcIndex, int length)
 {
-	arrayHdr* srcArray = (arrayHdr*)source;
-	arrayHdr* tempArray;
-	char* srcPtr;
-	char* destPtr;
+	arrayHdr *srcArray = (arrayHdr*)source;
+	arrayHdr *tempArray;
+	char *srcPtr;
+	char *destPtr;
 	int byteSize;
 	if (length == -1)
 		length = array->size - srcIndex;
@@ -244,9 +244,9 @@ void ArrayCopy(int destIndex, void* source, int srcIndex, int length)
 arrayHdr* DuplicateArray()
 {
 	int byteSize = sizeof(arrayHdr) + (array->size * array->elementSize);
-	void* dup = NeedPtr(byteSize);
-	char* i = (char*)dup;
-	char* j = (char*)array;
+	void *dup = NeedPtr(byteSize);
+	char *i = (char*)dup;
+	char *j = (char*)array;
 	while (byteSize--)
 		*i++ = *j++;
 	return dup;

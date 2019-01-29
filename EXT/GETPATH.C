@@ -1,4 +1,3 @@
-
 /* GETPATH.C PATH AROUND AN OBSTACLE PLOYGON
 **
 ** Algorithm by Larry Scott
@@ -79,7 +78,7 @@ static long near ATanArray[]=
 };
 #endif
 
-AvdPoint* getpath(AvdPoint* A, AvdPoint* B, polygon* polylist, int opt)
+AvdPoint* getpath(AvdPoint *A, AvdPoint *B, polygon *polylist, int opt)
 {
 	int pathType;
 	int i, j, k;
@@ -349,14 +348,14 @@ AvdPoint* getpath(AvdPoint* A, AvdPoint* B, polygon* polylist, int opt)
 }
 
 
-static void near delPoly(polygon* polylist, int i)
+static void near delPoly(polygon *polylist, int i)
 {
 	for (; polylist[i].n != 0; ++i)
 		polylist[i] = polylist[i + 1];
 }
 
 
-static void near startPath(AvdPoint* A, AvdPoint* P)
+static void near startPath(AvdPoint *A, AvdPoint *P)
 {
 	int i = 0;
 	do
@@ -368,7 +367,7 @@ static void near startPath(AvdPoint* A, AvdPoint* P)
 }
 
 
-static void near endPath(AvdPoint* B, AvdPoint* P)
+static void near endPath(AvdPoint *B, AvdPoint *P)
 {
 	int i = 0;
 	do
@@ -379,7 +378,7 @@ static void near endPath(AvdPoint* B, AvdPoint* P)
 }
 
 
-static long near nearPoint(AvdPoint* P, AvdPoint* Poly, int n, AvdPoint* R, int Edge)
+static long near nearPoint(AvdPoint *P, AvdPoint *Poly, int n, AvdPoint *R, int Edge)
 {
 	int i;
 	long d=0x07FFFFFFF, dot1, dot2, dot3;
@@ -502,7 +501,7 @@ static long near nearPoint(AvdPoint* P, AvdPoint* Poly, int n, AvdPoint* R, int 
 }
 
 
-static void near invertPolygon(AvdPoint* Points, int n)
+static void near invertPolygon(AvdPoint *Points, int n)
 {
 	int i, j;
 	AvdPoint P;
@@ -516,7 +515,7 @@ static void near invertPolygon(AvdPoint* Points, int n)
 
 
 #ifdef TEST
-static int near testClockwise(AvdPoint* Points, int n)
+static int near testClockwise(AvdPoint *Points, int n)
 {
 	int i;
 	int angle = 0;
@@ -602,7 +601,7 @@ static int near prorateATan(long index)
 }
 
 
-static int near testColinear(AvdPoint* P, int* n)
+static int near testColinear(AvdPoint *P, int *n)
 {
 	int i, j;
 	int ret_value = 0;
@@ -709,13 +708,13 @@ static int near testColinear(AvdPoint* P, int* n)
  *  polygonN :pointer to possible polygon obstacle
  *  0 :indicates end of polyList
  */
-static AvdPoint* near avdpath(AvdPoint*A, AvdPoint*B, polygon* polylist, int opt)
+static AvdPoint* near avdpath(AvdPoint*A, AvdPoint*B, polygon *polylist, int opt)
 {
-	polygon* newPolylist;
+	polygon *newPolylist;
 	int i, j;
 	AvdPoint startPath;
-	polyNode* Npath;
-	polyNode* polyNpath;
+	polyNode *Npath;
+	polyNode *polyNpath;
 	AvdPoint Path[MAXPATH];
 	int totalNodes = 0;
 	int polyDirections, firstPolyDirection, bestPolyDirection;
@@ -836,10 +835,10 @@ static AvdPoint* near avdpath(AvdPoint*A, AvdPoint*B, polygon* polylist, int opt
 }
 
 
-static AvdPoint* near copyPath(AvdPoint* Path)
+static AvdPoint* near copyPath(AvdPoint *Path)
 {
 	int i;
-	AvdPoint* P;
+	AvdPoint *P;
 	i = 0;
 	do
 	{
@@ -861,12 +860,12 @@ static AvdPoint* near copyPath(AvdPoint* Path)
 }
 
 
-static polyNode* near avdpoly(AvdPoint* A, AvdPoint* B, polygon* polylist)
+static polyNode* near avdpoly(AvdPoint *A, AvdPoint *B, polygon *polylist)
 {
 	int n1, n2, d, i;
 	AvdPoint I1, I2;
 	polyNode *node, *newNode;
-	polyNode* Npath = 0;
+	polyNode *Npath = 0;
 	if (!((A->x == B->x) && (A->y == B->y)))
 	{
 		for (i = 0; polylist[i].n != 0; ++i)
@@ -930,9 +929,9 @@ static polyNode* near avdpoly(AvdPoint* A, AvdPoint* B, polygon* polylist)
 }
 
 
-static void near reducePolyList(polygon* polylist, polyNode* Npath)
+static void near reducePolyList(polygon *polylist, polyNode *Npath)
 {
-	polyNode* temp;
+	polyNode *temp;
 	int deleted;
 	AvdPoint I1, I2;
 	AvdPoint tmp1, tmp2;
@@ -983,7 +982,7 @@ A-----------*----------*--*-----*--*-----------*---------B
 }
 
 
-static void near removeNode(polygon* polylist, int i)
+static void near removeNode(polygon *polylist, int i)
 {
 	do
 	{
@@ -994,7 +993,7 @@ static void near removeNode(polygon* polylist, int i)
 }
 
 
-static void near freeNpath(polyNode* Npath)
+static void near freeNpath(polyNode *Npath)
 {
 	polyNode *node, *tmp;
 	for (node = Npath; node != 0;)
@@ -1010,7 +1009,7 @@ static void near freeNpath(polyNode* Npath)
 }
 
 
-static int near getPolyDirections(polyNode* Npath)
+static int near getPolyDirections(polyNode *Npath)
 {
 	int polyDirections = 0;
 	int d, i;
@@ -1039,9 +1038,9 @@ static int near getPolyDistance(AvdPoint Path[])
 }
 
 
-static void near setPolyDirections(polyNode* Npath, int polyDirections, int totalNodes)
+static void near setPolyDirections(polyNode *Npath, int polyDirections, int totalNodes)
 {
-	polyNode* node;
+	polyNode *node;
 	int i, d;
 	for (node = Npath, i = 0; (node != 0) && (i < totalNodes); ++i)
 	{
@@ -1076,7 +1075,7 @@ static void near setPolyDirections(polyNode* Npath, int polyDirections, int tota
  * output:
  *  path
  */
-static void near optpath(AvdPoint* A, AvdPoint* B, AvdPoint Path[], polyNode* Npath, polygon* polylist, int opt)
+static void near optpath(AvdPoint *A, AvdPoint *B, AvdPoint Path[], polyNode *Npath, polygon *polylist, int opt)
 {
 	int i, j, k, x;
 	int M, P0, PN, PG;
@@ -1180,10 +1179,10 @@ static void near optpath(AvdPoint* A, AvdPoint* B, AvdPoint Path[], polyNode* Np
 }
 
 
-AvdPoint* MergePolygons(AvdPoint* poly, polygon* polylist)
+AvdPoint* MergePolygons(AvdPoint *poly, polygon *polylist)
 {
 	AvdPoint P[MAXPATH];
-	AvdPoint* newPoly;
+	AvdPoint *newPoly;
 	int i, j, n;
 
 	//copy polygon to merge into P
@@ -1236,7 +1235,7 @@ AvdPoint* MergePolygons(AvdPoint* poly, polygon* polylist)
 }
 
 
-static void near MergePoly(AvdPoint* P, int n, polygon* poly)
+static void near MergePoly(AvdPoint *P, int n, polygon *poly)
 {
 	int i, j, k, m;
 	int AddNode;
@@ -1430,7 +1429,7 @@ Q[j+1]<------*-----------------Q[j]     This is an entering intersection
 }
 
 
-static int near PatchNode(polyPatch* Patch, int theNode, AvdPoint* thePoly)
+static int near PatchNode(polyPatch *Patch, int theNode, AvdPoint *thePoly)
 {
 	int offScreen;
 	if (Patch->P_i < Patch->P_j)
@@ -1446,7 +1445,7 @@ static int near PatchNode(polyPatch* Patch, int theNode, AvdPoint* thePoly)
 }
 
 
-static int near dominates(polyPatch* A, polyPatch* B, AvdPoint* poly)
+static int near dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 {
 	int Api, Bpi, Apj, Bpj, offScreen = 0;
 
@@ -1840,7 +1839,7 @@ static int near dominates(polyPatch* A, polyPatch* B, AvdPoint* poly)
 }
 
 
-int ptIntr(AvdPoint* M, AvdPoint* P, int n)
+int ptIntr(AvdPoint *M, AvdPoint *P, int n)
 {
 	AvdPoint N3, P1, P2, P3, P4;
 	AvdPoint tmp1, tmp2;
@@ -1977,7 +1976,7 @@ intersection?  yes          no             yes           no
  *         N4 ****************** N3
 */
 
-static int near polypath(AvdPoint* A, AvdPoint* B, AvdPoint* P, int n, AvdPoint* I1, AvdPoint* I2, int* nodeI1, int* nodeI2)
+static int near polypath(AvdPoint *A, AvdPoint *B, AvdPoint *P, int n, AvdPoint *I1, AvdPoint *I2, int *nodeI1, int *nodeI2)
 {
 	int distA, distB;
 	int offScreenA = FALSE, offScreenB = FALSE;
@@ -2019,7 +2018,7 @@ static int near polypath(AvdPoint* A, AvdPoint* B, AvdPoint* P, int n, AvdPoint*
  * P = polygon
  * offScreen = pointer to offscreen TRUE or FALSE
 */
-static int near distsq(int d, int nodeF, int nodeL, AvdPoint* P, int n, AvdPoint* I1, AvdPoint* I2, int* offScreen)
+static int near distsq(int d, int nodeF, int nodeL, AvdPoint *P, int n, AvdPoint *I1, AvdPoint *I2, int *offScreen)
 {
 	int distance = 0;
 	int nodeM;
@@ -2052,7 +2051,7 @@ static int near distsq(int d, int nodeF, int nodeL, AvdPoint* P, int n, AvdPoint
 }
 
 
-static int near distEstimate(AvdPoint* P2, AvdPoint* P1, int* offScreen)
+static int near distEstimate(AvdPoint *P2, AvdPoint *P1, int *offScreen)
 {
 	int deltaX, deltaY, temp;
 	//if line lies on screen edge offScreen set to TRUE
@@ -2080,7 +2079,7 @@ static int near distEstimate(AvdPoint* P2, AvdPoint* P1, int* offScreen)
 }
 
 
-static int near lineOnScreenEdge(AvdPoint* p1, AvdPoint* p2)
+static int near lineOnScreenEdge(AvdPoint *p1, AvdPoint *p2)
 {
 	if ((p1->x == p2->x) && (p1->y != p2->y) && ((p1->x == 0) || (p1->x == picWindPoly[1].x)))
 		return(1);
@@ -2105,7 +2104,7 @@ static int near lineOnScreenEdge(AvdPoint* p1, AvdPoint* p2)
  *  nodeI1 start node of line intersecting at I1
  *  nodeI2 start node of line intersecting at I2
  */
-static int near intpoly(AvdPoint* A, AvdPoint* B, AvdPoint* P, int n, AvdPoint* INT1, AvdPoint* INT2, int* nodeI1, int* nodeI2)
+static int near intpoly(AvdPoint *A, AvdPoint *B, AvdPoint *P, int n, AvdPoint *INT1, AvdPoint *INT2, int *nodeI1, int *nodeI2)
 {
 	long distA = MAXVALUELONG, distB = MAXVALUELONG, d;
 	AvdPoint N1, N2, P1, P2, P3, V, W, F1, tmp1, tmp2, tmp3, tmp4, I1, I2;
@@ -2645,7 +2644,7 @@ intersection:
 }
 
 
-static int near nodeTest(AvdPoint* tmp1, AvdPoint* P1, AvdPoint* P2, AvdPoint* P3)
+static int near nodeTest(AvdPoint *tmp1, AvdPoint *P1, AvdPoint *P2, AvdPoint *P3)
 {
 	AvdPoint tmp2, tmp3;
 
@@ -2717,7 +2716,7 @@ static int near nodeTest(AvdPoint* tmp1, AvdPoint* P1, AvdPoint* P2, AvdPoint* P
  * INTERSECT + INTERSECTI intersection internal to segments
  * interpt intersection point
 */
-static int near intsegms(AvdPoint* A, AvdPoint* B, AvdPoint* C, AvdPoint* D, AvdPoint* interpt)
+static int near intsegms(AvdPoint *A, AvdPoint *B, AvdPoint *C, AvdPoint *D, AvdPoint *interpt)
 {
 	int x1, x2;
 	long dot1, dot2, dot3, d;
@@ -2879,7 +2878,7 @@ static int near intsegms(AvdPoint* A, AvdPoint* B, AvdPoint* C, AvdPoint* D, Avd
 
 
 //vector subtraction for 2 components
-static void near v_subtract(AvdPoint* X, AvdPoint* Y, AvdPoint* Res)
+static void near v_subtract(AvdPoint *X, AvdPoint *Y, AvdPoint *Res)
 {
 	Res->x = X->x - Y->x;
 	Res->y = X->y - Y->y;
@@ -2887,7 +2886,7 @@ static void near v_subtract(AvdPoint* X, AvdPoint* Y, AvdPoint* Res)
 
 
 //vector addition for 2 components
-static void near v_add(AvdPoint* X, AvdPoint* Y, AvdPoint* Res)
+static void near v_add(AvdPoint *X, AvdPoint *Y, AvdPoint *Res)
 {
 	Res->x = X->x + Y->x;
 	Res->y = X->y + Y->y;
@@ -2895,14 +2894,14 @@ static void near v_add(AvdPoint* X, AvdPoint* Y, AvdPoint* Res)
 
 
 //2 component dot product
-static long near v_dot(AvdPoint* X, AvdPoint* Y)
+static long near v_dot(AvdPoint *X, AvdPoint *Y)
 {
 	return (((long)X->x) * ((long)Y->x) + ((long)X->y) * ((long)Y->y));
 }
 
 
 //return the third component of a cross product
-static int near v_cross3rd_comp(AvdPoint* X, AvdPoint* Y)
+static int near v_cross3rd_comp(AvdPoint *X, AvdPoint *Y)
 {
 	long direction;
 	direction = ((((long)X->x) * ((long)Y->y)) - (((long)X->y) * ((long)Y->x)));
@@ -2915,7 +2914,7 @@ static int near v_cross3rd_comp(AvdPoint* X, AvdPoint* Y)
 
 
 //return the magnitude (squared) of vector X
-static long near v_sizesqrd(AvdPoint* X, AvdPoint* Y)
+static long near v_sizesqrd(AvdPoint *X, AvdPoint *Y)
 {
 	long x, y;
 	x = (((long)X->x) - ((long)Y->x)) * (((long)X->x) - ((long)Y->x));

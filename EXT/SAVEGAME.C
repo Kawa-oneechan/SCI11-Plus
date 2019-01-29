@@ -39,14 +39,14 @@
 #include "movie.h"
 #include "sci.h"
 
-static void near Save(byte far* start, byte far* end);
-static void near Restore(byte far* bp);
+static void near Save(byte far *start, byte far *end);
+static void near Restore(byte far *bp);
 static uint near inword(void);
 static void near outbyte(byte c);
 static void near outword(word w);
 static void near outstr(strptr str);
 static bool near CheckSaveGame(strptr version);
-static int near GetSaveFiles(strptr name, strptr names, int* nums);
+static int near GetSaveFiles(strptr name, strptr names, int *nums);
 static bool near PutSaveFiles(strptr name, strptr desc, int num);
 
 char saveDir[65] = "";
@@ -136,8 +136,8 @@ KERNEL(RestoreGame)
 {
 	char file[64];
 	ObjID sp;
-	LoadLink _far** res;
-	LoadLink _far** next;
+	LoadLink _far **res;
+	LoadLink _far **next;
 	int ticks;
 	byte lastVideoMode = currentVideoMode;
 	word passVideoMode[2];
@@ -335,7 +335,7 @@ ulong GetSaveLength()
 }
 
 
-static void near Save(byte far* start, byte far* end)
+static void near Save(byte far *start, byte far *end)
 {
 	long offset1, offset2;
 
@@ -352,7 +352,7 @@ static void near Save(byte far* start, byte far* end)
 }
 
 
-static void near Restore(byte far* bp)
+static void near Restore(byte far *bp)
 {
 	//File contains 1 word of data length followed by compressed data
 	pkExplode(fd, bp, inword());
@@ -406,7 +406,7 @@ KERNEL(GetSaveFiles)
 
 //Read the save-game directory, putting file descriptions in the array
 //pointed to by 'names', the file numbers in the array pointed to by 'nums'.
-static int near GetSaveFiles(strptr name, strptr names, int* nums)
+static int near GetSaveFiles(strptr name, strptr names, int *nums)
 {
 	char file[65];
 	int n, tempNum, numSaves;

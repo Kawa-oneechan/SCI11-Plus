@@ -37,7 +37,7 @@ struct pseudoCursor
 
 extern word NumberColors;
 extern byte currentVideoMode;
-extern RGrafPort* rThePort;
+extern RGrafPort *rThePort;
 extern char palVaryOn;
 extern char palVaryPause;
 extern word palettePercent;
@@ -49,7 +49,7 @@ extern Handle startPalette;
 extern Handle targetPalette;
 extern Handle newPalette;
 extern word NumberColors;
-extern char* theFont;
+extern char *theFont;
 extern short wordBits[];
 
 void GetCLUT(RPalette far*);

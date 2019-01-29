@@ -58,7 +58,7 @@ global bool InitAudioDriver()
 {
 	uint newSize;
 	char pathName[64];
-	char* cp;
+	char *cp;
 	Handle oldPtr;
 	Hunkptr buffAdr;
 	struct {
@@ -66,8 +66,8 @@ global bool InitAudioDriver()
 		char unused;
 		char irq;
 		char dma;
-		void far* armWrite;
-		void far* armRead;
+		void far *armWrite;
+		void far *armRead;
 	} audArgs;
 
 	//If audio is not requested -- vamboose
@@ -279,7 +279,7 @@ global KERNEL(DoAudio)
 }
 
 
-global void SetAudParms(word* args)
+global void SetAudParms(word *args)
 {
 	if (argCount < 6)
 	{
@@ -335,7 +335,7 @@ global KERNEL(CDAudio)
 
 
 //CD-Red book functions
-global bool CDAudioPlay(word* args)
+global bool CDAudioPlay(word *args)
 {
 	struct {
 		uint track;
@@ -613,7 +613,7 @@ ulong FindAudEntry(uint id)
 {
 	long offset;
 	Handle map;
-	ResAudEntry far* entry;
+	ResAudEntry far *entry;
 
 	if (sfxVolFd == CLOSED)
 		return((ulong)-1L); //KAWA WAS HERE
@@ -637,8 +637,8 @@ ulong FindAud36Entry(uint module, byte noun, byte verb, byte cond, byte sequ)
 {
 	long offset;
 	Handle map;
-	char far* ptr36;
-	ResAud36Entry far* entry36;
+	char far *ptr36;
+	ResAud36Entry far *entry36;
 
 	if (audVolFd == CLOSED)
 		return((ulong)-1L); //KAWA WAS HERE
@@ -695,7 +695,7 @@ void AudARMTerm() {
 }
 
 
-bool AudARMRead(uint len, void far* buff)
+bool AudARMRead(uint len, void far *buff)
 {
 	if (ARMCritical() || (ulong)len > bytesBuffered)
 		return FALSE;

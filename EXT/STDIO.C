@@ -26,7 +26,7 @@ void puts(strptr str)
 }
 
 
-int sprintf(char* str, char* fp, ...)
+int sprintf(char *str, char *fp, ...)
 {
 	va_list ap;
 	int rc;
@@ -38,7 +38,7 @@ int sprintf(char* str, char* fp, ...)
 }
 
 
-int vsprintf(char* str, char* fp, va_list ap)
+int vsprintf(char *str, char *fp, va_list ap)
 {
 	strptr sp;
 	char theStr[20];

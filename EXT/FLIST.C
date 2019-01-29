@@ -25,14 +25,14 @@ bool FIsFirstNode(word node)
 
 
 // Returns first node in list (value in list.lHead will be zero for empty list).
-word FFirstNode(FList* list)
+word FFirstNode(FList *list)
 {
 	return list->head;
 }
 
 
 //Returns last node in list (value in list.lTail will be zero for empty list).
-word FLastNode(FList* list)
+word FLastNode(FList *list)
 {
 	return list->tail;
 }
@@ -61,7 +61,7 @@ word FPrevNode(word node)
 
 
 //Add this element to front of list and return the node added.
-word FAddToFront(FList* list, word node)
+word FAddToFront(FList *list, word node)
 {
 	FNodePtr np;
 	_cli();
@@ -80,7 +80,7 @@ word FAddToFront(FList* list, word node)
 
 
 //Delete 'node' from the list.  Return TRUE if the list still has elements.
-bool FDeleteNode(FList* list, word node)
+bool FDeleteNode(FList *list, word node)
 {
 	FNodePtr np;
 	_cli();
@@ -99,7 +99,7 @@ bool FDeleteNode(FList* list, word node)
 
 
 //Move this node to the front of the list.
-word FMoveToFront(FList* list, word node)
+word FMoveToFront(FList *list, word node)
 {
 	if (list->head != node)
 	{

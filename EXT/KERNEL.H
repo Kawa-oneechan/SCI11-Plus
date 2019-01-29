@@ -83,7 +83,7 @@
 //sortNode used in Sort
 typedef struct
 {
-	Obj* sortObject;
+	Obj *sortObject;
 	int sortKey;
 } SortNode;
 

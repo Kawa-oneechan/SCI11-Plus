@@ -53,13 +53,13 @@
 #include "resource.h"
 #include "selector.h"
 
-static void near InitHeapRes(Handle h, Script* sp);
-static void near InitHunkRes(Handle h, Script* sp);
-static void near InitObj(Obj* op, Script* sp);
-static void near DoFixups(uword _far* fixTbl, byte _far* fixBase, byte _far* fixOfs, int sign);
-static void near TossScriptObjects(Script* sp);
+static void near InitHeapRes(Handle h, Script *sp);
+static void near InitHunkRes(Handle h, Script *sp);
+static void near InitObj(Obj *op, Script *sp);
+static void near DoFixups(uword _far *fixTbl, byte _far *fixBase, byte _far *fixOfs, int sign);
+static void near TossScriptObjects(Script *sp);
 static Script* near FindScript(int n);
-static void near TossScript(Script* sp, bool checkClones);
+static void near TossScript(Script *sp, bool checkClones);
 static void near TossScriptClasses(uint n);
 static Obj* near GetClass(int n);
 
@@ -74,7 +74,7 @@ void InitScripts()
 //Return a pointer to the node for script n. Load the script if necessary.
 Script* ScriptPtr(int n)
 {
-	Script* sp;
+	Script *sp;
 
 	if ((sp = FindScript(n))== NULL)
 		sp = LoadScript(n);
@@ -87,7 +87,7 @@ Script* ScriptPtr(int n)
 //clear its local variables, and return a pointer to its script node.
 Script* LoadScript(int n)
 {
-	Script* sp;
+	Script *sp;
 	Handle heap;
 	Handle hunk;
 
@@ -107,7 +107,7 @@ Script* LoadScript(int n)
 }
 
 
-void ReloadScript(Script* sp)
+void ReloadScript(Script *sp)
 {
 	uint n;
 	Handle hunk;
@@ -119,12 +119,12 @@ void ReloadScript(Script* sp)
 }
 
 
-static void near InitHeapRes(Handle h, Script* sp)
+static void near InitHeapRes(Handle h, Script *sp)
 {
-	HeapRes _far* heapRes = (HeapRes _far*)*h;
-	HeapRes* heap;
+	HeapRes _far *heapRes = (HeapRes _far*)*h;
+	HeapRes *heap;
 	uint heapLen;
-	Obj* op;
+	Obj *op;
 
 	//The first word of the heap resource is the offset to the fixup tables
 	//for the resource (which are at the end of the resource). This is thus
@@ -144,9 +144,9 @@ static void near InitHeapRes(Handle h, Script* sp)
 }
 
 
-static void near InitObj(Obj* op, Script* sp)
+static void near InitObj(Obj *op, Script *sp)
 {
-	Obj* cp;
+	Obj *cp;
 
 	//Set the address of the object's superclass (the compiler puts the
 	//class number of the superclass in the -super- property)
@@ -173,10 +173,10 @@ static void near InitObj(Obj* op, Script* sp)
 }
 
 
-static void near InitHunkRes(Handle h, Script* sp)
+static void near InitHunkRes(Handle h, Script *sp)
 {
-	HunkRes _far* hunk;
-	uword _far* fp;
+	HunkRes _far *hunk;
+	uword _far *fp;
 
 	sp->hunk = h;
 	hunk = (HunkRes _far*)*sp->hunk;
@@ -194,10 +194,10 @@ static void near InitHunkRes(Handle h, Script* sp)
 
 
 #pragma warning (disable: 4759)//KAWA WAS HERE -- can't FIX this "segment lost in conversion", but I can HIDE it ;)
-static void near DoFixups(uword _far* fixTbl, byte _far* fixBase, byte _far* fixOfs, int sign)
+static void near DoFixups(uword _far *fixTbl, byte _far *fixBase, byte _far *fixOfs, int sign)
 {
 	uint numFix;
-	uword _far* hp;
+	uword _far *hp;
 
 	for (numFix = *fixTbl++; numFix--; )
 	{
@@ -213,7 +213,7 @@ static void near DoFixups(uword _far* fixTbl, byte _far* fixBase, byte _far* fix
 //Dispose of the entire script list (for restart game).
 void DisposeAllScripts()
 {
-	Script* sp;
+	Script *sp;
 
 	for (sp = (Script*)Native(FirstNode(&scriptList)); !EmptyList((List*)&scriptList); sp = (Script*)Native(FirstNode(&scriptList)))
 		TossScript(sp, FALSE);
@@ -230,7 +230,7 @@ void DisposeScript(int n)
 }
 
 
-static void near TossScript(Script* sp, bool checkClones)
+static void near TossScript(Script *sp, bool checkClones)
 {
 	int n = ScriptNumber(sp);
 
@@ -250,10 +250,10 @@ static void near TossScript(Script* sp, bool checkClones)
 }
 
 
-void ResetHunk(HunkRes _far* hunk)
+void ResetHunk(HunkRes _far *hunk)
 {
-	Script* sp;
-	uword _far* fp;
+	Script *sp;
+	uword _far *fp;
 
 	sp = (Script*)Native(hunk->script);
 	if (hunk->script)
@@ -300,9 +300,9 @@ static void near TossScriptClasses(uint n)
 
 
 //Scan through the script unmarking the objects.
-static void near TossScriptObjects(Script* sp)
+static void near TossScriptObjects(Script *sp)
 {
-	Obj* op;
+	Obj *op;
 
 	for (op = (Obj*)(&sp->heap->vars + sp->heap->numVars); op->objID == OBJID; op = (Obj*)((uword*)op + op->size))
 		op->objID = 0;

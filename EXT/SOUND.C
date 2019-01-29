@@ -101,7 +101,7 @@ global void TermSndDrv()
 
 global void KillAllSounds()
 {
-	Sound* sn;
+	Sound *sn;
 	Handle theHandle;
 
 	//Stop and delete each node in the sound list
@@ -135,8 +135,8 @@ global void KillAllSounds()
 
 global void RestoreAllSounds()
 {
-	Sound* sn;
-	Obj* soundObj;
+	Sound *sn;
+	Obj *soundObj;
 	Handle sHandle;
 	int soundId;
 
@@ -191,7 +191,7 @@ global byte GetSoundResType(uint resId)
 //Kernel Functions
 global KERNEL(DoSound)
 {
-	Obj* soundObj = (Obj*)Native(arg(2));
+	Obj *soundObj = (Obj*)Native(arg(2));
 
 	switch(arg(1))
 	{
@@ -280,9 +280,9 @@ global void SuspendSounds(int onOff)
 
 //Allocate a sound node for the object being initialized if there isn't already one), load the sound resource
 //specified in the s_number property, and set up the node properties
-global void InitSnd(Obj* soundObj)
+global void InitSnd(Obj *soundObj)
 {
-	Sound* sn;
+	Sound *sn;
 	int soundId;
 	byte sample;
 
@@ -328,9 +328,9 @@ global void InitSnd(Obj* soundObj)
 
 
 //Stop the sound and delete it's node
-global void KillSnd(Obj* soundObj)
+global void KillSnd(Obj *soundObj)
 {
-	Sound* sn;
+	Sound *sn;
 
 	sn = (Sound*)Native(GetProperty(soundObj, s_nodePtr));
 	StopSnd(soundObj);
@@ -346,12 +346,12 @@ global void KillSnd(Obj* soundObj)
 
 
 //Load the resource in the s_number property of the object, lock the resource, and start the sound playing
-global void PlaySnd(Obj* soundObj, int how)
+global void PlaySnd(Obj *soundObj, int how)
 {
-	Sound* sn;
+	Sound *sn;
 	Handle sHandle;
 	int soundId;
-	LoadLink far** scan;
+	LoadLink far **scan;
 
 	if (!GetProperty(soundObj, s_nodePtr))
 		InitSnd(soundObj);
@@ -436,7 +436,7 @@ global void PlaySnd(Obj* soundObj, int how)
 }
 
 
-global void StopSnd(Obj* soundObj)
+global void StopSnd(Obj *soundObj)
 {
 	Sound *sn, *searchSn;
 
@@ -489,9 +489,9 @@ global void StopSnd(Obj* soundObj)
 }
 
 
-global void PauseSnd(Obj* soundObj, int stopStart)
+global void PauseSnd(Obj *soundObj, int stopStart)
 {
-	Sound* sn;
+	Sound *sn;
 
 	/* If the Object parameter is 0, then we want to pause/unpause
 	 * every node. If it is nonzero, pause/unpause only the node
@@ -505,9 +505,9 @@ global void PauseSnd(Obj* soundObj, int stopStart)
 
 
 //Fade the node belonging to the object specified using the fade function of MIDI.S
-global void FadeSnd(Obj* soundObj, int newVol, int fTicks, int fSteps, int fEnd)
+global void FadeSnd(Obj *soundObj, int newVol, int fTicks, int fSteps, int fEnd)
 {
-	Sound* sn;
+	Sound *sn;
 
 	if (fEnd)
 		newVol += 128;
@@ -522,9 +522,9 @@ global void FadeSnd(Obj* soundObj, int newVol, int fTicks, int fSteps, int fEnd)
  * in which sounds can be looped in the middle, and continue
  * on towards the end after being released
  */
-global void HoldSnd(Obj* soundObj, int where)
+global void HoldSnd(Obj *soundObj, int where)
 {
-	Sound* sn;
+	Sound *sn;
 
 	if (sn = (Sound*)Native(GetProperty(soundObj, s_nodePtr)))
 		DoSound(SHold, (char far*)sn,where);
@@ -532,9 +532,9 @@ global void HoldSnd(Obj* soundObj, int where)
 
 
 //Change the volume of the sound node and the sound object to the value passed in
-global void SetSndVol(Obj* soundObj, int newVol)
+global void SetSndVol(Obj *soundObj, int newVol)
 {
-	Sound* sn;
+	Sound *sn;
 
 	if (sn = (Sound*)Native(GetProperty(soundObj, s_nodePtr)))
 	{
@@ -553,9 +553,9 @@ global void SetSndVol(Obj* soundObj, int newVol)
  * sound object. If it is not -1, then set both of those
  * flags
  */
-global void SetSndPri(Obj* soundObj, int newPri)
+global void SetSndPri(Obj *soundObj, int newPri)
 {
-	Sound* sn;
+	Sound *sn;
 
 	if (sn = (Sound*)Native(GetProperty(soundObj, s_nodePtr)))
 	{
@@ -575,9 +575,9 @@ global void SetSndPri(Obj* soundObj, int newPri)
 
 
 //Set the loop property of the sound node and the sound object to the value passed in.
-global void SetSndLoop(Obj* soundObj, int newLoop)
+global void SetSndLoop(Obj *soundObj, int newLoop)
 {
-	Sound* sn;
+	Sound *sn;
 
 	if (sn = (Sound*)Native(GetProperty(soundObj, s_nodePtr)))
 	{
@@ -600,9 +600,9 @@ global void SetSndLoop(Obj* soundObj, int newLoop)
  * cycle (in the sounds check: method), or the time and cue
  * information in the sound object will be wrong
  */
-global void UpdateCues(Obj* soundObj)
+global void UpdateCues(Obj *soundObj)
 {
-	Sound* sn;
+	Sound *sn;
 	int min, sec, frame, signal;
 
 	if (sn = (Sound*)Native(GetProperty(soundObj, s_nodePtr)))
@@ -646,9 +646,9 @@ global void UpdateCues(Obj* soundObj)
 
 
 //Send MIDI a command to any channel of the node belonging to the specified object
-global void MidiSend(Obj* soundObj, int channel, int command, int value1, int value2)
+global void MidiSend(Obj *soundObj, int channel, int command, int value1, int value2)
 {
-	Sound* sn;
+	Sound *sn;
 
 	channel--;
 	if (command == PBEND)
@@ -697,11 +697,11 @@ global void MidiSend(Obj* soundObj, int channel, int command, int value1, int va
 
 //Update the sLoop, sVolume, and sPriority properties of the sound node to
 //what is currently in those properties of object which the node belongs to
-global void ChangeSndState(Obj* soundObj)
+global void ChangeSndState(Obj *soundObj)
 {
 	//This function is on it's way out (after KQ5 cd and Jones cd ship)
 	//KAWA WAS HERE Y'ALL
-	Sound* sn;
+	Sound *sn;
 
 	if (sn = (Sound*)Native(GetProperty(soundObj, s_nodePtr)))
 	{

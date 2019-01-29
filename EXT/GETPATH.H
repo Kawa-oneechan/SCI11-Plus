@@ -13,7 +13,7 @@ typedef struct AvdPoint AvdPoint;
 
 struct polygon
 {
-	AvdPoint* polyPoints;	//points to points of polygon
+	AvdPoint *polyPoints;	//points to points of polygon
 	byte type;				//number of nodes in polygon
 	byte info; 				//bit flag info
 	int n;					//number of nodes in polygon
@@ -22,14 +22,14 @@ typedef struct polygon polygon;
 
 struct polyNode
 {
-	struct polyNode* next;	//pointer to next path in list
-	struct polyNode* prev;	//pointer to previous path in list
+	struct polyNode *next;	//pointer to next path in list
+	struct polyNode *prev;	//pointer to previous path in list
 	AvdPoint I1;			//intersection nearest to A
 	AvdPoint I2;			//intersection nearest to B
 	int d;					//direction to travel on polygon
 	int n1;					//first node encountered when traversing polygon
 	int n2;					//last node encountered when traversing polygon
-	AvdPoint* poly;			//points to polygon
+	AvdPoint *poly;			//points to polygon
 	int n;					//number of nodes in polygon
 	int i;					//index into polylist for this polygon
 };

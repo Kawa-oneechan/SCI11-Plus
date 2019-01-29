@@ -10,7 +10,7 @@
 
 //KAWA WAS HERE
 //Use this to not feel as tempted to use args directly.
-#define KERNEL(x)		void K##x (word* args)
+#define KERNEL(x)		void K##x (word *args)
 typedef signed short	int16;
 typedef signed long		int32;
 typedef unsigned short	uint16;

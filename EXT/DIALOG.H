@@ -17,7 +17,7 @@
 
 extern void InitDialog(boolfptr);
 extern void RHiliteControl(Obj*);
-extern word *DrawControl(Obj*);
+extern word* DrawControl(Obj*);
 extern word EditControl(Obj*, Obj*);
 extern int GetLine(strptr, strptr, int); //accept or modify the string in buffer
 extern void RGlobalToLocal(RPoint*);

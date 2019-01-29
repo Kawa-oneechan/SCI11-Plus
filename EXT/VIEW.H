@@ -68,10 +68,10 @@ struct newView
 	uchar hIsSplitFlag;
 	uchar dummy2;
 	uint celCount;
-	newPalette far* paletteOffset;
+	newPalette far *paletteOffset;
 	uchar loopHeaderSize;
 	uchar celHeaderSize;
-	void far* animationOffset;
+	void far *animationOffset;
 };
 typedef struct newView newView;
 */

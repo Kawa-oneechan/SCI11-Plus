@@ -220,9 +220,9 @@ global void GetExecDir(strptr path)
 {
 #ifdef DEBUG
 	int i;
-	char far* cmdPath;
-	word far* envSeg;
-	char far* envPtr;
+	char far *cmdPath;
+	word far *envSeg;
+	char far *envPtr;
 
 	envSeg = (word far*)(((long)pspSeg << 16) + 0x2c);
 	envPtr = (char far*)((long)*envSeg << 16);

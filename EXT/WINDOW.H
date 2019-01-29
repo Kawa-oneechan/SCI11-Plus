@@ -36,7 +36,7 @@ typedef struct
 #define	STDWIND		0
 #define	CUSTOMWIND	0x80
 
-extern RGrafPort* wmgrPort;
+extern RGrafPort *wmgrPort;
 extern List windowList;
 extern uint winTitleBackColor;
 extern uint winTitleTextColor;
