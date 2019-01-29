@@ -11,13 +11,13 @@
 ;
 ;Hunks:
 ;	These will be used for space for data loaded from disk, 
-;	background save areas, etc.  These should be implemented
+;	background save areas, etc. These should be implemented
 ;	in such a way as to give the largest address space possible.
 ;
 ;Revision History:
 ;
 ;90.03.23 Abdul
-;	Changed to use .MODEL directive and simplified segments.  
+;	Changed to use .MODEL directive and simplified segments.
 ;	Microsoft MASM 5.1.
 ;
 ;90.03.16 Larry Scott & Corinna Abdul
@@ -30,7 +30,7 @@
 ;
 ;87.08.16 16:4	JAS
 ;	CopyHandle added. InitMem now allocates as much memory as it can,
-;	but insists on at least hunkSize paragraphs.  Fixed FillPtr
+;	but insists on at least hunkSize paragraphs. Fixed FillPtr
 ;
 ;87.05.06 15:51	JAS
 ;	Module created.
@@ -54,75 +54,69 @@ include string.i
 ;-------------------------------------------------------------------------------
 
 ;Status bits for hunkHeaders
-LOCKED			equ	1
-ALLOCATED		equ	2
-CRITICAL			equ	80h
+LOCKED		equ	1
+ALLOCATED	equ	2
+CRITICAL	equ	80h
 
 ;These are the minimum sizes for free block or hunks.
-MIN_BLOCK_SIZE	equ	4		;in bytes
-MIN_HUNK_SIZE	equ	2		;in paragraphs (16 bytes)
+MIN_BLOCK_SIZE	equ	4	;in bytes
+MIN_HUNK_SIZE	equ	2	;in paragraphs (16 bytes)
 
-HANDLESIZE		equ	4
-LONGSIZE		   equ	4
-WORDSIZE		   equ	2
+HANDLESIZE	equ	4
+LONGSIZE	equ	4
+WORDSIZE	equ	2
 
-AllocMem		   equ	48h
+AllocMem	equ	48h
 
 ;-------------------------------------------------------------------------------
-;			DATA AND INITIALIZATION
+;	DATA AND INITIALIZATION
 ;-------------------------------------------------------------------------------
-
 
 ;Free list structure for hunks
 hunk	struc
-	hNext		word	?	;pointer to next free hunk in list
-	hSize		word	?	;size of hunk
+	hNext	word	?	;pointer to next free hunk in list
+	hSize	word	?	;size of hunk
 	status	word	?	;status of this hunk
 hunk	ends
 
 ;-------------------------------------------------------------------------------
 
-	.DATA?
+.DATA?
 
-hunkAvail		word	0ffffh
-heapAvail		word	?
-heapBase			word	?
-handleBase		word	?
-handlePtr		word	?
-restartBase		word	?
+hunkAvail	word	0ffffh
+heapAvail	word	?
+heapBase	word	?
+handleBase	word	?
+handlePtr	word	?
+restartBase	word	?
 
 ;All hunk addresses are paragraph addresses (real addresses/16)
-hunkBase 		word	?	;address of base of hunk space
-hunkTop			word	?	;top of hunk space
-hunkList 		word	?	;segment of starting hunk in free hunk list
+hunkBase 	word	?	;address of base of hunk space
+hunkTop		word	?	;top of hunk space
+hunkList 	word	?	;segment of starting hunk in free hunk list
 
-handle			word	?
-prevFree 		word	?
-packDone 		word	?
+handle		word	?
+prevFree 	word	?
+packDone 	word	?
 
 savedHeapStart	word	?
 
-
 ;-------------------------------------------------------------------------------
 
+.DATA
 
-	.DATA
-
-;hunkHdr		byte	"Hunks:", LF, "    hunkList -> %x", LF, 0
-;nextMsg		byte	": next -> %x", LF, 0
-;hunkMsg		byte	"    %x -- %x paragraphs: %s", 0
-;freeStr		byte	"free", 0
-;allocStr		byte	"allocated", 0
-;lockStr		byte	"locked", 0
+;hunkHdr	byte	"Hunks:", LF, "	hunkList -> %x", LF, 0
+;nextMsg	byte	": next -> %x", LF, 0
+;hunkMsg	byte	"	%x -- %x paragraphs: %s", 0
+;freeStr	byte	"free", 0
+;allocStr	byte	"allocated", 0
+;lockStr	byte	"locked", 0
 
 ;hunkErrMsg	byte	"Check Hunk Error no:%d",0
 
-
-
 ;-------------------------------------------------------------------------------
 
-	.CODE
-
+.CODE
 
 ;-------------------------------------------------------------------------------
 ;Initialize the heap from which pointers will be allocated, and the
@@ -134,31 +128,31 @@ InitHeap	proc	uses di, theBase:word, theSize:word
 	xor	ax, ax
 	mov	di, theBase
 	mov	cx, theSize
-	mov   heapAvail, cx
+	mov	heapAvail, cx
 	shr	cx, 1
 	rep	stosw
-	
+
 	;Initialize the handle table, which is at the top of the heap.
 	mov	ax, theBase
 	add	ax, theSize
-	mov   bx, numHandles
-	shl   bx, 1										;each handle takes 4 bytes
-	shl   bx, 1
+	mov	bx, numHandles
+	shl	bx, 1		;each handle takes 4 bytes
+	shl	bx, 1
 ifdef DEBUG
 	;Following code sets up a duplicate handle table
 	; if X command line option has been specified
 	.if	checkingLoadLinks
-		shl   bx, 1
+		shl	bx, 1
 	.endif
 endif
-	sub   ax, bx
+	sub	ax, bx
 	mov	handleBase, ax
 	mov	handlePtr, ax
 
 	;Set up the initial free block.
 	mov	bx, theBase
 	mov	heapBase, bx
-	sub	ax, bx									;ax = _handleBase
+	sub	ax, bx		;ax = _handleBase
 assume	bx:ptr block
 	mov	[bx].bSize, ax
 	mov	[bx].bNext, 0
@@ -182,8 +176,8 @@ InitHandle	proc	uses si, baseSeg:word, paraSize:word
 	mov	es, ax
 	xor	si, si
 assume	si:ptr hunk
-	mov	es:[si].hNext, si  					;no next block
-	mov	es:[si].status, si					;unlocked and free
+	mov	es:[si].hNext, si	;no next block
+	mov	es:[si].status, si	;unlocked and free
 	mov	bx, paraSize
 	mov	es:[si].hSize, bx
 assume	si:nothing
@@ -205,20 +199,20 @@ InitMem	proc	uses di, maxHunkSize:word
 	;Zero out the BSS data.
 	cld
 
-	mov	di, offset @data:bssStart			;beginning of bss area
-	mov	cx, offset @data:bssEnd				;end of bss area
+	mov	di, offset @data:bssStart	;beginning of bss area
+	mov	cx, offset @data:bssEnd		;end of bss area
 	sub	cx, di
 	xor	ax, ax
-	rep	stosb										;zero bss
+	rep	stosb				;zero bss
 
 	;Set up the free list with the memory lying between static
-	;data and the stack.  Make sure that the heap starts on a
+	;data and the stack. Make sure that the heap starts on a
 	;word boundary.
-	mov	ax, offset @data:bssEnd				;get start of free mem
+	mov	ax, offset @data:bssEnd		;get start of free mem
 	.if	ax & 1
 		inc	ax
 	.endif
-	mov	bx, stackBase		
+	mov	bx, stackBase
 	sub	bx, ax
 	invoke	InitHeap, ax, bx
 
@@ -232,7 +226,7 @@ InitMem	proc	uses di, maxHunkSize:word
 		dos	AllocMem
 	.endif
 	mov	hunkAvail, bx
-	
+
 	; we get to use BX paragraphs starting at para AX
 	invoke	InitHandle, ax, bx
 
@@ -241,25 +235,24 @@ InitMem	proc	uses di, maxHunkSize:word
 InitMem	endp
 
 
-
 ;-------------------------------------------------------------------------------
-;				POINTERS
+;	POINTERS
 ;-------------------------------------------------------------------------------
 ;
 ;On the IBM & compatibles, 'freeList' points to the first block in a
-;free list.  This block has a header which contains a pointer to the
+;free list. This block has a header which contains a pointer to the
 ;next block in the list or NULL if it is at the end of the list.
-;A first-fit strategy is used to allocate the block.  When allocating
+;A first-fit strategy is used to allocate the block. When allocating
 ;a block, enough extra space is allocated that the allocated block size
 ;can be stored at the beginning of the block -- the pointer returned
-;is to the first byte past this size.  This size is used when we free
+;is to the first byte past this size. This size is used when we free
 ;the block.
 ;-------------------------------------------------------------------------------
 
-RNewPtr		proc	uses si di, theSize:word
+RNewPtr	proc	uses si di, theSize:word
 ;-------------------------------------------------------------------------------
 ;Return a pointer to 'size' bytes in the heap, or NULL if there is no
-;free block large enough to do so.  Always allocate in multiples of words.
+;free block large enough to do so. Always allocate in multiples of words.
 ;
 ;Register usage:
 ;	bx	pointer to previous block in list
@@ -269,7 +262,7 @@ RNewPtr		proc	uses si di, theSize:word
 ;-------------------------------------------------------------------------------
 
 	;The required size is the requested size plus enough space to
-	;hold the allocated block size.  Round up to an even number of bytes.
+	;hold the allocated block size. Round up to an even number of bytes.
 	mov	cx, theSize
 	.if	!cx
 		invoke Panic, E_HEAP_ALLOC
@@ -285,8 +278,8 @@ assume	di:ptr block
 assume	bx:ptr block
 
 	;Search the free list for a free block large enough.
-	xor	bx, bx							;previous ptr = NULL
-	mov	si, freeList					;pointer to start of list
+	xor	bx, bx			;previous ptr = NULL
+	mov	si, freeList		;pointer to start of list
 	.while	si && cx > [si].bSize
 		mov	bx, si
 		mov	si, [si].bNext
@@ -299,29 +292,29 @@ assume	bx:ptr block
 	.endif
 
 	;If the block we've found isn't big enough to break in two, 
-	;allocate the whole thing.  Otherwise, break it up.
+	;allocate the whole thing. Otherwise, break it up.
 	mov	ax, [si].bSize
 	sub	ax, cx
 	.if	ax < MIN_BLOCK_SIZE
-		mov	cx, [si].bSize				;set required size = block size
-		mov	di, [si].bNext				;get pointer to next block
+		mov	cx, [si].bSize	;set required size = block size
+		mov	di, [si].bNext	;get pointer to next block
 	.else
 		;Create a new block following this one.
 		mov	di, si
 		add	di, cx
 		mov	ax, [si].bNext
-		mov	[di].bNext, ax				;point new block to next block in list
+		mov	[di].bNext, ax	;point new block to next block in list
 		mov	ax, [si].bSize
 		sub	ax, cx
-		mov	[di].bSize, ax				;set new block's size
+		mov	[di].bSize, ax	;set new block's size
 	.endif
-	
+
 	;Link around the allocated block.
 	.if	bx
-		mov	[bx].bNext, di				;Link the previous block to the next block.
+		mov	[bx].bNext, di	;Link the previous block to the next block.
 	.else
-		mov	freeList, di				;Current block was first block in the list --
-	.endif									; point the list head to the next block
+		mov	freeList, di	;Current block was first block in the list --
+	.endif				; point the list head to the next block
 
 	;Put the block size in the first word of the current block.
 	mov	[si].bSize, cx
@@ -336,12 +329,11 @@ assume	bx:nothing
 
 	return
 
-
-RNewPtr		endp
-
+RNewPtr	endp
 
 
-NeedPtr		proc	theSize:word
+
+NeedPtr	proc	theSize:word
 ;-------------------------------------------------------------------------------
 ;Try to get a pointer and abort the program if we can't.
 ;-------------------------------------------------------------------------------
@@ -369,9 +361,9 @@ FillPtr	proc	uses di, thePtr:word, theByte:byte
 	mov	ax, ds
 	mov	es, ax
 	mov	al, theByte
-	mov	di, thePtr	      		;get pointer to memory
-	mov	cx, [di-WORDSIZE]     		;get size of block
-	sub	cx, WORDSIZE	      		;minus size of header
+	mov	di, thePtr		;get pointer to memory
+	mov	cx, [di-WORDSIZE]	;get size of block
+	sub	cx, WORDSIZE		;minus size of header
 	rep	stosb
 	ret
 
@@ -404,7 +396,7 @@ DisposePtr	proc	uses si di, thePtr:word
 
 	;Convert the returned block to a memory block.
 	mov	si, thePtr
-	sub	si, WORDSIZE			 ;point back to block start
+	sub	si, WORDSIZE	;point back to block start
 
 assume	si:ptr block
 assume	di:ptr block
@@ -412,8 +404,8 @@ assume	bx:ptr block
 
 	;Search from the base of the list until we hit a block whose address
 	;is higher than that of the returned block.
-	xor	bx, bx				 					;previous ptr = NULL
-	mov	di, freeList			 				;pointer to head of list
+	xor	bx, bx		;previous ptr = NULL
+	mov	di, freeList	;pointer to head of list
 	.while	di && di <= si
 		mov	bx, di
 		mov	di, [di].bNext
@@ -442,10 +434,10 @@ assume	bx:ptr block
 		mov	freeList, si
 	.else
 		;There is a previous block -- see if we can coalesce with it.
-	 	;We can coalesce if the end of the previous block is the byte
-	 	;preceeding the returned block.
+		;We can coalesce if the end of the previous block is the byte
+		;preceeding the returned block.
 		mov	ax, bx
-		add	ax, [bx].bSize			;ax = pointer to end of previous block
+		add	ax, [bx].bSize	;ax = pointer to end of previous block
 		.if	ax != si
 			;Can't coalesce -- just link into chain.
 			mov	[bx].bNext, si
@@ -479,30 +471,30 @@ ReallocatePtr	proc	uses si di, thePtr:word, newSize:word
 ;	dx	requested size
 ;-------------------------------------------------------------------------------
 
-	mov	si, thePtr								;get pointer
-	sub	si, WORDSIZE							;point to block
+	mov	si, thePtr	;get pointer
+	sub	si, WORDSIZE	;point to block
 	mov	di, si
-	mov	cx, [si]									;get current size of block
-	mov	dx, newSize								;and requested size
-	add	dx, 2										;add 2 for header
-	add	di, dx									;pointer to portion being returned
+	mov	cx, [si]	;get current size of block
+	mov	dx, newSize	;and requested size
+	add	dx, 2		;add 2 for header
+	add	di, dx		;pointer to portion being returned
 
-	;Current implementation only allows for shrinking a block.  Check
-	;for other cases and return NULL.
-	xor	ax, ax									;prepare a null return
+	;Current implementation only allows for shrinking a block.
+	;Check for other cases and return NULL.
+	xor	ax, ax			;prepare a null return
 	.if	cx >= dx
-		sub	cx, dx								;compute amount to return
+		sub	cx, dx		;compute amount to return
 		.if	cx >= MIN_BLOCK_SIZE
 			;Create a block consisting of the of the unneeded portion of the
 			;block being reallocated, and return it.
 			mov	[di], cx
-			add	di, 2					;point past size of block
+			add	di, 2	;point past size of block
 			invoke	DisposePtr, di
 
 			;Set the size of the reallocated block.
 			mov	[si], dx
 		.endif
-		mov	ax, si						;return pointer
+		mov	ax, si		;return pointer
 	.endif
 
 	ret
@@ -545,7 +537,7 @@ LargestPtr	endp
 
 FreeHeap	proc	uses si di
 ;-------------------------------------------------------------------------------
-;Return the total free heap space.  Zero free space in the process.
+;Return the total free heap space. Zero free space in the process.
 ;-------------------------------------------------------------------------------
 
 	mov	ax, ds
@@ -557,14 +549,14 @@ FreeHeap	proc	uses si di
 assume	si:ptr block
 	.while	si
 		;Add the size of this block.
-		mov	cx, [si].bSize		;get size (will be used below)
+		mov	cx, [si].bSize	;get size (will be used below)
 		add	bx, cx
 
 		;Zero the block.
 		mov	di, si
 		add	di, type block
 		sub	cx, type block
-		rep	stosb								;ax is always 0
+		rep	stosb		;ax is always 0
 
 		;Move down the list.
 		mov	si, [si].bNext
@@ -583,9 +575,9 @@ PtrSize	proc	thePtr:word
 ;Return the size of the block corresponding to a pointer.
 ;-------------------------------------------------------------------------------
 
-	mov	bx, thePtr	 							;get pointer to memory
-	mov	ax, [bx-WORDSIZE]						;get size of block
-	sub	ax, WORDSIZE	 						;minus size of header
+	mov	bx, thePtr		;get pointer to memory
+	mov	ax, [bx-WORDSIZE]	;get size of block
+	sub	ax, WORDSIZE		;minus size of header
 	ret
 
 PtrSize	endp
@@ -654,13 +646,13 @@ memcpy	endp
 
 
 ;-------------------------------------------------------------------------------
-;				HANDLES
+;	HANDLES
 ;-------------------------------------------------------------------------------
 ;These routines do management of the handles (i.e. the pointers to hunk
 ;pointers kept at the top of heap space).
 ;-------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------
-;				HUNKS
+;	HUNKS
 ;-------------------------------------------------------------------------------
 ;These routines manage the hunks -- the large pieces of memory accessed by
 ;a far pointer.
@@ -670,7 +662,7 @@ memcpy	endp
 RelocateHunk	proc uses si di
 ;-------------------------------------------------------------------------------
 ;dx points to an unlocked, allocated hunk, bx to a free hunk at
-;a lower address.  Relocate the allocated hunk to the space occupied
+;a lower address. Relocate the allocated hunk to the space occupied
 ;by the free hunk, adjust its handle to reflect this, create a free hunk
 ;following the relocated one, and return the pointer to this hunk in dx.
 ;-------------------------------------------------------------------------------
@@ -685,19 +677,19 @@ assume	si:ptr hunk
 
 	;Find the handle to the allocated hunk and adjust to its new address.
 	mov	ax, dx
-	inc	ax											;point to data area of hunk
+	inc	ax		;point to data area of hunk
 	mov	di, handleBase
-	mov   cx, numHandles
-   shl   cx, 1										;4 bytes per handle
-	shl   cx, 1
-	add   cx, di
+	mov	cx, numHandles
+	shl	cx, 1		;4 bytes per handle
+	shl	cx, 1
+	add	cx, di
 	.while	ax != [di+_seg]
 		add	di, HANDLESIZE
 		.if	di == cx
 			;There is an allocated hunk with no handle!
 ifdef DEBUG
 			.if	checkingLoadLinks
-				mov   checkingLoadLinks, FALSE
+				mov	checkingLoadLinks, FALSE
 			.endif
 endif
 			mov	bx, ax
@@ -708,31 +700,31 @@ endif
 ifdef DEBUG
 	;If X option keep a parallel handle table.
 	.if	checkingLoadLinks
-		push  di
-		add   di,numHandles     ;4 bytes per handle
-		add   di,numHandles
-		add   di,numHandles
-		add   di,numHandles
+		push	di
+		add	di,numHandles	;4 bytes per handle
+		add	di,numHandles
+		add	di,numHandles
+		add	di,numHandles
 		mov	[di+_seg], bx
 		inc	word ptr [di+_seg]
-		pop   di
+		pop	di
 	.endif
 endif
-	inc	word ptr [di+_seg]					;point to data area of hunk
+	inc	word ptr [di+_seg]	;point to data area of hunk
 	;Now move the hunk down to the free space.
 assume	di:ptr hunk
 	xor	si, si
 	xor	di, di
-	mov	es, bx									;point to free hunk
-	push	es:[di].hNext							;save pointer to next free hunk
-	push	es:[di].hSize							;and hunk's size
-	push	ds											;save our data segment
-	mov	ds, dx									;point to allocated hunk
-	mov	cx, [si].hSize							;get size of allocated hunk
+	mov	es, bx			;point to free hunk
+	push	es:[di].hNext		;save pointer to next free hunk
+	push	es:[di].hSize		;and hunk's size
+	push	ds			;save our data segment
+	mov	ds, dx			;point to allocated hunk
+	mov	cx, [si].hSize		;get size of allocated hunk
 	shl	cx, 1
 	shl	cx, 1
-	shl	cx, 1										;cx = size of hunk in words
-	rep	movsw										;move the allocated hunk down
+	shl	cx, 1			;cx = size of hunk in words
+	rep	movsw			;move the allocated hunk down
 	pop	ds
 
 	;Move has been done -- reenable interrupts if they've been disabled.
@@ -741,13 +733,13 @@ assume	di:ptr hunk
 		sti
 	.endif
 
-	;The hunk has been moved.  Now build a free hunk above
+	;The hunk has been moved. Now build a free hunk above
 	;the relocated allocated hunk.
-	add	bx, es:[si].hSize						;bx = seg addr of new hunk
+	add	bx, es:[si].hSize	;bx = seg addr of new hunk
 	mov	es, bx
 	pop	es:[si].hSize
 	pop	es:[si].hNext
-	mov	es:[si].status, si					;not allocated or locked
+	mov	es:[si].status, si	;not allocated or locked
 
 	;Tell the previous hunk about this new one.
 	mov	cx, prevFree
@@ -764,14 +756,14 @@ assume	di:ptr hunk
 
 	;Check to see if we can coalesce with the next free block
 	;(which, after all, is the point of this whole exercise).
-	mov	dx, bx									;return pointer to this block
+	mov	dx, bx				;return pointer to this block
 	add	bx, es:[si].hSize
 	.if	bx < hunkTop && bx == es:[si].hNext
 		;Then we can coalesce.
 		push	es
 		mov	es, bx
-		mov	ax, es:[si].hSize					;get size of next block
-		mov	cx, es:[si].hNext					;and pointer to next
+		mov	ax, es:[si].hSize	;get size of next block
+		mov	cx, es:[si].hNext	;and pointer to next
 		pop	es
 		add	es:[si].hSize, ax
 		mov	es:[si].hNext, cx
@@ -796,23 +788,23 @@ PackHandles	proc	uses si di
 ifdef DEBUG
 	.if	checkingLoadLinks
 		;Check for internal consistancy of parallel handle tables
-		push  cx
+		push	cx
 		mov	di, handleBase
-		mov   si, di
-		mov   cx, numHandles
-		shl   cx, 1
-		shl   cx, 1
-		add   si, cx
+		mov	si, di
+		mov	cx, numHandles
+		shl	cx, 1
+		shl	cx, 1
+		add	si, cx
 		cld
-		push  es
-		push  ds
-		pop   es
-		repe  cmpsb
-		pop   es
-		pop   cx
+		push	es
+		push	ds
+		pop	es
+		repe	cmpsb
+		pop	es
+		pop	cx
 		.if	!zero?
-			mov   checkingLoadLinks, FALSE
-			dec   di
+			mov	checkingLoadLinks, FALSE
+			dec	di
 			invoke	PError, word ptr thisIP, pmsp, E_PACKHANDLE_HEAP, di
 		.endif
 		call	CheckLoadLinks
@@ -847,14 +839,14 @@ assume	si:ptr hunk
 		.break .if dx == hunkTop
 
 		;The next hunk must be allocated (since we coalesce returned
-		;hunks).  If it is locked, skip around it and begin looking
+		;hunks). If it is locked, skip around it and begin looking
 		;for free blocks above it.
 		mov	es, dx
 		.if	es:[si].status & LOCKED
 			mov	prevFree, bx
-			add	dx, es:[si].hSize				;point to next hunk
+			add	dx, es:[si].hSize	;point to next hunk
 		.else
-			call	RelocateHunk					;relocate the hunk
+			call	RelocateHunk		;relocate the hunk
 		.endif
 	.endw
 
@@ -862,6 +854,7 @@ assume	si:nothing
 	ret
 
 PackHandles	endp
+
 
 
 GetHandle	proc	uses si di	cx
@@ -878,11 +871,11 @@ GetHandle	proc	uses si di	cx
 	mov	si, handlePtr
 	mov	cx, si
 
-	mov   di, numHandles
+	mov	di, numHandles
 	;4 bytes per handle
-	shl   di, 1
-	shl   di, 1
-	add   di, handleBase
+	shl	di, 1
+	shl	di, 1
+	add	di, handleBase
 
 	.repeat
 		;Move on to the next handle
@@ -893,7 +886,7 @@ GetHandle	proc	uses si di	cx
 
 		;Test for a free handle
 		mov	ax, [si+_seg]
-		or		ax, [si+_off]
+		or	ax, [si+_off]
 	.until zero? || si == cx
 
 	.if	ax
@@ -911,7 +904,7 @@ GetHandle	endp
 
 RNewHandle	proc	uses si di, lsize:word
 ;-------------------------------------------------------------------------------
-;Return a pointer to a handle.  Handles are pointers to pointers to a hunk.
+;Return a pointer to a handle. Handles are pointers to pointers to a hunk.
 ;
 ;Register usage:
 ;	bx	segment of previous hunk
@@ -921,23 +914,23 @@ RNewHandle	proc	uses si di, lsize:word
 ;	si	always 0 -- offset of base of hunk
 ;-------------------------------------------------------------------------------
 
-	mov	packDone, 0								;no pack of handles has been done
+	mov	packDone, 0	;no pack of handles has been done
 TryHandle:
 	;Get the requested size, convert it to the appropriate number
 	;of paragraphs (16 byte blocks), and add an extra paragraph for
 	;the header.
-	mov	di, lsize								;get requested size
+	mov	di, lsize	;get requested size
 	.if	!di
 		invoke Panic, E_HUNK_ALLOC
 	.endif
 
-	add	di, 15									;round up to paragraph
+	add	di, 15		;round up to paragraph
 	mov	cl, 4
-	shr	di, cl									;convert to paragraph
-	inc	di											;add a paragraph for the header
+	shr	di, cl		;convert to paragraph
+	inc	di		;add a paragraph for the header
 
 	;Search the hunk list for a free hunk large enough.
-	xor	bx, bx									;previous hunk = NULL
+	xor	bx, bx		;previous hunk = NULL
 	mov	si, bx
 assume	si:ptr hunk
 assume	di:ptr hunk
@@ -950,7 +943,7 @@ assume	di:ptr hunk
 		.break .if di <= es:[si].hSize
 
 		;Block not large enough -- move on to the next one.
-		mov	bx, cx								;previous = current
+		mov	bx, cx	;previous = current
 		mov	cx, es:[si].hNext
 	.endw
 
@@ -959,7 +952,7 @@ assume	di:ptr hunk
 		call	GetHandle
 	.else
 		;We're at the end of the list, so we couldn't find a hunk big enough.
-		;If we've already tried packing the handles, we're sunk.  Otherwise, 
+		;If we've already tried packing the handles, we're sunk. Otherwise, 
 		;pack the handles and try allocating again.
 		.if	packDone
 			;A pack has been done -- no hope for us now
@@ -970,7 +963,7 @@ assume	di:ptr hunk
 			jmp	TryHandle
 		.endif
 	.endif
-	or		ax, ax
+	or	ax, ax
 	jz		NewHandleExit
 
 	mov	handle, ax
@@ -981,33 +974,33 @@ assume	di:ptr hunk
 	sub	ax, di
 
 	;If the remaining free hunk wouldn't be big enough to be useful, 
-	;just allocate the whole hunk.  Otherwise, split the hunk.
+	;just allocate the whole hunk. Otherwise, split the hunk.
 	.if	ax < MIN_HUNK_SIZE
 		;Then the hunk is small -- allocate the whole thing.
 		mov	di, es:[si].hSize
-		mov	dx, es:[si].hNext					;pointer to next hunk
+		mov	dx, es:[si].hNext	;pointer to next hunk
 	.else
 		mov	dx, cx
-		add	dx, di								;pointer to new hunk
-		push	es:[si].hNext						;save pointer to next hunk
-		mov	es, dx								;point to new hunk
-		mov	es:[si].hSize, ax					;set its size (which was in ax)
-		pop	es:[si].hNext						;set pointer to next
- 		mov	es:[si].status, si				;not allocated
+		add	dx, di			;pointer to new hunk
+		push	es:[si].hNext		;save pointer to next hunk
+		mov	es, dx			;point to new hunk
+		mov	es:[si].hSize, ax	;set its size (which was in ax)
+		pop	es:[si].hNext		;set pointer to next
+ 		mov	es:[si].status, si	;not allocated
 	.endif
 
 	;Link around the allocated hunk.
 	.if	bx
-		mov	es, bx								;point to previous hunk
-		mov	es:[si].hNext, dx					;and set its next pointer
+		mov	es, bx			;point to previous hunk
+		mov	es:[si].hNext, dx	;and set its next pointer
 	.else
 		;Then we're at the head of the hunk list -- point to
 		;the next hunk.
 		mov	hunkList, dx
 	.endif
-	
+
 	;Put the new size in the structure and mark it as allocated and unlocked.
-	mov	es, cx									;point back to allocated hunk
+	mov	es, cx				;point back to allocated hunk
 	mov	es:[si].hSize, di
 	mov	word ptr es:[si].status, ALLOCATED
 assume	si:nothing
@@ -1024,14 +1017,14 @@ assume	di:nothing
 ifdef DEBUG
 	; if X option keep a parallel handle table.
 	.if	checkingLoadLinks
-		push  si
-		add   si,numHandles     ;4 bytes per handle
-		add   si,numHandles
-		add   si,numHandles
-		add   si,numHandles
+		push	si
+		add	si,numHandles		;4 bytes per handle
+		add	si,numHandles
+		add	si,numHandles
+		add	si,numHandles
 		mov	[si+_seg], cx
 		mov	word ptr [si+_off], 0
-		pop   si
+		pop	si
 	.endif
 endif
 
@@ -1047,7 +1040,7 @@ NeedHandle	proc	lsize:word
 ;Try to get a handle and abort the program if we can't.
 ;-------------------------------------------------------------------------------
 
-	invoke	RNewHandle,lsize	   			;try getting the handle
+	invoke	RNewHandle,lsize	;try getting the handle
 	.if	!ax
 		invoke Panic, E_NO_HUNK_SPACE
 	.endif
@@ -1066,16 +1059,16 @@ FillHandle	proc	uses di, theHandle:word, theByte:word
 ;-------------------------------------------------------------------------------
 
 	mov	di, theHandle
-	mov	ax, [di+_seg]							;get segment of hunk
-	dec	ax											;point to hunk header
+	mov	ax, [di+_seg]		;get segment of hunk
+	dec	ax			;point to hunk header
 	mov	es, ax
 	xor	di, di
-	mov	bx, es:(hunk ptr [di]).hSize						;get size of hunk (paragraphs)
-	dec	bx											;minus header size
+	mov	bx, es:(hunk ptr [di]).hSize	;get size of hunk (paragraphs)
+	dec	bx				;minus header size
 	mov	cl, 3
 	shl	bx, cl
-	mov	cx, bx									;cx = hunk size (words)
-	inc	ax											;point back to hunk data
+	mov	cx, bx			;cx = hunk size (words)
+	inc	ax			;point back to hunk data
 	mov	es, ax
 	mov	al, byte ptr theByte
 	mov	ah, al
@@ -1115,14 +1108,14 @@ ifdef DEBUG
 	;Following code clears the handle in a duplicate handle table
 	; if X command line option has been specified
 	.if	checkingLoadLinks
-		push  si
-		add   si, numHandles
-		add   si, numHandles
-		add   si, numHandles
-		add   si, numHandles
+		push	si
+		add	si, numHandles
+		add	si, numHandles
+		add	si, numHandles
+		add	si, numHandles
 		mov	[si+_seg], ax
 		mov	[si+_off], ax
-		pop   si
+		pop	si
 	.endif
 endif
 	ret
@@ -1144,12 +1137,12 @@ DisposeHandle	proc	uses si di, theHandle:word
 	;Get the pointer to the hunk data from the handle, then decrement
 	;it to get a pointer to the hunk header.
 	mov	di, theHandle
-	mov	cx, [di+_seg]							;get segment of returned hunk
-	dec	cx											;point to hunk header
-	
+	mov	cx, [di+_seg]		;get segment of returned hunk
+	dec	cx			;point to hunk header
+
 	;Dispose of the hunk.
 	call	DisposeHunk
-	
+
 	;Return the handle.
 	invoke	ReturnHandle, theHandle
 
@@ -1178,7 +1171,7 @@ assume	si:ptr hunk
 
 	;Search from the base of the list until we hit a hunk whose address
 	;is higher than that of the returned hunk.
-	xor	bx, bx				;previous hunk = NULL
+	xor	bx, bx		;previous hunk = NULL
 	mov	dx, hunkList
 	.while dx && dx < cx
 		mov	bx, dx
@@ -1200,10 +1193,10 @@ assume	si:ptr hunk
 		mov	es:[si].hNext, dx
 	.else
 		;We can coalesce hunks.
-		mov	es, dx								;point at next hunk in list
-		mov	di, es:[si].hNext					;get pointer to its next hunk
+		mov	es, dx			;point at next hunk in list
+		mov	di, es:[si].hNext	;get pointer to its next hunk
 		mov	ax, es:[si].hSize
-		mov	es, cx								;point at returned hunk
+		mov	es, cx			;point at returned hunk
 		add	es:[si].hSize, ax
 		mov	es:[si].hNext, di
 	.endif
@@ -1219,17 +1212,17 @@ assume	si:ptr hunk
 		;preceeding the returned block.
 		mov	es, bx
 		mov	ax, bx
-		add	ax, es:[si].hSize					;ax = end of previous hunk
+		add	ax, es:[si].hSize	;ax = end of previous hunk
 		.if	ax != cx
 			;Can't coalesce -- just link into chain.
-			mov	es, bx							;point to previous hunk
+			mov	es, bx		;point to previous hunk
 			mov	es:[si].hNext, cx
 		.else
 			;Then we can coalesce the hunks.
-			mov	es, cx							;point to returned hunk
+			mov	es, cx		;point to returned hunk
 			mov	ax, es:[si].hNext
 			mov	di, es:[si].hSize
-			mov	es, bx							;point to previous hunk
+			mov	es, bx		;point to previous hunk
 			add	es:[si].hSize, di
 			mov	es:[si].hNext, ax
 		.endif
@@ -1258,12 +1251,12 @@ ReallocateHandle	proc	uses si, theHandle:word, newSize:word
 	add	bx, 15
 	mov	cl, 4
 	shr	bx, cl
-	inc	bx											;add one paragraph for header
+	inc	bx			;add one paragraph for header
 
 	;Get pointer to the hunk.
-	mov	si, theHandle							;get handle
-	mov	dx, [si+_seg]							;get segment of hunk
-	dec	dx											;point to hunk header
+	mov	si, theHandle		;get handle
+	mov	dx, [si+_seg]		;get segment of hunk
+	dec	dx			;point to hunk header
 	mov	es, dx
 	xor	si, si
 assume	si:ptr hunk
@@ -1274,15 +1267,15 @@ assume	si:ptr hunk
 	.if	bx >= ax
 		xor	ax, ax
 	.else
-		sub	ax, bx								;compute amount to return
+		sub	ax, bx		;compute amount to return
 		.if	ax > MIN_HUNK_SIZE
 			;Set the new size of the current block.
 			mov	es:[si].hSize, bx
-			
+
 			;Create a block consisting of the of the unneeded portion of the
 			;block being reallocated, and return it.
 			mov	cx, dx
-			add	cx, bx							;address of portion being returned
+			add	cx, bx	;address of portion being returned
 			mov	es, cx
 			mov	es:[si].hSize, ax
 			mov	es:[si].status, ALLOCATED
@@ -1377,14 +1370,14 @@ HandleSize	proc	theHandle:word
 ;-------------------------------------------------------------------------------
 
 	mov	bx, theHandle
-	mov	ax, [bx+_seg]							;get segment of hunk
-	dec	ax											;point to hunk header
+	mov	ax, [bx+_seg]			;get segment of hunk
+	dec	ax				;point to hunk header
 	mov	es, ax
 	xor	bx, bx
-	mov	ax, es:(hunk ptr [bx]).hSize		;get size of hunk (paragraphs)
-	dec	ax											;minus header size
+	mov	ax, es:(hunk ptr [bx]).hSize	;get size of hunk (paragraphs)
+	dec	ax				;minus header size
 	mov	cl, 4
-	shl	ax, cl									;* 16 for byte size
+	shl	ax, cl				;* 16 for byte size
 	ret
 
 HandleSize	endp
@@ -1396,8 +1389,8 @@ HandleLocked	proc	theHandle:word
 ;Return TRUE if handle locked
 ;-------------------------------------------------------------------------------
 
-	mov	bx, theHandle							;get the handle
-	mov	ax, [bx+_seg]							;get segment address of the hunk
+	mov	bx, theHandle			;get the handle
+	mov	ax, [bx+_seg]			;get segment address of the hunk
  	dec	ax
 	mov	es, ax
 	xor	bx, bx
@@ -1414,12 +1407,12 @@ LockHandle	proc	theHandle:word
 ;Lock the hunk pointed to by theHandle
 ;-------------------------------------------------------------------------------
 
-	mov	bx, theHandle							;get the handle
-	mov	ax, [bx+_seg]							;get segment address of the hunk
+	mov	bx, theHandle			;get the handle
+	mov	ax, [bx+_seg]			;get segment address of the hunk
  	dec	ax
 	mov	es, ax
 	xor	bx, bx
-	or		es:(hunk ptr [bx]).status, LOCKED	;lock the hunk
+	or	es:(hunk ptr [bx]).status, LOCKED	;lock the hunk
 	ret
 
 LockHandle	endp
@@ -1431,8 +1424,8 @@ UnlockHandle	proc	theHandle:word
 ;Unlock the hunk pointed to by theHandle
 ;-------------------------------------------------------------------------------
 
-	mov	bx, theHandle							;get the handle
-	mov	ax, [bx+_seg]							;get segment address of the hunk
+	mov	bx, theHandle			;get the handle
+	mov	ax, [bx+_seg]			;get segment address of the hunk
 	dec	ax
 	mov	es, ax
 	xor	bx, bx
@@ -1448,14 +1441,14 @@ CriticalHandle	proc	theHandle:word, critical:word
 ;Mark a handle as 'critical', i.e. not to be relocated with interrupts on.
 ;-------------------------------------------------------------------------------
 
-	mov	bx, theHandle							;get the handle
-	mov	ax, [bx+_seg]							;get segment address of the hunk
+	mov	bx, theHandle			;get the handle
+	mov	ax, [bx+_seg]			;get segment address of the hunk
 	dec	ax
 	mov	es, ax
 	xor	bx, bx
 assume	bx:ptr hunk
 	.if	critical
-		or		es:[bx].status, CRITICAL
+		or	es:[bx].status, CRITICAL
 	.else
 		and	es:[bx].status, not CRITICAL
 	.endif
@@ -1471,13 +1464,13 @@ hunkcpy	proc	uses si di ds, dest:word, src:dword, len:word
 ;to 'dest' (in the heap).
 
 	mov	ax, DGROUP
-	mov	es, ax									;get destination segment (heap) in es
-	mov	di, dest									;get offset of destination
-	push	di											;save pointer to destination
-	mov	cx, len									;get # of bytes to move
-	lds	si, src									;get source pointer in ds:si
-	rep	movsb										;do the move
-	pop	ax											;recover pointer for return
+	mov	es, ax		;get destination segment (heap) in es
+	mov	di, dest	;get offset of destination
+	push	di		;save pointer to destination
+	mov	cx, len		;get # of bytes to move
+	lds	si, src		;get source pointer in ds:si
+	rep	movsb		;do the move
+	pop	ax		;recover pointer for return
 	return
 
 hunkcpy	endp
@@ -1487,7 +1480,7 @@ hunkcpy	endp
 CopyHandle	proc	uses si, theHandle:word, thePtr:word
 ;-------------------------------------------------------------------------------
 ;Copy a hunk (specified by a handle) to heap space and return a pointer
-;to it.  If thePtr is null, allocate space in the heap.  Otherwise,
+;to it. If thePtr is null, allocate space in the heap. Otherwise,
 ;copy to that address.
 ;Register usage:
 ;	dx = size of hunk
@@ -1495,14 +1488,14 @@ CopyHandle	proc	uses si, theHandle:word, thePtr:word
 
 	;Determine the size of the hunk we're to copy.
 	mov	bx, theHandle
-	mov	ax, [bx+_seg]		 					;get para address of handle
-	dec	ax											;point to handle header
+	mov	ax, [bx+_seg]		;get para address of handle
+	dec	ax			;point to handle header
 	mov	es, ax
 	xor	si, si
 assume	si:ptr hunk
-	mov	dx, es:[si].hSize						;get the paragraph size
+	mov	dx, es:[si].hSize	;get the paragraph size
 	mov	cl, 4
-	shl	dx, cl									;get size in bytes
+	shl	dx, cl			;get size in bytes
 
 	;If thePtr is NULL, allocate the requisite space in the heap
 	mov	ax, thePtr
@@ -1535,41 +1528,42 @@ StackLeft	endp
 
 
 ;CheckHunk proc uses si di bp,	chErrorNo:word
-;	xor	si, si			;previous hunk = NULL
+;	xor	si, si		;previous hunk = NULL
 ;	mov	cx, hunkList
 ;	do
 ;		;At end of the list?
-;		or		cx, cx
+;		or	cx, cx
 ;		breakif	zero
 ;
 ;		;RPoint to the current hunk.
 ;		mov	es, cx
 ;
-;      ;Is this segment out of range of hunkBase to hunkTop?
-;      cmp   cx, hunkBase
-;      jb    ErrorInHunkList
-;      cmp   cx, hunkTop
-;      jae   ErrorInHunkList
+;		;Is this segment out of range of hunkBase to hunkTop?
+;		cmp	cx, hunkBase
+;		jb	ErrorInHunkList
+;		cmp	cx, hunkTop
+;		jae	ErrorInHunkList
 ;
 ;		;RMove on to the next block.
 ;		mov	cx, es:[si+hNext]
 ;	repeat
-;   jmp   short KeepGoing
+;	jmp	short KeepGoing
 ;ErrorInHunkList:
-;	 mov	bx, offset @data:hunkErrMsg ;get pointer to specific error
-;	 mov	cx, chErrorNo		 ;pointer to error message
-;	 sub	sp, 400				;create some space for a message
-;	 mov	ax, sp
-;	 invoke	sprintf, ax, bx, cx
-;	 mov	ax, sp
-;	 invoke	RAlert, ax
-;	 add	sp, 400
-;	
+;	mov	bx, offset @data:hunkErrMsg ;get pointer to specific error
+;	mov	cx, chErrorNo	;pointer to error message
+;	sub	sp, 400		;create some space for a message
+;	mov	ax, sp
+;	invoke	sprintf, ax, bx, cx
+;	mov	ax, sp
+;	invoke	RAlert, ax
+;	add	sp, 400
+;
 ;KeepGoing:
-;   mov   ax, ds
-;   mov   es, ax
+;	mov	ax, ds
+;	mov	es, ax
 ;	ret
 ;CheckHunk endp
+
 
 
 FarMemcpy	proc	uses si di, dest:far ptr byte, source:far ptr byte, count:word
@@ -1595,4 +1589,4 @@ FarMemcpy	proc	uses si di, dest:far ptr byte, source:far ptr byte, count:word
 FarMemcpy	endp
 
 
-	end
+end
