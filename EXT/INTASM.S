@@ -17,9 +17,9 @@ include	start.i
 dosSetVector	equ	25h
 dosGetVector	equ	35h
 
-prtScrInt		equ	5
-timeInt			equ	8
-videoInt  		equ	10h
+prtScrInt	equ	5
+timeInt		equ	8
+videoInt	equ	10h
 
 ctrlBrkInt	equ	1bh
 
@@ -28,14 +28,14 @@ breakExit	equ	23h
 critErrInt	equ	24h
 
 timerPort	equ	40h	;address of counter port for interval timer
-EOI			equ	20h	;end-of-interrupt to 8259
+EOI		equ	20h	;end-of-interrupt to 8259
 
 ;This is the counter to load the programmable interval timer with in order
-;to get interrupts at a rate of 60/second.  Clock to the PIT is 1.19318 MHz.
+;to get interrupts at a rate of 60/second. Clock to the PIT is 1.19318 MHz.
 
 TIMER_DIVISOR	equ	19886
 DISNEY_DIVISOR	equ	1326
-DISNEY_INTS		equ	15
+DISNEY_INTS	equ	15
 
 ;Issue BIOS interrupt every 3 interrupts.
 
@@ -44,32 +44,32 @@ TIMER_COUNT	equ	3
 ;Every 11 BIOS interrupts, skip one in order to account for differences
 ;between our 20/sec rate and native 18.2/sec.
 
-ADJ_COUNT  	equ	11
+ADJ_COUNT	equ	11
 
 ;-------------------------------------------------------------------
-	.DATA?
+.DATA?
 
-timerCounter	word		?	;count left to next user interrupt
-adjustCounter	word		?	;count left to adjustment time
-interruptsSet	word		?	;flag to indicate that interrupts have been set
-oldTimer   	   dword		?
-oldCtrlBrk 	   dword		?
-oldCritErr 	   dword		?
-oldPrtScr  	   dword		?
-sysTicks  	   dword		?
-servers			Server MaxServers DUP  (<>)
+timerCounter	word	?	;count left to next user interrupt
+adjustCounter	word	?	;count left to adjustment time
+interruptsSet	word	?	;flag to indicate that interrupts have been set
+oldTimer	dword	?
+oldCtrlBrk	dword	?
+oldCritErr	dword	?
+oldPrtScr	dword	?
+sysTicks	dword	?
+servers		Server	MaxServers DUP (<>)
 
 ;-------------------------------------------------------------------
-	.DATA
+.DATA
 
 diskIOCritical	word	TRUE
 interruptLevel	word	0
-disneyCntr		word	0
+disneyCntr	word	0
 
 ;-------------------------------------------------------------------
-	.CODE
+.CODE
 
-SetInterrupts		proc
+SetInterrupts	proc
 ;Set the address of our various interrupt handlers.
 
 	;First, save the address of the current handlers
@@ -123,7 +123,9 @@ SetInterrupts		proc
 
 	return
 
-SetInterrupts		endp
+SetInterrupts	endp
+
+
 
 ResetInterrupts	proc	
 ;Set all interrupts back to their original handlers
@@ -153,6 +155,8 @@ ResetInterrupts	proc
 
 ResetInterrupts	endp
 
+
+
 SetTimerInt	proc	near
 
 	;Initialize the user timer interrupt counter.
@@ -178,6 +182,8 @@ SetTimerInt	proc	near
 
 SetTimerInt	endp
 
+
+
 SetDisneyInt	proc	
 	cli
 	mov	al, 36h			;timer 0, LSB, MSB, mode 3
@@ -192,7 +198,9 @@ SetDisneyInt	proc
 
 SetDisneyInt	endp
 
-ResetTimerInt	proc	near   
+
+
+ResetTimerInt	proc	near 
 ;Set the timer frequency back to normal (18.2/second)
 
 	mov	al, 36h			;timer 0, LSB, MSB, mode 3
@@ -211,10 +219,12 @@ ResetTimerInt	proc	near
 
 ResetTimerInt	endp
 
-TimerIntHandler		proc	far 
+
+
+TimerIntHandler	proc	far 
 ; This routine must be far.
 ; This routines gets the interrupt from the timer chip and passes 
-; it down the server list.  Every 20th of a second, passes it to 
+; it down the server list. Every 20th of a second, passes it to 
 ; the old BIOS low-level timer interrupt, to keep the system moving 
 ; as expected.
 
@@ -251,48 +261,48 @@ TimerIntHandler		proc	far
 		mov	disneyCntr, DISNEY_INTS
 	.endif
 
-	 ;Update the current time.
-	 inc	WORD PTR sysTicks
-	 .if	zero?
-	   inc	WORD PTR sysTicks[2]
-	 .endif
+	;Update the current time.
+	inc	WORD PTR sysTicks
+	.if	zero?
+	inc	WORD PTR sysTicks[2]
+	.endif
 
-	 ;Finish up the interrupt by either issuing the EOI or 
-	 ;passing it on to the machine's interrupt handler, which 
-	 ;will finish it for us.
-	 dec	byte ptr timerCounter
-	 .if	!zero?
+	;Finish up the interrupt by either issuing the EOI or 
+	;passing it on to the machine's interrupt handler, which 
+	;will finish it for us.
+	dec	byte ptr timerCounter
+	.if	!zero?
 DoEOI:
-	    ;Nothing to do -- issue the end-of-interrupt
-	    mov	al, EOI
-	    out	20h, al
-	 .else
-	    dec	adjustCounter
-	    .if	zero?
-	 	   ;Time to adjust for the difference between our
-	 	   ;20/second interrupts and the native 18.2/second
-	 	   ;by not issuing this interrupt.
-	 	   mov	timerCounter, TIMER_COUNT
-	 	   mov	adjustCounter, ADJ_COUNT
-	 	   jmp	DoEOI
-	    .endif
+	;Nothing to do -- issue the end-of-interrupt
+	mov	al, EOI
+	out	20h, al
+	.else
+	dec	adjustCounter
+	.if	zero?
+		;Time to adjust for the difference between our
+		;20/second interrupts and the native 18.2/second
+		;by not issuing this interrupt.
+		mov	timerCounter, TIMER_COUNT
+		mov	adjustCounter, ADJ_COUNT
+		jmp	DoEOI
+	.endif
 
-	    ;Time to call the BIOS routine (which will issue EOI for us)
-	    mov	timerCounter, TIMER_COUNT
-	    pushf
-	    call	oldTimer
-	 .endif
+	;Time to call the BIOS routine (which will issue EOI for us)
+	mov	timerCounter, TIMER_COUNT
+	pushf
+	call	oldTimer
+	.endif
 
 	;Call each server in the timer interrupt list.
-   lea   bx, servers
+ lea bx, servers
 assume	bx:ptr Server
-   mov   cx, MaxServers
+ mov cx, MaxServers
 	.repeat
 		.if	[bx].inUse
-		   push  bx									;save current server and count
-		   push  cx
+		push	bx		;save current server and count
+		push	cx
 
-			;Decrement this server's counter.  If it reaches zero, 
+			;Decrement this server's counter. If it reaches zero, 
 			;reload it and call the server.
 			dec	[bx].count
 			.if	zero?
@@ -300,7 +310,7 @@ assume	bx:ptr Server
 				mov	[bx].count, ax
 				call	[bx].function
 			.endif
-		   pop   cx									;Restore pointer to server and count
+		pop cx			;Restore pointer to server and count
 			pop	bx
 		.endif
 		add	bx, type Server
@@ -314,12 +324,16 @@ assume	bx:nothing
 
 TimerIntHandler	endp
 
+
+
 NullInterrupt	proc	far 
 ;This routine must be far.
 
 	iret
 
 NullInterrupt	endp
+
+
 
 BreakExitHandler	proc	far
 ;Deal with abnormal termination due to a critical DOS error.
@@ -328,6 +342,8 @@ BreakExitHandler	proc	far
 	invoke	exit, 1
 
 BreakExitHandler	endp
+
+
 
 CritErrorHandler	proc	far
 ;Handle DOS critical errors by putting up an alert and either retrying or
@@ -349,12 +365,12 @@ CritErrorHandler	proc	far
 	mov	ds, ax
 	mov	es, ax
 
-	cmp	diskIOCritical, 5586					; inhibit critical error message?
+	cmp	diskIOCritical, 5586		; inhibit critical error message?
 	.if	zero?
-		xor	ax, ax								; inhibit critical error message!
+		xor	ax, ax			; inhibit critical error message!
 	.else
 		;Create an error message and print the alert.
-		and	di, 0ffh								;mask off undefined portion of error code
+		and	di, 0ffh		;mask off undefined portion of error code
 
 		.if	diskIOCritical == TRUE
 			mov	dx, E_QUIT
@@ -364,18 +380,18 @@ CritErrorHandler	proc	far
 
 		sub	sp, 200
 
-		invoke	ReadErrMsg, dx, sp			; On return ax points to msg
+		invoke	ReadErrMsg, dx, sp	; On return ax points to msg
 		mov	dx, ax
 
-		mov	ax, E_DISK_ERROR_MSG				; Find correct error message between
-		add	ax, di								; messages 4 - 16
+		mov	ax, E_DISK_ERROR_MSG	; Find correct error message between
+		add	ax, di			; messages 4 - 16
 
 		sub	sp, 200
 		mov	bx, sp
 
 		push	dx
-		invoke	ReadErrMsg, ax, bx			; On return ax points to msg
-		pop	dx										; Restore previous msg
+		invoke	ReadErrMsg, ax, bx	; On return ax points to msg
+		pop	dx			; Restore previous msg
 
 		invoke	RAlert, E_DISK_ERROR, ax, dx
 
@@ -383,7 +399,7 @@ CritErrorHandler	proc	far
 	.endif
 
 	;Test the return value to see what to do.
-	or		ax, ax
+	or	ax, ax
 
 	;Restore the registers which DOS wants
 	pop	es
@@ -410,13 +426,13 @@ CritErrorHandler	proc	far
 		.else
 			;We can run without the IO -- return an error.
 
-			add	sp,6								;Pop DOS's return address off the stack
+			add	sp,6		;Pop DOS's return address off the stack
 
 			;Set the carry flag in the flags which will be returned to the caller
 			mov	bp,sp
-			mov	ax,[bp+22]						;get the original flags
-			or		ax,1								;set the carry
-			mov	[bp+22],ax						;and put the flags back
+			mov	ax,[bp+22]	;get the original flags
+			or	ax,1		;set the carry
+			mov	[bp+22],ax	;and put the flags back
 
 			;Let everybody know that this is a critical 
 			;error which we're returning from.
@@ -439,6 +455,8 @@ CritErrorHandler	proc	far
 
 CritErrorHandler	endp
 
+
+
 _cli	proc
 
 	cli
@@ -446,12 +464,16 @@ _cli	proc
 
 _cli	endp
 
+
+
 _sti	proc
 
 	sti
 	return
 
 _sti	endp
+
+
 
 SysTime	proc	func:word
 ;Return word of system time data
@@ -468,12 +490,12 @@ SysTime	proc	func:word
 		shr	ax, 1
 		shr	ax, 1
 		shr	ax, 1
-		or		al, dl
+		or	al, dl
 		; subtract the base of our year 
 		; numbering system
 		sub	cx, 1980
 		shl	cx, 1
-		or		ah, cl
+		or	ah, cl
 	.else
 		; return packed time
 		; from DOS ch=0-23H cl=0-59M dh=0-59S
@@ -484,18 +506,18 @@ SysTime	proc	func:word
 		; * note loss of SECOND resolution in this form
 
 		mov	ah, 2ch
-		int	21h									; Get Time from DOS
+		int	21h		; Get Time from DOS
 
-		mov	ah, cl								; free up cl and start building return
-		xor	al, al								; minutes bits span ah, al
+		mov	ah, cl		; free up cl and start building return
+		xor	al, al		; minutes bits span ah, al
 		shr	ax, 1
 		shr	ax, 1
-		or		al, dh								; put seconds in zeroed bottom 6 bits
+		or	al, dh		; put seconds in zeroed bottom 6 bits
 
 		;hours go in top bits of ah after we massage them
 		.if	func == 2
 			; 24 hour request
-			shr	ax, 1								; make room for 5 bits of hours
+			shr	ax, 1	; make room for 5 bits of hours
 			mov	cl, 3
 		.else
 			; must be adjusted into proper range (ie. 0:30 -> 12:30)
@@ -515,5 +537,7 @@ SysTime	proc	func:word
 
 SysTime	endp
 
-	end
+
+
+end
 

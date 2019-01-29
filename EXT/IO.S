@@ -2,29 +2,25 @@
 ; io.s
 ;-------------------------------------------------------------------
 
-
 include	macro.i
 include	stdio.i
 include	dos.i
 include	io.i
 
-
-
-	.CODE
+.CODE
 
 
 lseek	proc	fd:word, ofs:dword, theOrg:word
 
 ;Input:
-;       fd	file handle
-;       ofs	double-word offset [ofsh, ofsl]
-;       theorg  offset is from:
-;               0 = offset from beginning of file
-;               1 = current location + offset
-;               2 = EOF + offset
+;	fd	file handle
+;	ofs	double-word offset [ofsh, ofsl]
+;	theorg offset is from:
+;		0 = offset from beginning of file
+;		1 = current location + offset
+;		2 = EOF + offset
 ;Output:
-;       returns double-word file pointer
-
+; returns double-word file pointer
 
 	call	ClearDosError
 	mov	bx, fd
@@ -42,4 +38,4 @@ lseek	proc	fd:word, ofs:dword, theOrg:word
 lseek	endp
 
 
-	end
+end
