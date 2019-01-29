@@ -232,9 +232,6 @@ static void ReadCommandLineArgs(int argc, char* argv[])
 #ifdef DEBUG
 						sprintf(str, helpstr, version);
 #else
-//KAWA WAS HERE
-//						interpVerStamp = verStamp + VERSTAMPDELTA;
-//						sprintf(str, "version %s/%U", version, interpVerStamp);
 						sprintf(str, "version %s", version);
 #endif
 						DoPanic(str);

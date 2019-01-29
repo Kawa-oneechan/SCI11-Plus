@@ -35,8 +35,6 @@
 #define E_PACKHANDLE_FAILURE	14
 #define E_ODD_HEAP_RETURNED		15
 
-#define VERSTAMPDELTA	0x1234
-
 #define PSTACKSIZE		0x01400
 
 extern Obj* theGame;
@@ -58,9 +56,6 @@ extern uint numClasses;
 extern bool defaultES;
 extern word thisScript;
 extern memptr thisIP;
-extern long interpVerStamp;
-extern long gameVerStamp;
-extern long verStamp;
 
 void PMachine(void);
 memptr GetDispatchAddr(uint, uint);
