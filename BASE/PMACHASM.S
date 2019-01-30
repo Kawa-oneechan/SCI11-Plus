@@ -11,13 +11,15 @@ include debugasm.i
 include errmsg.i
 include pmachine.i
 
-	.DATA
+.DATA
 
-pmCode			label FuncPtr
-pmCodeOffset	word		?
-pmCodeSegment	word     ?
+pmCode		label	FuncPtr
+pmCodeOffset	word	?
+pmCodeSegment	word	?
 
-	.CODE		PM_TEXT
+
+.CODE	PM_TEXT
+
 
 Dispatch	proc
 ;On entry:
@@ -27,12 +29,12 @@ Dispatch	proc
 
 	;Save the instruction pointer, and pointers to the current local
 	;variables.
-   push  scriptHandle
+	push	scriptHandle
 ifdef DEBUG
-   push  thisScript
-   mov   thisScript, cx
+	push	thisScript
+	mov	thisScript, cx
 endif
-	push  es
+	push	es
 	push	si
 	push	localVar
 
@@ -44,52 +46,54 @@ endif
 	mov	si, bx
 	mov	di, ax
 assume	di:ptr scriptNode
-	mov   ax, [di].sHunk
-	mov   scriptHandle, ax
-	mov	ax, [di].sVars				;get address of local variables
+	mov	ax, [di].sHunk
+	mov	scriptHandle, ax
+	mov	ax, [di].sVars	;get address of local variables
 	mov	localVar, ax
 assume	di:nothing
 
 	;Go execute the code.
-	pop	ax								;recover the number of bytes of parameters
+	pop	ax		;recover the number of bytes of parameters
 	call	DoCall
 
 	;Restore the old module base, local variables, and scan pointer
 	;within the module.
 	pop	localVar
 	pop	si
-	pop   es
+	pop	es
 ifdef DEBUG
-	pop   thisScript
+	pop	thisScript
 endif
-	pop   bx          				;script node hunk pointer
+	pop	bx		;script node hunk pointer
 	mov	scriptHandle, bx
 	UpdateScriptSeg
 	ret
 
 Dispatch	endp
 
+
+
 DoCall	proc	near
 ;On entry:
-;	ax =  number of bytes of parameters passed
+;	ax =	number of bytes of parameters passed
 ;	es:si -> code to execute
 
 	;Save relevant variables.
-	push	parmVar	      			;save parameter base
-	push	tempVar	      			;save temporary base
+	push	parmVar		;save parameter base
+	push	tempVar		;save temporary base
 
-	;Set up the new parameter base.  The parameter base
+	;Set up the new parameter base.	The parameter base
 	;is the (number of parameters) words below the current bp.
 	;This is further decreased by the number of arguments put
 	;on the stack by '&rest'.
 	mov	bx, bp
 	sub	bx, ax
-   mov	ax, restArgs
+	mov	ax, restArgs
 	sub	bx, ax
 	mov	parmVar, bx
 	shr	ax, 1
 	add	[bx], ax
-   mov	restArgs, 0
+	mov	restArgs, 0
 	call	ExecuteCode
 
 	;Restore the stack pointer to above the parameters, then restore
@@ -103,18 +107,20 @@ DoCall	proc	near
 
 DoCall	endp
 
+
+
 ;-------------------------------------------------------------------------
-; GetDispatchAddrInHeapFromC  interface to GetDispatchAddrInHeap from C
+; GetDispatchAddrInHeapFromC	interface to GetDispatchAddrInHeap from C
 ;
 ; entry:	scriptNum	= script number
-;        entry			= entry in script
-; exit:  objPtrPtr	= pointer to pointer to object
-;        scriptPtrPtr= pointer to pointer to script node
+;		entry			= entry in script
+; exit:	objPtrPtr	= pointer to pointer to object
+;		scriptPtrPtr= pointer to pointer to script node
 ;-------------------------------------------------------------------------
 GetDispatchAddrInHeapFromC proc	uses si \
-											scriptNum:word, entry:word, \
-											objPtrPtr:ptr ptr Obj, \
-											scriptPtrPtr:ptr ptr scriptNode
+				scriptNum:word, entry:word, \
+				objPtrPtr:ptr ptr Obj, \
+				scriptPtrPtr:ptr ptr scriptNode
 	mov	cx, scriptNum
 	mov	bx, entry
 	call	GetDispatchAddrInHeap
@@ -128,6 +134,7 @@ GetDispatchAddrInHeapFromC proc	uses si \
 GetDispatchAddrInHeapFromC	endp
 
 
+
 GetDispatchAddr	proc	uses si di, scrptNde:word, entry:word
 ;Return a pointer to an entry in a script.
 
@@ -138,6 +145,8 @@ GetDispatchAddr	proc	uses si di, scrptNde:word, entry:word
 	ret
 
 GetDispatchAddr	endp
+
+
 
 GetDispatchAddrInHeap	proc	near
 ; Returns a pointer to the script node in heap and the address of
@@ -150,15 +159,15 @@ GetDispatchAddrInHeap	proc	near
 ;	bx = address of object in heap
 ;	ax = address of script node in heap
 
-	push  es
+	push	es
 	push	bx
 	invoke	ScriptPtr, cx
 	mov	di, ax
 	;get the handle for the hunk resource
 	mov	bx, (scriptNode ptr [di]).sHunk
 	;and dereference it to get the segment address
-	mov   bx, (hunkPtr ptr [bx]).hSegment
-	mov   es, bx
+	mov	bx, (hunkPtr ptr [bx]).hSegment
+	mov	es, bx
 	xor	di, di
 	lea	di, (hunkRes ptr [di]).hkNumDisp
 	pop	bx
@@ -168,16 +177,18 @@ GetDispatchAddrInHeap	proc	near
 	.if	es:[di] >= bx
 		;Index into the dispatch table with the entry number.
 		shl	bx, 1
-		mov	bx, es:[di+bx+2]					;get address of object from table
+		mov	bx, es:[di+bx+2]	;get address of object from table
 		pop	es
 		UpdateScriptSeg
 		ret
 	.else
-		pop   es
+		pop	es
 		invoke	PError, si, bp, E_BAD_DISPATCH, bx
 	.endif
 
 GetDispatchAddrInHeap	endp
+
+
 
 GetDispatchAddrInHunk	proc	near
 ; Returns a pointer to the script node in heap and the address of
@@ -187,47 +198,51 @@ GetDispatchAddrInHunk	proc	near
 ;	cx = script number
 ;	bx = entry number in script
 ;Output:
-;  es = code segment
+;	es = code segment
 ;	bx = object
 ;	ax = script
 
 	call	GetDispatchAddrInHeap
  	mov	di, ax
 	mov	di, (scriptNode ptr [di]).sHunk
-	mov   di, (hunkPtr ptr [di]).hSegment
-	mov   es, di
+	mov	di, (hunkPtr ptr [di]).hSegment
+	mov	es, di
 	return
 
 GetDispatchAddrInHunk	endp
 
+
+
 GetNewScript	proc	near
 ;loads script into heap and hunk
 ;input:
-;  ax = script number
+;	ax = script number
 
-	push  bx         ;points to classTbl
-	push  es
-	push  si
+	push	bx	;points to classTbl
+	push	es
+	push	si
 	invoke	LoadScript, ax
-	pop   si
-	pop   es
-	pop   bx
+	pop	si
+	pop	es
+	pop	bx
 	UpdateScriptSeg
 	ret
 
 GetNewScript	endp
 
-OP_ret_BYTE    equ   048h
+
+
+OP_ret_BYTE	 equ	048h
 
 NeedRetOpcode	proc	far
 ; taking previous es:si as instruction pointer
 ; because handle points to zero
 
 ifdef DEBUG
-	mov   defaultES, TRUE
+	mov	defaultES, TRUE
 	.if	scriptHandle && byte ptr es:[si] != OP_ret_BYTE
 		;Save those registers which DOS wants saved.
-		push  si
+		push	si
 		push	es
 		push	bx
 		push	dx
@@ -239,10 +254,10 @@ ifdef DEBUG
 		pop	ds
 		pop	dx
 		pop	bx
-		call  DebugOn
-		mov   trace, 1
+		call	DebugOn
+		mov	trace, 1
 		pop	es
-		pop   si
+		pop	si
 	.endif
 endif
 
@@ -250,4 +265,4 @@ endif
 
 NeedRetOpcode	endp
 
-	end
+end

@@ -6,21 +6,21 @@
 include	macro.i
 include	mono.i
 
-	.DATA
+.DATA
 
 MONO_CRTC_ADDR_REG	equ	3b4h
 MONO_CRTC_DATA_REG	equ	3b5h
-CURSOR_LOC_REG			equ	0fh
+CURSOR_LOC_REG		equ	0fh
 
 TEXT1			equ	0b000h
 TEXT2			equ	0b800h
 
-monoInited	byte	0
+monoInited		byte	0
 xlate			word	0
 dseg			word	TEXT1
 doff			word	0
-	.CODE
 
+.CODE
 
 DoXlate	proc
 
@@ -30,11 +30,13 @@ DoXlate	proc
 	.if monoInited != 1
 		ret
 	.endif
-	call	MonoClear		; clear mono screen
-	mov	xlate, 1			; allow foreign language translations to mono mon.
+	call	MonoClear	; clear mono screen
+	mov	xlate, 1	; allow foreign language translations to mono mon.
 	ret
 
 DoXlate	endp
+
+
 
 MonoStr	proc uses si di es, tOffset:word, tSegment:word
 
@@ -62,14 +64,15 @@ MonoStr	proc uses si di es, tOffset:word, tSegment:word
 	mov	di, doff
 	push	ds
 	mov	ds, ax
+
 ms1:
 	lodsb
-	or		al, al
-	jz		ms2
+	or	al, al
+	jz	ms2
 	stosb
 	inc	di
 	cmp	di, 4000
-	jl		ms1
+	jl	ms1
 	pop	ax
 	push	ds
 	mov	ds, ax
@@ -87,21 +90,23 @@ ms2:
 
 MonoStr	endp
 
+
+
 MonoInit	proc	uses dx
 
 	; detect presence of mono monitor
 	mov	dx, MONO_CRTC_ADDR_REG
 	mov	al, CURSOR_LOC_REG
-	out	dx, al			; access cursor loc reg
+	out	dx, al		; access cursor loc reg
 	mov	dx, MONO_CRTC_DATA_REG
-	in		al, dx
-	inc	al					
-	out	dx, al			; attempt to modify it
+	in	al, dx
+	inc	al
+	out	dx, al		; attempt to modify it
 	mov	ah, al
-	in		al, dx
+	in	al, dx
 	.if al == ah
-		dec	al				; it's modifiable; ergo mono monitor exists
-		out	dx, al		; (clean-up mess)
+		dec	al	; it's modifiable; ergo mono monitor exists
+		out	dx, al	; (clean-up mess)
 		mov	monoInited, 1
 	.else
 		mov	monoInited, -1
@@ -109,6 +114,8 @@ MonoInit	proc	uses dx
 	ret
 
 MonoInit	endp
+
+
 
 MonoClear proc uses di cx es
 
@@ -121,6 +128,8 @@ MonoClear proc uses di cx es
 	ret
 
 MonoClear endp
+
+
 
 MonoNewline proc uses cx dx
 
@@ -138,6 +147,8 @@ MonoNewline proc uses cx dx
 
 MonoNewline endp
 
+
+
 MonoScroll proc uses si di 
 
 	push	ds
@@ -153,14 +164,14 @@ ss1:
 	stosb
 	inc	di
 	cmp	si, 4000
-	jl		ss1
+	jl	ss1
 	mov	si, di
 	mov	al, ' '
 ss2:
 	stosb
 	inc	di
 	cmp	di, 4000
-	jl		ss2
+	jl	ss2
 	pop	es
 	pop	ds
 	mov	doff, si
@@ -168,5 +179,4 @@ ss2:
 
 MonoScroll endp
 
-	end
-
+end

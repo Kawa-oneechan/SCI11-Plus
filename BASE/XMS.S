@@ -14,31 +14,31 @@ include	stdio.i
 include	xms.i
 
 ; Interrupt vectors
-MULTIPLEX_INT		equ 2Fh
+MULTIPLEX_INT	equ 2Fh
 
 ; Xtended Memory Manager functions
-XMM_MULTIPLEX_FUNC			equ 43h
+XMM_MULTIPLEX_FUNC		equ 43h
 XMM_MULTIPLEX_CHKSTAT		equ 00h
 XMM_MULTIPLEX_INSTALLED		equ 80h
 XMM_MULTIPLEX_GETENTRYPT	equ 10h
 
 XMM_MEMAVAIL	equ 08h
-XMM_ALLOC		equ 09h
-XMM_RELEASE		equ 0Ah
-XMM_MEMCPY		equ 0Bh
+XMM_ALLOC	equ 09h
+XMM_RELEASE	equ 0Ah
+XMM_MEMCPY	equ 0Bh
 
 .data
 
 xms	ARMType	<	\
-	xmsName,			\
-	'%',				\
-	init,				\
-	memcpy,			\
-	term,				\
-	PAGESIZE			\
+	xmsName,	\
+	'%',		\
+	init,		\
+	memcpy,		\
+	term,		\
+	PAGESIZE	\
 >
 
-xmmEntry		dword	?
+xmmEntry	dword	?
 xmmHandle	word	?
 xmsName		byte	"XMS", 0
 
@@ -46,11 +46,11 @@ xmmParmBlock struc
 	copyLength	dword	0
 	srcHandle	word	0	; xmmHandle or 0 if src is standard memory
 	srcAddress	dword	0	; offset into allocated XMS memory, or far adr if src
-	dstHandle	word	0	;	is standard memory
+	dstHandle	word	0	; is standard memory
 	dstAddress	dword	0
 xmmParmBlock ends
 
-xmmParms		xmmParmBlock <>
+xmmParms	xmmParmBlock <>
 
 .code
 
@@ -59,7 +59,7 @@ xmmParms		xmmParmBlock <>
 ;			allocate it all
 ;
 ; entry:	nothing
-; exit:	ax	= success
+; exit:		ax	success
 ;---------------------------------------------------------------------------
 init	proc private uses es
 
@@ -80,7 +80,7 @@ init	proc private uses es
 	
 		; determine number of pages available
 		mov	ah, XMM_MEMAVAIL
-		call	xmmEntry				; ax = largest block (K), dx = total (K)
+		call	xmmEntry		; ax = largest block (K), dx = total (K)
 		mov	cl, PAGESIZE_LOG2 - 10
 		shr	ax, cl
 		.if	ax > MAXPAGES
@@ -94,8 +94,8 @@ init	proc private uses es
 			; grab them
 			mov	ah, XMM_ALLOC
 			mov	dx, xms.nFreePages
-			shl	dx, cl				; convert from 16K back to K
-			call	xmmEntry				; dx = handle
+			shl	dx, cl		; convert from 16K back to K
+			call	xmmEntry	; dx = handle
 			.if	ax
 				mov	xmmHandle, dx
 			.else
@@ -112,34 +112,36 @@ init	proc private uses es
 
 init	endp
 
+
+
 ;---------------------------------------------------------------------------
-; memcpy		moves data from memory to/from XMS memory page
+; memcpy	moves data from memory to/from XMS memory page
 ;
-; entry:	es:di = data
-;			ax		= direction (PAGE2MEM or MEM2PAGE)
-;			bx		= page
-;			cx		= count
-;			dx		= offset into page
-; exit:	ah		= 0 if success
+; entry:	es:di	data
+;		ax	direction (PAGE2MEM or MEM2PAGE)
+;		bx	page
+;		cx	count
+;		dx	offset into page
+; exit:		ah	0 if success
 ;---------------------------------------------------------------------------
 memcpy proc private	uses ax dx si
 
 	mov	si, ax
 
-	push	si											; push the direction
-	push	cx											; push the count
+	push	si	; push the direction
+	push	cx	; push the count
 
 	; jump around according to direction we're copying
 	cmp	si, PAGE2MEM
-	je		pushPage
+	je	pushPage
 
 pushSegAdr:
-	mov	ax, 0				; "handle" indicating this operand is std memory
+	mov	ax, 0	; "handle" indicating this operand is std memory
 	push	ax
 	push	di
 	push	es
 	cmp	si, PAGE2MEM
-	je		doCopy
+	je	doCopy
 
 pushPage:
 	mov	ax, xmmHandle
@@ -148,7 +150,7 @@ pushPage:
 	push	ax
 	push	dx
 	cmp	si, PAGE2MEM
-	je		pushSegAdr
+	je	pushSegAdr
 
 doCopy:
 	call	xmmMemCpy
@@ -164,11 +166,13 @@ doCopy:
 
 memcpy endp
 
+
+
 ;---------------------------------------------------------------------------
-; term	deallocate the memory we got
+; term		deallocate the memory we got
 ;
 ; entry:	nothing
-; exit:	nothing
+; exit:		nothing
 ;---------------------------------------------------------------------------
 term	proc private
 
@@ -183,22 +187,23 @@ term	proc private
 
 term	endp
 
+
+
 ;---------------------------------------------------------------------------
-; xmmMemCpy		copies to/from XMS memory
+; xmmMemCpy	copies to/from XMS memory
 ;
-; entry:	dstHi:dstLo	=	destination XMS offset or far address
-;			dstHandle	=	XMS handle or 0, if dest is standard memory
-; 			srcHi:srcLo
-;			srcHandle
-; 			count			= 16-bit byte count (though XMS can handle 32-bit counts)
-;			dir			= PAGE2MEM or MEM2PAGE (for error message only)
-;
-; exit:	ax				= 1 if success
+; entry:	dstHi:dstLo	destination XMS offset or far address
+;		dstHandle	XMS handle or 0, if dest is standard memory
+; 		srcHi:srcLo
+;		srcHandle
+; 		count		16-bit byte count (though XMS can handle 32-bit counts)
+;		dir		PAGE2MEM or MEM2PAGE (for error message only)
+; exit:		ax		1 if success
 ;---------------------------------------------------------------------------
 xmmMemCpy	 proc near private uses es bx cx dx si di, \
-				 destHi:word, destLo:word, destHandle:word, \
-				 sourceHi:word, sourceLo:word, sourceHandle:word,	\
-				 count:word, dir:word
+			destHi:word, destLo:word, destHandle:word, \
+			sourceHi:word, sourceLo:word, sourceHandle:word, \
+			count:word, dir:word
 
 	mov	ax, destLo
 	mov	word ptr xmmParms.dstAddress[_off], ax
@@ -240,25 +245,26 @@ xmmMemCpy	 proc near private uses es bx cx dx si di, \
 
 xmmMemCpy	endp
 
+
+
 ;---------------------------------------------------------------------------
 ; page2XMSOfs	converts a page number to a linear offset into XMS memory
 ;
-; entry:	bx		= page number
-;			dx		= offset into page
-; exit:	dx:ax	= offset into XMS allocation
+; entry:	bx	page number
+;		dx	offset into page
+; exit:		dx:ax	offset into XMS allocation
 ;---------------------------------------------------------------------------
 page2XMSOfs	proc near private	uses cx
 
 	mov	cx, dx
 	mov	ax, bx
-	shr	ax, 1						; convert from offset to index
+	shr	ax, 1		; convert from offset to index
 	mov	dx, PAGESIZE
 	mul	dx
 	add	ax, cx
-	adc	dx, 0						; dx:ax = offset into XMS allocation
+	adc	dx, 0		; dx:ax = offset into XMS allocation
 	ret
 
 page2XMSOfs	endp
 
-	end
-
+end

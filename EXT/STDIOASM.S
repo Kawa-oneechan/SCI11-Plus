@@ -1,7 +1,7 @@
 ;-------------------------------------------------------------------
 ; STDIOASM.S
 ; File open, close, and i/o routines.
-; Modifications:  
+; Modifications:
 ;   3/12/90 Abdul.  Changed to use .MODEL directive and simplified
 ;                   segments.  Microsoft MASM 5.1.
 ;-------------------------------------------------------------------
@@ -15,16 +15,14 @@ include	fileio.i
 ;-------------------------------------------------------------------
 
 
-NO_HANDLE	   equ	-1
-ERROR_CODE	   equ	-1
+NO_HANDLE	equ	-1
+ERROR_CODE	equ	-1
 
 ;-------------------------------------------------------------------
 
+.CODE
 
-	.CODE
-
-
-ClearDosError	proc	
+ClearDosError	proc
 
 	push	ds
 	mov	ax, @data
@@ -37,7 +35,7 @@ ClearDosError	endp
 
 
 
-creat	proc	fname:ptr byte, mode:word	
+creat	proc	fname:ptr byte, mode:word
 ;Create a file with name pointed to by 'fname' with attributes set in 'mode'.
 
 	call	ClearDosError
@@ -56,9 +54,9 @@ creat	endp
 open	proc	fname:ptr byte, mode:word
 ;Open the file with name 'fname'.
 ;The access is defined by 'mode':
-;       0 = _read
-;       1 = _write
-;       2 = _read/_write
+;	0 = _read
+;	1 = _write
+;	2 = _read/_write
 
 	call	ClearDosError
 	mov	dx, fname
@@ -66,7 +64,7 @@ open	proc	fname:ptr byte, mode:word
 	dos	dosOpen
 	.if	carry?
 		mov	ax, NO_HANDLE
-  	.endif
+	.endif
 	ret
 
 open	endp
@@ -122,4 +120,4 @@ close	proc	fd:word
 
 close	endp
 
-	end
+end

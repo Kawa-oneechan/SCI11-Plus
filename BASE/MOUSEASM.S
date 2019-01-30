@@ -20,48 +20,47 @@ include resource.i
 include restypes.i
 include video.i
 
-MAXY				equ 200
-MAXX				equ 320
+MAXY		equ 200
+MAXX		equ 320
 
-CURSORVIEW  	equ 998
+CURSORVIEW	equ 998
 
-mouseInt			equ 33h
+mouseInt	equ 33h
 mouseInstalled	equ 0
-mouseShow		equ 1
-mouseHide		equ 2
-mouseGet			equ 3
-mouseSet			equ 4
-mouseCursor		equ 9
-mouseSetInt		equ 12
+mouseShow	equ 1
+mouseHide	equ 2
+mouseGet	equ 3
+mouseSet	equ 4
+mouseCursor	equ 9
+mouseSetInt	equ 12
 
-mouseMoved		equ 01h
-lButDown			equ 02h
-lButUp			equ 04h
-rButDown			equ 08h
-rButUp			equ 10h
-cButDown			equ 20h
-cButUp			equ 40h
+mouseMoved	equ 01h
+lButDown	equ 02h
+lButUp		equ 04h
+rButDown	equ 08h
+rButUp		equ 10h
+cButDown	equ 20h
+cButUp		equ 40h
 
-butDown			equ lButDown or rButDown or cButDown
-butUp				equ lButUp or rButUp or cButUp
+butDown		equ lButDown or rButDown or cButDown
+butUp		equ lButUp or rButUp or cButUp
 
-lButton			equ lButDown or lButUp
-rButton			equ rButDown or rButUp
-cButton			equ cButDown or cButUp
+lButton		equ lButDown or lButUp
+rButton		equ rButDown or rButUp
+cButton		equ cButDown or cButUp
 
 ;-------------------------------------------------------------------
-	.DATA
+.DATA
 
-anEvent		Event	<>								;the local event record
-haveMouse	word 	0								;do we have a mouse?
+anEvent		Event	<>	;the local event record
+haveMouse	word 	0	;do we have a mouse?
 mouseY		word 	0
 mouseX		word 	0
 patchX		word 	0
 mPoint		RPoint<>
 
 ;-------------------------------------------------------------------
-
-	.CODE
+.CODE
 
 InstallMouse	proc
 ;See if we're supposed to use a mouse.
@@ -88,14 +87,14 @@ InstallMouse	proc
 		mov	mouseY, dx
 
 		; do the first show
-	  ; set mouse cursor to default cursor
-	  invoke    ResCheck, RES_VIEW, CURSORVIEW
-	  cmp   ax, 0
-	  je    showCursor
+		; set mouse cursor to default cursor
+		invoke	ResCheck, RES_VIEW, CURSORVIEW
+		cmp	ax, 0
+		je	showCursor
 
-	  invoke    ResLoad, RES_VIEW, CURSORVIEW
-	  mov   si, ax
-	  invoke    RSetCursor, si, 0, 0, -1, -1
+		invoke	ResLoad, RES_VIEW, CURSORVIEW
+		mov	si, ax
+		invoke	RSetCursor, si, 0, 0, -1, -1
 
 showCursor:
 		call	RShowCursor
@@ -105,18 +104,20 @@ showCursor:
 		push	es
 		mov	ax, cs
 		mov	es, ax
-		mov	cx, 7fh								;all mouse events
+		mov	cx, 7fh		;all mouse events
 		mov	dx, offset @code: HndlMouse
 		mov	ax, mouseSetInt
 		int	mouseInt
 		pop	es
-  .else
+	.else
 		call	RShowCursor
 	.endif
 
 	ret
 
 InstallMouse	endp
+
+
 
 DisposeMouse	proc	uses si di
 ;Unhook timer tick routine and shut down the mouse
@@ -128,6 +129,8 @@ DisposeMouse	proc	uses si di
 	ret
 
 DisposeMouse	endp
+
+
 
 SetMouse	proc	uses si, mpoint:ptr Point
 ;Put local point in mouse coords
@@ -143,18 +146,18 @@ assume	bx:ptr RGrafPort
 assume	si:nothing
 assume	bx:nothing
 
-	.if  sword ptr	cx < 0
+	.if	sword ptr cx < 0
 		mov	cx, 0
 	.endif
-	.if sword ptr	cx >= MAXX
+	.if	sword ptr cx >= MAXX
 		mov	cx, MAXX-1
 	.endif
 	mov	mouseX, cx
 
-	.if sword ptr	dx < 0
+	.if	sword ptr dx < 0
 		mov	dx, 0
 	.endif
-	.if  sword ptr	dx >= MAXY
+	.if	sword ptr dx >= MAXY
 		mov	dx, MAXY-1
 	.endif
 	cmp	dx, MAXY
@@ -177,6 +180,8 @@ assume	bx:nothing
 	ret
 
 SetMouse	endp
+
+
 
 ;-----------------------------------------------------------------------
 ; Far event proc handler for Mouse generated interrupt
@@ -210,10 +215,10 @@ HndlMouse	proc	far
 		mov	mouseY, dx
 		mov	anEvent.where.h, cx
 		mov	anEvent.where.v, dx
-		
+
 		;Only create events for non-move incidents
 		.if	ax != mouseMoved
-			push	ax										;save the interrupting condition
+			push	ax	;save the interrupting condition
 
 			;See whether a button went up or down.
 			.if	ax & butDown
@@ -239,60 +244,56 @@ HndlMouse	proc	far
 			mov	anEvent.modifiers, bx
 
 			call	GetModifiers
-			or		anEvent.modifiers, ax
+			or	anEvent.modifiers, ax
 
 			;Post the event.
 			invoke	RPostEvent, addr anEvent
 			pop	ax
 		.endif
 
-	;If the mouse moved, we must move cursor to a new location.
-	.if	ax & mouseMoved
-
+		;If the mouse moved, we must move cursor to a new location.
+		.if	ax & mouseMoved
 			mov	cx, mouseX
 			mov	dx, mouseY
-				
 
-; If we are restricted to a rectangle act accordingly
-		.if	restrictRecPtr != 0
-			assume si: ptr RRect
-			mov	si, restrictRecPtr
-			
+			; If we are restricted to a rectangle act accordingly
+			.if	restrictRecPtr != 0
+				assume si: ptr RRect
+				mov	si, restrictRecPtr
 
-			.if	cx < 	[si].left
-				mov	cx,[si].left
+
+				.if	cx < [si].left
+					mov	cx,[si].left
+				.endif
+				.if	cx > [si].right
+					mov	cx, [si].right
+				.endif
+				.if	dx < [si].top
+					mov	dx, [si].top
+				.endif
+				.if	dx > [si].bottom
+					mov	dx, [si].bottom
+				.endif
+				assume si: nothing
+
+				mov	mouseX, cx
+				mov	mouseY, dx
+
+				assume	si:ptr RPoint
+				assume	di:ptr RGrafPort
+
+				mov	di,  rThePort
+				mov	si, OFFSET mPoint
+				sub	cx, [di].origin.h
+				mov	[si].h, cx
+				sub	dx, [di].origin.v
+				mov	[si].v, dx
+				invoke	SetMouse ,si
+
+				assume	si:nothing
+				assume	di:nothing
+
 			.endif
-			.if	cx > [si].right
-				mov	cx, [si].right
- 			.endif
- 			.if	dx < [si].top
- 				mov	dx, [si].top
- 			.endif
-			.if	dx > [si].bottom
- 				mov	dx, [si].bottom
- 			.endif	  
-			assume si: nothing
-
-
-			mov	mouseX, cx
-			mov	mouseY, dx
-
-
-			assume	si:ptr RPoint
-			assume	di:ptr RGrafPort
-
-			mov	di,  rThePort
-			mov	si, OFFSET mPoint
-			sub	cx, [di].origin.h
-			mov	[si].h, cx
-			sub	dx, [di].origin.v
-			mov	[si].v, dx 
-			invoke	SetMouse ,si
-
-			assume	si:nothing
-			assume	di:nothing
-
-		.endif
 
 			invoke	MoveCursor, mouseX, mouseY
 		.endif
@@ -304,5 +305,4 @@ HndlMouse	proc	far
 
 HndlMouse	endp
 
-	end
-
+end
