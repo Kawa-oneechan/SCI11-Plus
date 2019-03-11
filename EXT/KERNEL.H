@@ -80,6 +80,19 @@
 #define REMAPGRAY			3
 #define REMAPPERCENTGRAY	4
 
+//Function codes for KString -- KAWA
+#define STRCMP	0
+#define STRLEN	1
+#define STRCPY	2
+#define STREND	3
+#define STRCAT	4
+#define STRAT	5
+#define STRATOI	6
+#define STRUPR	7
+#define STRLWR	8
+#define STRTRIM	9
+
+
 //sortNode used in Sort
 typedef struct
 {
@@ -157,7 +170,6 @@ KERNEL(FindKey);
 KERNEL(DeleteKey);
 KERNEL(Abs);
 KERNEL(Sqrt);
-KERNEL(ReadNumber);
 KERNEL(MemoryInfo);
 KERNEL(PalVary);
 KERNEL(ScriptID);
@@ -169,16 +181,11 @@ KERNEL(DisposeClone);
 KERNEL(DisposeScript);
 KERNEL(Wait);
 KERNEL(Format);
-KERNEL(StrCmp);
-KERNEL(StrLen);
-KERNEL(StrCpy);
-KERNEL(StrEnd);
-KERNEL(StrCat);
+KERNEL(String);
 KERNEL(Dummy); //KShowObjs;
 KERNEL(HaveMouse);
 KERNEL(GetCWD);
 KERNEL(CoordPri);
-KERNEL(StrAt);
 KERNEL(FlushResources);
 KERNEL(MemorySegment);
 KERNEL(Memory);

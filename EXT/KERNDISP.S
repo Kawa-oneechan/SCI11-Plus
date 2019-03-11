@@ -171,14 +171,14 @@ kernelDispTbl	label	dword
 	kernel	GetTime
 
 ;String handling.
-	kernel	StrEnd
-	kernel	StrCat
-	kernel	StrCmp
-	kernel	StrLen			;70
-	kernel	StrCpy
+	kernel	String ; StrEnd
+	dummy ;	StrCat
+	dummy ;	StrCmp
+	dummy ;	StrLen			;70
+	dummy ;	StrCpy
 	kernel	Format
 	kernel	GetFarText
-	kernel	ReadNumber
+	dummy ;	ReadNumber
 
 ;Actor motion support.
 	kernel	BaseSetter
@@ -210,7 +210,7 @@ kernelDispTbl	label	dword
 	kernel	ValidPath
 
 	kernel	CoordPri
-	kernel	StrAt
+	dummy ;	StrAt
 	kernel	DeviceInfo
 	kernel	GetSaveDir		;100
 	kernel	CheckSaveGame

@@ -1424,13 +1424,6 @@ global KERNEL(Sqrt)
 }
 
 
-//read a number from the input line
-global KERNEL(ReadNumber)
-{
-	acc = atoi(Native(arg(1)));
-}
-
-
 global KERNEL(Clone)
 {
 	Obj *theClone;
@@ -1583,51 +1576,74 @@ global KERNEL(StrCmp)
 }
 
 
-global KERNEL(StrLen)
-{
-	acc = strlen(Native(arg(1)));
-}
-
-
-global KERNEL(StrCpy)
+global KERNEL(String)
 {
 	strptr src, dst;
 	word i;
 
-	acc = arg(1);
-	if (argCount == 2)
-		strcpy(Native(arg(1)), Native(arg(2)));
-	else
+	switch (arg(1))
 	{
-		//a positive length does standard string op
-		if (arg(3) > 0)
-			strncpy(Native(arg(1)), Native(arg(2)), arg(3));
-		else
-		{
-			//a negative length does mem copy without NULL terminator
-			src = Native(arg(2));
-			dst = Native(arg(1));
-			i = abs(arg(3));
-			while(i--)
-				*dst++ = *src++;
-		}
+		case STRCMP:
+			if (argCount == 3)
+				acc = strcmp(Native(arg(2)), Native(arg(3)));
+			else
+				acc = strncmp(Native(arg(2)), Native(arg(3)), arg(4));
+			break;
+		case STRLEN:
+			acc = strlen(Native(arg(2)));
+			break;
+		case STRCPY:
+			acc = arg(2);
+			if (argCount == 3)
+				strcpy(Native(arg(2)), Native(arg(3)));
+			else
+			{
+				//a positive length does standard string op
+				if (arg(4) > 0)
+					strncpy(Native(arg(2)), Native(arg(3)), arg(4));
+				else
+				{
+					//a negative length does mem copy without NULL terminator
+					src = Native(arg(3));
+					dst = Native(arg(2));
+					i = abs(arg(4));
+					while(i--)
+						*dst++ = *src++;
+				}
+			}
+			break;
+		case STREND:
+			for (src = Native(arg(2)); *src; ++src);
+			acc = Pseudo(src);
+			break;
+		case STRCAT:
+			acc = arg(2);
+			strcat(Native(acc), Native(arg(3)));
+			break;
+		case STRAT:
+			src = (memptr)Native(arg(2)) + (int)arg(3);
+			acc = *src;
+			if (argCount == 4)
+				*src = (byte)arg(4);
+			break;
+		case STRATOI:
+			acc = atoi(Native(arg(2)));
+			break;
+		case STRUPR:
+			for (src = Native(arg(2)); *src != '\0'; ++src)
+				*src = toupper(*src);
+			break;
+		case STRLWR:
+			for (src = Native(arg(2)); *src != '\0'; ++src)
+				*src = tolower(*src);
+			break;
+		case STRTRIM:
+			//TODO
+			acc = arg(2);
+			break;
 	}
 }
 
-
-global KERNEL(StrEnd)
-{
-	strptr str;
-	for (str = Native(arg(1)); *str; ++str);
-	acc = Pseudo(str);
-}
-
-
-global KERNEL(StrCat)
-{
-	acc = arg(1);
-	strcat(Native(acc), Native(arg(2)));
-}
 
 KERNEL(Dummy) { }
 
@@ -1657,19 +1673,6 @@ global KERNEL(ShakeScreen)
 		dir = arg(2);
 
 	ShakeScreen(arg(1), dir);
-}
-
-
-//Return the nth [arg(2)] byte of a string [arg(1)]. If a third argument
-//is present, set the byte to that value.
-global KERNEL(StrAt)
-{
-	memptr sp;
-
-	sp = (memptr)Native(arg(1)) + (int)arg(2);
-	acc = *sp;
-	if (argCount == 3)
-		*sp = (byte)arg(3);
 }
 
 
