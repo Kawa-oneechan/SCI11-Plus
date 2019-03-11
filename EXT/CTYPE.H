@@ -5,6 +5,14 @@
 #ifndef CTYPE_H
 #define CTYPE_H
 
+#include "kawa.h"
+
+#ifdef UTF8
+	#ifndef WIN1252
+		#define WIN1252
+	#endif
+#endif
+
 #ifndef TYPES_H
 	#include "types.h"
 #endif
@@ -27,6 +35,9 @@ extern char _toupper(byte c);
 #define  isspace(c) strchr(" \t\n\r", c)
 #define  ispunct(c) !(isalnum(c) || isspace(c) || iscntrl(c))
 
+#ifdef WIN1252
+#define	iseuro(c) ((c) >= 0x80 && (c) <= 0xff)
+#else
 #define	iseuro(c) ((c) >= 0x80 && (c) <= 0xa5)
 #define	iskana(c) ((c) >= 0xa6 && (c) <= 0xdf)
 #define	isgreek(c) ((c) >= 0xe0 && (c) <= 0xee)
@@ -41,6 +52,7 @@ extern char _toupper(byte c);
 			 (unsigned char)(c) <= 0x7e || \
 			 (unsigned char)(c) >= 0x80 && \
 			 (unsigned char)(c) <= 0xfc)
+#endif
 
 #endif
 
