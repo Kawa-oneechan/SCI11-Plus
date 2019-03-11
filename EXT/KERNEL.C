@@ -2483,11 +2483,7 @@ global KERNEL(DbugStr)
 
 	//Now that we have our text, we can write it to file.
 	fd = open(logFile, O_RDWR);
-	if (fd == -1)
-	{
-		fd = creat(logFile, 0);
-		if (fd == -1) return; //fuck it.
-	}
+	if (fd == -1) return; //fuck it.
 	lseek(fd, 0L, LSEEK_END);
 	write(fd, buffer, strlen(buffer));
 	close(fd);

@@ -152,6 +152,14 @@ global bool ReadConfigFile(strptr name, strptr defaultName)
 		Panic(E_NO_MINHUNK, name);
 #endif
 
+#ifdef DBUGSTRFILE
+	if (logFile != 0)
+	{
+		fd = creat(logFile, 0);
+		close(fd);
+	}
+#endif
+
 	return 1;
 }
 
