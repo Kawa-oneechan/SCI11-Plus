@@ -1629,6 +1629,26 @@ global KERNEL(StrCat)
 	strcat(Native(acc), Native(arg(2)));
 }
 
+
+global KERNEL(StrCase)
+{
+	strptr str = Native(arg(1));
+	if (argCount == 2 && arg(2) > 0)
+		for (; *str != '\0'; ++str)
+			*str = toupper(*str);
+	else
+		for (; *str != '\0'; ++str)
+			*str = tolower(*str);
+}
+
+
+global KERNEL(StrTrim)
+{
+	//TODO
+	acc = arg(2);
+}
+
+
 KERNEL(Dummy) { }
 
 

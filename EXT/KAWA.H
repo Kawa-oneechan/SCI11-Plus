@@ -28,6 +28,9 @@
  * UTF8
  *   Allow all 65536 characters in a font file to be
  *   used via UTF-8 encoding.
+ * WIN1252
+ *   Have the case folding functions use the Windows
+ *   1252 codepage instead of DOS 437.
  * DBUGSTRFILE
  *   Instead of writing to a mono text screen, have
  *   DbugStr write to a text file for later checking,

@@ -126,8 +126,8 @@ kernelDispTbl	label	dword
 	kernel	DrawStatus
 
 ;Parsing.
-	dummy	; Parse
-	dummy	; Said
+	kernel	StrCase ; dummy	; Parse
+	kernel	StrTrim	; dummy	; Said
 	dummy	; SetSynonyms
 
 ;Mouse functions.
