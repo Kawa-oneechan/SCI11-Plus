@@ -23,7 +23,8 @@ const char *KawaErrors1 =
 	"\0" //22
 	"\0" //23
 	"\0" //24
-	"Du hast etwas ausprobiert, was wir nicht in Betracht gezogen haben.\nWas auch immer es war, es ist nicht n”tig, um das Spiel zu beenden.\nVersuche einen anderen Weg, um dieses Problem zu l”sen.\nFehler %d.  SCI Version %s\0"
+	//"Du hast etwas ausprobiert, was wir nicht in Betracht gezogen haben.\nWas auch immer es war, es ist nicht n”tig, um das Spiel zu beenden.\nVersuche einen anderen Weg, um dieses Problem zu l”sen.\nFehler %d.  SCI Version %s\0"
+	"Du hast etwas ausprobiert, was wir nicht in Betracht gezogen haben.\nVersuche einen anderen Weg, um dieses Problem zu l”sen.\nFehler %d.  SCI Version %s\0"
 	"Uups!\0"
 	"Debug nicht m”glich! Fehler #%d \0"
 	"Kann den Audio Treiber '%s' nicht finden!\0"
@@ -52,8 +53,8 @@ const char *KawaErrors1 =
 	"Zu kleiner Speicherbereich in der Konfigurationsdatei.\0"
 	"Schlechter Bildcode\0"
 	"Out of hunk\nLade %s\0"
-	"Konnte Resource mit Log-Datei "%s" nicht ”ffnen\n\0"
-	"Konnte Hunk mit Log-Datei "%s" nicht ”ffnen\n\0"
+	"Konnte Resource mit Log-Datei \"%s\" nicht ”ffnen\n\0"
+	"Konnte Hunk mit Log-Datei \"%s\" nicht ”ffnen\n\0"
 	"ARM Lesefehler\0"
 	"ARM handle < 0\0"
 	"Konnte keine 'where' Datei finden.\0"
@@ -66,8 +67,8 @@ const char *KawaErrors1 =
 ;
 const char *KawaErrors2 =
 	"Ungltiges rechteck!\0"
-	"\nFehler: Ungltiger Wert in Deiner "%s" Datei:\naudioSize = %s\n\0"
-	"Fehler: Der minHunk Wert wurde in Deiner "%s" Datei nicht in KILOBYTES angegeben.\nBesipiel: minHunk = 100k\0"
+	"\nFehler: Ungltiger Wert in Deiner \"%s\" Datei:\naudioSize = %s\n\0"
+	"Fehler: Der minHunk Wert wurde in Deiner \"%s\" Datei nicht in KILOBYTES angegeben.\nBesipiel: minHunk = 100k\0"
 	"ExtMem Fehler %d\0"
 	"Poly Avoider generierte einen zu groáen Pfad!\0"
 	"Poly Merge generierte einen zu groáen Pfad!\0"

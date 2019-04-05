@@ -23,7 +23,8 @@ const char *KawaErrors1 =
 	"\0" //22
 	"\0" //23
 	"\0" //24
-	"Vous avez fait quelque chose que nous n'avions pas pr‚vu.\nMais ce que vous avez fait n'est pas n‚cessaire pour terminer le jeu.\nEssayez d'approcher la situation d'une maniere differente.\nErreur %d.  Version %s SCI.\0"
+	//"Vous avez fait quelque chose que nous n'avions pas pr‚vu.\nMais ce que vous avez fait n'est pas n‚cessaire pour terminer le jeu.\nEssayez d'approcher la situation d'une maniere differente.\nErreur %d.  Version %s SCI.\0"
+	"Vous avez fait quelque chose que nous n'avions pas pr‚vu.\nEssayez d'approcher la situation d'une maniere differente.\nErreur %d.  Version %s SCI.\0"
 	"Oups!\0"
 	"D‚bogage imposible! erreur #%d \0"
 	"Incapable de trouver le p‚riph‚rique Du son '%s'!\0"
@@ -47,13 +48,13 @@ const char *KawaErrors1 =
 	"Erreur de chargement: %s\nRetour pour continuer\nESC pour sortir\0"
 	"Le nombre de serveurs maximum a ‚t‚ d‚passe.\n\0"
 	"Aucun systeme de debogage possible.\0"
-	"Erreur: la valeur minhunk MANQUE dans votre fichier "%s".\nExemple: minHunk = 100k\0"
+	"Erreur: la valeur minhunk MANQUE dans votre fichier \"%s\".\nExemple: minHunk = 100k\0"
 	"Vous n'avez pas assez de m‚moire pour pouvoir jouer ce jeu.\nSi vous avvez des programmes r‚sidents en memoire, essayez de les enlever et essayez a nouveau.\0"
-	"Espace de configuration termin‚.					     \0"
+	"Espace de configuration termin‚.\0"
 	"Code image erron‚\0"
 	"Ne peut\ncharger %s!\0"
-	"Ne peut ouvrir fichier "%s"\n\0"
-	"Ne peut ouvrir m‚moire fichier "%s"\n\0"
+	"Ne peut ouvrir fichier \"%s\"\n\0"
+	"Ne peut ouvrir m‚moire fichier \"%s\"\n\0"
 	"ARM lit erreur\0"
 	"ARM handle < 0\0"
 	"Ne trouve pas fichier 'where'.\0"
@@ -66,8 +67,8 @@ const char *KawaErrors1 =
 ;
 const char *KawaErrors2 =
 	"Rectangle invalide\0"
-	"\nErreur : valeur invalide dans votre fichier "%s"\naudioSize = %s\n\0"
-	"Erreur : M‚moire min. non sp‚cifi‚e en KILOBYTES dans votre fichier "%s".\nExemple : minHunk = 100k\0"
+	"\nErreur : valeur invalide dans votre fichier \"%s\"\naudioSize = %s\n\0"
+	"Erreur : M‚moire min. non sp‚cifi‚e en KILOBYTES dans votre fichier \"%s\".\nExemple : minHunk = 100k\0"
 	"ExtMem erreur %d\0"
 	"Poly Avoider donne un sentier trop large!\0"
 	"Poly Merge donne un sentier trop large!\0"
