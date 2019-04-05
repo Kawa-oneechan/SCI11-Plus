@@ -50,3 +50,7 @@
 #define UTF8
 #define DBUGSTRFILE
 #define COLORFULMENU
+
+//For INTERNALERRORS
+#define ERRLANG "ERRMSG_E.H"
+
