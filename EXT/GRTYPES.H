@@ -110,11 +110,7 @@ void RFillRect(RRect*, uword, int, ...);
 uword OnControl(uword, RRect*);
 void CanBeHere(RRect*, uword);
 
-#ifdef UTF8
-void RDrawChar(byte);
-#else
 void RDrawChar(short);
-#endif
 void ShowChar(byte);
 void DrawLine(int, int, int, int);
 void DrawBrush(int, int, int, int);
