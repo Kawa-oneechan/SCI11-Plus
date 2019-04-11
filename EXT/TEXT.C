@@ -477,7 +477,11 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 					Panic(E_TEXT_PARAM, code, *str);
 				}
 #endif
+#ifdef UTF8
+				while ((utf8job.cursor < last) && (utf8_GetChar() != CTRL_CHAR));
+#else
 				while ((str < last) && (*str++ != CTRL_CHAR));
+#endif
 			}
 
 			switch(command)
