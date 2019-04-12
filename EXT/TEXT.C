@@ -106,52 +106,58 @@ global void RTextSize(RRect *r, strptr text, word font, word def)
 	RSetFont(oldFont);
 }
 
+#ifdef UTF8
+short UTF8Char = 0xFFFF;
+short UTF8Count = 0;
+char* GetUTF8Char(char* str)
+{
+	short c, trailer, middle;
+
+	if (GetNumChars() <= 256)
+	{
+		UTF8Char = *str++;
+		UTF8Count = 1;
+		return str;
+	}
+
+	c = *str++;
+	UTF8Count = 1;
+	if ((c & 0xE0) == 0xC0)
+	{
+		trailer = *str++ & 0x3F;
+		c = ((c & 0x1F) << 6) | trailer;
+		UTF8Count = 2;
+	}
+	else if ((c & 0xF0) == 0xE0)
+	{
+		middle = *str++ & 0x3F;
+		trailer = *str++ & 0x3F;
+		c = ((c & 0x1F) << 12) | (middle << 6) | trailer;
+		UTF8Count = 3;
+	}
+
+	if (c >= 0x2000 && c < 0x2070) //General Punctuation overlaps Combining Diacritic block
+		c = c - 0x2000 + 0x300;
+	//TODO: Add more remap hacks here.
+
+	UTF8Char = c;
+	return str;
+}
+#endif
+
 //Return total width of this text
 global word RTextWidth(strptr text, int index, int count, int defaultFont)
 {
 	int width = 0, newNum, action;
-#ifdef UTF8
 	short c;
-	char utf8trailer, utf8middle;
-	char isUnifont;
-#else
-	char c;
-#endif
 	int oldFont = GetFont();
 	char* str = text + index;
 
 	RSetFont(defaultFont);
-#ifdef UTF8
-	isUnifont = GetNumChars() > 256;
-#endif
 
 	while (count-- > 0 && (*str != 0))
 	{
 		c = *str;
-#ifdef UTF8
-		if (isUnifont)
-		{
-			//Handle UTF-8
-			if ((c & 0xE0) == 0xC0)
-			{
-				count++;
-				str++;
-				utf8trailer = *str & 0x3F;
-				c = ((c & 0x1F) << 6) | utf8trailer;
-			}
-			else if ((c & 0xF0) == 0xE0)
-			{
-				count += 2;
-				str++;
-				utf8middle = *str & 0x3F;
-				str++;
-				utf8trailer = *str & 0x3F;
-				c = ((c & 0x1F) << 12) | (utf8middle << 6) | utf8trailer;
-			}
-			if (c >= 0x2000 && c < 0x2070) //General Punctuation overlaps Combining Diacritic block
-				c = c - 0x2000 + 0x300;
-		}
-#endif
 
 		if(c == CTRL_CHAR)
 		{
@@ -191,6 +197,11 @@ global word RTextWidth(strptr text, int index, int count, int defaultFont)
 		}
 		else
 		{
+#ifdef UTF8
+			str = GetUTF8Char(str) - 1;
+			count -= UTF8Count - 1;
+			c = UTF8Char;
+#endif
 			width += RCharWidth(c);
 		}
 
@@ -200,55 +211,22 @@ global word RTextWidth(strptr text, int index, int count, int defaultFont)
 	return width;
 }
 
-
 //return count of chars that fit in pixel length
 global int GetLongest(strptr *str, int max, int defaultFont)
 {
 	strptr last, first;
-#ifdef UTF8
 	short c;
-	char utf8middle, utf8trailer;
-	char isUnifont;
-#else
-	char c;
-#endif
 	word count = 0, lastCount = 0;
+#ifdef UTF8
+	strptr utf8new;
+#endif
 
 	first = last = *str;
-
-#ifdef UTF8
-	isUnifont = GetNumChars() > 256;
-#endif
 
 	//find a HARD terminator or LAST SPACE that fits on line
 	while (1)
 	{
 		c = *(*str);
-
-#ifdef UTF8
-		if (isUnifont)
-		{
-			//Handle UTF-8
-			if ((c & 0xE0) == 0xC0)
-			{
-				count++;
-				(*str)++;
-				utf8trailer = *(*str) & 0x3F;
-				c = ((c & 0x1F) << 6) | utf8trailer;
-			}
-			else if ((c & 0xF0) == 0xE0)
-			{
-				count += 2;
-				(*str)++;
-				utf8middle = *(*str) & 0x3F;
-				(*str)++;
-				utf8trailer = *(*str) & 0x3F;
-				c = ((c & 0x1F) << 12) | (utf8middle << 6) | utf8trailer;
-			}
-			if (c >= 0x2000 && c < 0x2070) //General Punctuation overlaps Combining Diacritic block
-				c = c - 0x2000 + 0x300;
-		}
-#endif
 
 		if (c == 0x0d)
 		{
@@ -265,9 +243,9 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 				return(count); //caller sees end of string
 			}
 		}
-		if (c == LF)
+		if (c == 0x0a)
 		{
-			if ((*(*str + 1) == CR) && (*(*str + 2) != LF)) //by Corey for 68k
+			if ((*(*str + 1) == 0x0d) && (*(*str + 2) != 0x0a)) //by Corey for 68k
 				(*str)++; //so we don't see it later
 			if (lastCount &&  max < RTextWidth(first , 0, count, defaultFont))
 			{
@@ -294,7 +272,7 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 			}
 		}
 
-		if (c == SP) //check word wrap
+		if (c == 0x20) //check word wrap
 		{
 			if (max >= RTextWidth(first , 0, count, defaultFont))
 			{
@@ -313,8 +291,14 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 		}
 
 		//all is still cool
+#ifdef UTF8
+		utf8new = GetUTF8Char(*str);
+		count += UTF8Count;
+		(*str) += UTF8Count;
+#else
 		++count;
 		(*str)++;
+#endif
 
 		{
 			//we may never see a space to break on
@@ -475,20 +459,11 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 	strptr chkParam;
 #endif
 	word TogRect;
-#ifdef UTF8
-	short utf8;
-	char utf8middle, utf8trailer;
-	char isUnifont;
-#endif
 
 	TogRect  = 0;
 
 	str += first;
 	last = str + cnt;
-
-#ifdef UTF8
-	isUnifont = GetNumChars() > 256;
-#endif
 
 	while (str < last)
 	{
@@ -582,9 +557,6 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 							Panic(E_TEXT_FONT, param);
 #endif
 					}
-#ifdef UTF8
-					isUnifont = GetNumChars() > 256;
-#endif
 					break;
 #ifdef DEBUG
 				default:
@@ -596,25 +568,8 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 		else
 		{
 #ifdef UTF8
-			//Handle UTF-8
-			utf8 = *str++;
-			if (isUnifont)
-			{
-				if ((utf8 & 0xE0) == 0xC0)
-				{
-					utf8trailer = *str++ & 0x3F;
-					utf8 = ((utf8 & 0x1F) << 6) | utf8trailer;
-				}
-				else if ((utf8 & 0xF0) == 0xE0)
-				{
-					utf8middle = *str++ & 0x3F;
-					utf8trailer = *str++ & 0x3F;
-					utf8 = ((utf8 & 0x1F) << 12) | (utf8middle << 6) | utf8trailer;
-				}
-				if (utf8 >= 0x2000 && utf8 < 0x2070) //General Punctuation overlaps Combining Diacritic block
-					utf8 = utf8 - 0x2000 + 0x300;
-			}
-			RDrawChar(utf8);
+			str = GetUTF8Char(str);
+			RDrawChar(UTF8Char);
 #else
 			RDrawChar(*str++);
 #endif

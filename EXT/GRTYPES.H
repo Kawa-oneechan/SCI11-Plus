@@ -95,7 +95,7 @@ word RSetFont(word);
 word GetFont(void);
 
 word RTextWidth(strptr, int, int, int);
-word RCharWidth(byte);
+word RCharWidth(short);
 word CharHeight(byte);
 word GetPointSize(void);
 void SetPointSize(word);
