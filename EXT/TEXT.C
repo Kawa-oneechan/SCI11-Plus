@@ -106,86 +106,154 @@ global void RTextSize(RRect *r, strptr text, word font, word def)
 	RSetFont(oldFont);
 }
 
+//Return total width of this text
+global word RTextWidth(strptr text, int index, int count, int defaultFont)
+{
+	int width = 0, newNum, action;
 #ifdef UTF8
-struct sUtf8job
-{
-	char* source; //string we're walking
-	char* cursor; //where we are now
-	short lastChar;
-	char expectUtf8;
-	char lastLength;
-} utf8job;
-void utf8_StartJob(char* source)
-{
-	utf8job.source = source;
-	utf8job.cursor = source;
-	utf8job.lastChar = 0xFFFF;
-	utf8job.lastLength = 0;
-}
-short utf8_GetChar()
-{
-	char middle, trailer;
-	short code = *utf8job.cursor++;
-
-	utf8job.lastLength = 1;
-
-	if (!utf8job.expectUtf8)
-		return utf8job.lastChar = code;
-
-	if ((code & 0xE0) == 0xC0)
-	{
-		trailer = *utf8job.cursor++ & 0x3F;
-		code = ((code & 0x1F) << 6) | trailer;
-		utf8job.lastLength = 2;
-	}
-	else if ((code & 0xF0) == 0xE0)
-	{
-		middle = *utf8job.cursor++ & 0x3F;
-		trailer = *utf8job.cursor++ & 0x3F;
-		code = ((code & 0x1F) << 12) | (middle << 6) | trailer;
-		utf8job.lastLength = 3;
-	}
-
-	//General Punctuation overlaps Combining Diacritic block
-	if (code >= 0x2000 && code < 0x2070)
-		code = code - 0x2000 + 0x300;
-
-	return utf8job.lastChar = code;
-}
+	short c;
+	char utf8trailer, utf8middle;
+	char isUnifont;
+#else
+	char c;
 #endif
+	int oldFont = GetFont();
+	char* str = text + index;
+
+	RSetFont(defaultFont);
+#ifdef UTF8
+	isUnifont = GetNumChars() > 256;
+#endif
+
+	while (count-- > 0 && (*str != 0))
+	{
+		c = *str;
+#ifdef UTF8
+		if (isUnifont)
+		{
+			//Handle UTF-8
+			if ((c & 0xE0) == 0xC0)
+			{
+				count++;
+				str++;
+				utf8trailer = *str & 0x3F;
+				c = ((c & 0x1F) << 6) | utf8trailer;
+			}
+			else if ((c & 0xF0) == 0xE0)
+			{
+				count += 2;
+				str++;
+				utf8middle = *str & 0x3F;
+				str++;
+				utf8trailer = *str & 0x3F;
+				c = ((c & 0x1F) << 12) | (utf8middle << 6) | utf8trailer;
+			}
+			if (c >= 0x2000 && c < 0x2070) //General Punctuation overlaps Combining Diacritic block
+				c = c - 0x2000 + 0x300;
+		}
+#endif
+
+		if(c == CTRL_CHAR)
+		{
+			newNum = 0;
+			str++;
+			if(!(count-- > 0)) break;
+
+			if((*str == 'c' || *str == 'f') &&  count-- > 0)
+			{
+				action = *str;
+				str++;
+				while(*str >= '0' && *str <= '9' && count)
+				{
+					newNum *= 10;
+					newNum += *str++ - '0';
+					count--;
+				}
+				if(count > 0)
+				{
+					switch(action)
+					{
+						case 'c':
+							break;
+						case 'f':
+							RSetFont(newNum);
+							break;
+					}
+				}
+			}
+
+			while(count > 0 && *str != CTRL_CHAR)
+			{
+				count--;
+				str++;
+			}
+
+		}
+		else
+		{
+			width += RCharWidth(c);
+		}
+
+		str++;
+	}
+	RSetFont(oldFont);
+	return width;
+}
+
 
 //return count of chars that fit in pixel length
 global int GetLongest(strptr *str, int max, int defaultFont)
 {
 	strptr last, first;
+#ifdef UTF8
 	short c;
+	char utf8middle, utf8trailer;
+	char isUnifont;
+#else
+	char c;
+#endif
 	word count = 0, lastCount = 0;
 
 	first = last = *str;
 
 #ifdef UTF8
-	utf8job.expectUtf8 = GetNumChars() > 256;
-	utf8_StartJob(*str);
+	isUnifont = GetNumChars() > 256;
 #endif
 
 	//find a HARD terminator or LAST SPACE that fits on line
 	while (1)
 	{
-#ifdef UTF8
-		c = utf8_GetChar();
-#else
 		c = *(*str);
+
+#ifdef UTF8
+		if (isUnifont)
+		{
+			//Handle UTF-8
+			if ((c & 0xE0) == 0xC0)
+			{
+				count++;
+				(*str)++;
+				utf8trailer = *(*str) & 0x3F;
+				c = ((c & 0x1F) << 6) | utf8trailer;
+			}
+			else if ((c & 0xF0) == 0xE0)
+			{
+				count += 2;
+				(*str)++;
+				utf8middle = *(*str) & 0x3F;
+				(*str)++;
+				utf8trailer = *(*str) & 0x3F;
+				c = ((c & 0x1F) << 12) | (utf8middle << 6) | utf8trailer;
+			}
+			if (c >= 0x2000 && c < 0x2070) //General Punctuation overlaps Combining Diacritic block
+				c = c - 0x2000 + 0x300;
+		}
 #endif
 
 		if (c == 0x0d)
 		{
-#ifdef UTF8
-			if (*(utf8job.cursor) == 0x0a)
-				utf8job.cursor++;
-#else
 			if (*(*str + 1) == 0x0a)
 				(*str)++; //so we don't see it later
-#endif
 			if (lastCount &&  max < RTextWidth(first , 0, count, defaultFont))
 			{
 				*str = last;
@@ -197,7 +265,6 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 				return(count); //caller sees end of string
 			}
 		}
-
 		if (c == LF)
 		{
 			if ((*(*str + 1) == CR) && (*(*str + 2) != LF)) //by Corey for 68k
@@ -219,7 +286,7 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 			if (lastCount && max < RTextWidth(first , 0, count, defaultFont))
 			{
 				*str = last;
-				return(lastCount - 1);
+				return(lastCount);
 			}
 			else
 			{
@@ -246,13 +313,8 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 		}
 
 		//all is still cool
-#ifdef UTF8
-		count += utf8job.lastLength;
-		(*str) += utf8job.lastLength;
-#else
 		++count;
 		(*str)++;
-#endif
 
 		{
 			//we may never see a space to break on
@@ -406,14 +468,18 @@ global void ShowString(strptr str)
 
 global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defaultFore)
 {
-	short code;
-	short command;
+	char code;
 	int param;
 	strptr last;
 #ifdef DEBUG
 	strptr chkParam;
 #endif
 	word TogRect;
+#ifdef UTF8
+	short utf8;
+	char utf8middle, utf8trailer;
+	char isUnifont;
+#endif
 
 	TogRect  = 0;
 
@@ -421,34 +487,26 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 	last = str + cnt;
 
 #ifdef UTF8
-	utf8job.expectUtf8 = GetNumChars() > 256;
-	utf8_StartJob(str);
-	while (utf8job.cursor < last)
-#else
-	#define utf8_GetChar() *str++
-	while (str < last)
+	isUnifont = GetNumChars() > 256;
 #endif
-	{
-		code = utf8_GetChar();
 
-		if (code == CTRL_CHAR)
+	while (str < last)
+	{
+		if (*str == CTRL_CHAR)
 		{
-			code = utf8_GetChar();
+			str++;
 
 			//Hit control code: do control function
-			if (code == CTRL_CHAR)
+			if ((code = *str++) == CTRL_CHAR)
 			{
 				RDrawChar(CTRL_CHAR); // No control code found -> want CTRL_CHAR
 				continue;
 			}
 
-			command = code;
-			code = utf8_GetChar();
-
-			if (code == CTRL_CHAR)
+			if (*str == CTRL_CHAR)
 			{
 				// No parameter following control code
-				code = utf8_GetChar();
+				str++;
 				param = -1;
 			}
 			else
@@ -457,19 +515,11 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 #ifdef DEBUG
 				chkParam = str;
 #endif
-#ifdef UTF8
-				while ((*utf8job.cursor >= '0') && (*utf8job.cursor <= '9'))
-				{
-					param *= 10;
-					param += (*utf8job.cursor++) - '0';
-				}
-#else
 				while ((*str >= '0') && (*str <= '9'))
 				{
 					param *= 10;
 					param += (*str++) - '0';
 				}
-#endif
 #ifdef DEBUG
 				if (str == chkParam)
 				{
@@ -477,14 +527,10 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 					Panic(E_TEXT_PARAM, code, *str);
 				}
 #endif
-#ifdef UTF8
-				while ((utf8job.cursor < last) && (utf8_GetChar() != CTRL_CHAR));
-#else
-				while ((str < last) && (*str++ != CTRL_CHAR));
-#endif
+				while ((str < last) && (*str++ != CTRL_CHAR)) ;
 			}
 
-			switch(command)
+			switch(code)
 			{
 				//rectangle
 				case 'r':
@@ -537,7 +583,7 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 #endif
 					}
 #ifdef UTF8
-					utf8job.expectUtf8 = GetNumChars() > 256;
+					isUnifont = GetNumChars() > 256;
 #endif
 					break;
 #ifdef DEBUG
@@ -549,7 +595,29 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 		}
 		else
 		{
-			RDrawChar(code);
+#ifdef UTF8
+			//Handle UTF-8
+			utf8 = *str++;
+			if (isUnifont)
+			{
+				if ((utf8 & 0xE0) == 0xC0)
+				{
+					utf8trailer = *str++ & 0x3F;
+					utf8 = ((utf8 & 0x1F) << 6) | utf8trailer;
+				}
+				else if ((utf8 & 0xF0) == 0xE0)
+				{
+					utf8middle = *str++ & 0x3F;
+					utf8trailer = *str++ & 0x3F;
+					utf8 = ((utf8 & 0x1F) << 12) | (utf8middle << 6) | utf8trailer;
+				}
+				if (utf8 >= 0x2000 && utf8 < 0x2070) //General Punctuation overlaps Combining Diacritic block
+					utf8 = utf8 - 0x2000 + 0x300;
+			}
+			RDrawChar(utf8);
+#else
+			RDrawChar(*str++);
+#endif
 		}
 	}
 }
@@ -567,4 +635,3 @@ global void ShowText(strptr str, int first, int cnt, int defaultFont, int defaul
 	r.right = rThePort->pnLoc.h;
 	ShowBits(&r, VMAP);
 }
-
