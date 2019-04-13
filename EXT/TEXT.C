@@ -7,6 +7,7 @@
 //-------------
 // > General cleanup -- no ancient-style loose parameter type lists, // comments
 // > Basic UTF-8
+// > Add SCI32-style |c| and |f| commands that don't use lookup tables as |C| and |F|
 
 #include "kawa.h"
 #include "text.h"
@@ -113,15 +114,15 @@ char* GetUTF8Char(char* str)
 {
 	short c, trailer, middle;
 
+	UTF8Count = 1;
+
 	if (GetNumChars() <= 256)
 	{
 		UTF8Char = *str++;
-		UTF8Count = 1;
 		return str;
 	}
 
 	c = *str++;
-	UTF8Count = 1;
 	if ((c & 0xE0) == 0xC0)
 	{
 		trailer = *str++ & 0x3F;
@@ -136,9 +137,22 @@ char* GetUTF8Char(char* str)
 		UTF8Count = 3;
 	}
 
-	if (c >= 0x2000 && c < 0x2070) //General Punctuation overlaps Combining Diacritic block
-		c = c - 0x2000 + 0x300;
-	//TODO: Add more remap hacks here.
+	//Handle stupid space-saving hack
+	if (c >= 0x2000 && c <= 0x2044) //General Punctuation overlaps Combining
+		c = c - 0x2000 + 0x300;		//Diacritical Marks.
+	if (c >= 0x3000 && c <= 0x30FF) //CJK Symbols and Kana overlap Latin Ext-B,
+		c = c - 0x3000 + 0x200;		//IPA Extensions, and Spacing Modifiers.
+	//Actual font mapping is thus:
+	//0x0000 C0 and Basic Latin
+	//0x0080 C1 and Latin Supplement
+	//0x0100 Latin Extended-A
+	//0x0180 Latin Extended-B
+	//0x0200 CJK Symbols and Punctuation
+	//0x0240 Hiragana
+	//0x02A0 Katakana
+	//0x0300 General Punctuation
+	//0x0370 Greek and Coptic
+	//0x0400 Cyrillic
 
 	UTF8Char = c;
 	return str;
@@ -151,7 +165,7 @@ global word RTextWidth(strptr text, int index, int count, int defaultFont)
 	int width = 0, newNum, action;
 	short c;
 	int oldFont = GetFont();
-	char* str = text + index;
+	char *str = text + index;
 
 	RSetFont(defaultFont);
 
@@ -165,7 +179,7 @@ global word RTextWidth(strptr text, int index, int count, int defaultFont)
 			str++;
 			if(!(count-- > 0)) break;
 
-			if((*str == 'c' || *str == 'f') &&  count-- > 0)
+			if((*str == 'c' || *str == 'f' || *str == 'C' || *str == 'F') && count-- > 0)
 			{
 				action = *str;
 				str++;
@@ -180,8 +194,12 @@ global word RTextWidth(strptr text, int index, int count, int defaultFont)
 					switch(action)
 					{
 						case 'c':
+						case 'C':
 							break;
 						case 'f':
+							RSetFont(textFonts[newNum]);
+							break;
+						case 'F':
 							RSetFont(newNum);
 							break;
 					}
@@ -268,7 +286,7 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 			}
 		}
 
-		if (c == 0x20) //check word wrap
+		if (c == ' ') //check word wrap
 		{
 			if (max >= RTextWidth(first , 0, count, defaultFont))
 			{
@@ -312,7 +330,7 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 //Search string for font control and return point size of tallest font
 global int GetHighest(strptr str, int cnt, int defaultFont)
 {
-	int oldFont, pointSize, start = cnt - 2, setFont, newFont;
+	int oldFont, pointSize, start = cnt - 2, setFont, newFont, anyFont;
 
 	oldFont = GetFont();
 	pointSize = GetPointSize();
@@ -324,9 +342,10 @@ global int GetHighest(strptr str, int cnt, int defaultFont)
 			//Hit control code: check for font control
 			//If font control found, adjust pointSize if a taller font
 			//is requested.
-			if (*str == 'f')
+			if (*str == 'f' || *str == 'F')
 			{
 				if (!cnt--) break;
+				anyFont = (*str == 'F');
 				str++;
 				setFont = (cnt == start); //If font control at start of line, set pointSize even if smaller than default.
 				if (*str == CTRL_CHAR)
@@ -342,7 +361,10 @@ global int GetHighest(strptr str, int cnt, int defaultFont)
 						newFont += *str++ - '0';
 					}
 					if (!++cnt) break;
-					RSetFont(textFonts[newFont]);
+					if (anyFont)
+						RSetFont(textFonts[newFont]);
+					else
+						RSetFont(newFont);
 				}
 				if (setFont || (pointSize < GetPointSize()))
 					pointSize = GetPointSize();
@@ -407,7 +429,7 @@ global word* RTextBox(strptr text, int show, RRect *box, word mode, word font)
 		height += pointSize;
 	}
 
-	/* restore old font */
+	//restore old font
 	RSetFont(oldFont);
 	for (i = 0; i < rectIndex; i++)
 	{
@@ -536,6 +558,18 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 #endif
 					}
 					break;
+				case 'C':
+					if (param == -1)
+					{
+						//No param = set color to default color
+						PenColor(defaultFore);
+					}
+					else
+					{
+						//Param = actual palette index!
+						PenColor(param & 0xff);
+					}
+					break;
 				//Font
 				case 'f':
 					if (param == -1)
@@ -552,6 +586,18 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 						else
 							Panic(E_TEXT_FONT, param);
 #endif
+					}
+					break;
+				case 'F':
+					if (param == -1)
+					{
+						//No param = set font to default
+						RSetFont(defaultFont);
+					}
+					else
+					{
+						//Param = actual font number!
+						RSetFont(param);
 					}
 					break;
 #ifdef DEBUG
