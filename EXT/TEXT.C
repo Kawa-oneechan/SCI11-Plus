@@ -217,10 +217,6 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 	strptr last, first;
 	short c;
 	word count = 0, lastCount = 0;
-#ifdef UTF8
-	strptr utf8new;
-#endif
-
 	first = last = *str;
 
 	//find a HARD terminator or LAST SPACE that fits on line
@@ -292,7 +288,7 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 
 		//all is still cool
 #ifdef UTF8
-		utf8new = GetUTF8Char(*str);
+		GetUTF8Char(*str);
 		count += UTF8Count;
 		(*str) += UTF8Count;
 #else
