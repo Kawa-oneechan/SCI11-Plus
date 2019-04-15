@@ -333,9 +333,9 @@ global int GetHighest(strptr str, int cnt, int defaultFont)
 					}
 					if (!++cnt) break;
 					if (anyFont)
-						RSetFont(textFonts[newFont]);
-					else
 						RSetFont(newFont);
+					else
+						RSetFont(textFonts[newFont]);
 				}
 				if (setFont || (pointSize < GetPointSize()))
 					pointSize = GetPointSize();
