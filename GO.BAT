@@ -1,6 +1,6 @@
 @echo off
 cls
-set80x50
-set PATH=Z:\;C:\MSVC\BIN;
+set PATH=Z:\;C:\BIN;
 set TNT=-NOPSPGROW
 cycles max
+set80x50
