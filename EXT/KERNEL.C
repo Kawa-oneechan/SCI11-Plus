@@ -1632,6 +1632,29 @@ global KERNEL(StrCat)
 
 global KERNEL(StrCase)
 {
+#ifdef UTF8
+	strptr str = Native(arg(1));
+	char work[255];
+	strptr str2 = work;
+	if (argCount == 2 && arg(2) > 0)
+	{
+		while (*str)
+		{
+			str = GetUTF8Char(str);
+			str2 = SetUTF8Char(str2, toupper(UTF8Char));
+		}
+	}
+	else
+	{
+		while (*str)
+		{
+			str = GetUTF8Char(str);
+			str2 = SetUTF8Char(str2, tolower(UTF8Char));
+		}
+	}
+	*str2 = '\0';
+	strcpy((strptr)Native(arg(1)), work);
+#else
 	strptr str = Native(arg(1));
 	if (argCount == 2 && arg(2) > 0)
 		for (; *str != '\0'; ++str)
@@ -1639,6 +1662,7 @@ global KERNEL(StrCase)
 	else
 		for (; *str != '\0'; ++str)
 			*str = tolower(*str);
+#endif
 }
 
 
@@ -1684,12 +1708,28 @@ global KERNEL(ShakeScreen)
 //is present, set the byte to that value.
 global KERNEL(StrAt)
 {
+#ifdef UTF8
+	memptr sp = (memptr)Native(arg(1));
+	int cnt = (int)arg(2) + 1;
+	while (cnt--)
+		sp = GetUTF8Char(sp);
+	acc = UTF8Char;
+	//TODO: set
+	if (argCount = 3)
+	{
+		//if ((short)arg(3) < 0x80)
+		//	*(sp - UTF8Count) = (byte)arg(3);
+		SetUTF8CharAt((memptr)Native(arg(1)), (int)arg(2), (short)arg(3));
+		//acc = (short)arg(3);
+	}
+#else
 	memptr sp;
 
 	sp = (memptr)Native(arg(1)) + (int)arg(2);
 	acc = *sp;
 	if (argCount == 3)
 		*sp = (byte)arg(3);
+#endif
 }
 
 
@@ -2637,3 +2677,45 @@ KERNEL(Kawa)
 	}
 }
 
+
+KERNEL(Utf8to16)
+{
+	short *wide = (short*)Native(arg(1));
+	char *str = (char*)Native(arg(2));
+	int i, len = (int)arg(3);
+	if (wide == 0)
+		wide = (short*)NeedPtr((len + 1) * 2);
+	for (i = 0; i < len; i++)
+	{
+#ifdef UTF8
+		str = GetUTF8Char(str);
+		wide[i] = UTF8Char;
+		if (UTF8Char == 0)
+			break;
+#else
+		wide[i] = (short)*str;
+		if (*str == 0)
+			break;
+		str++;
+#endif
+	}
+}
+
+KERNEL(Utf16to8)
+{
+	char *str = (char*)Native(arg(1));
+	short *wide = (short*)Native(arg(2));
+	int i, len = (int)arg(3);
+	if (str == 0)
+		str = (char*)NeedPtr((len + 1));
+	for (i = 0; i < len; i++)
+	{
+#ifdef UTF8
+		str = SetUTF8Char(str, wide[i]);
+#else
+		*str++ = (byte)wide[i];
+#endif
+		if (wide[i] == 0)
+			break;
+	}
+}

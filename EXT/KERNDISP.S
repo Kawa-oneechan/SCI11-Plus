@@ -269,6 +269,8 @@ kernelDispTbl	label	dword
 	
 	kernel	Kawa
 	kernel	Array
+	kernel	Utf8to16
+	kernel	Utf16to8
 
 kernelMax	dw	($-kernelDispTbl)/4 - 1
 

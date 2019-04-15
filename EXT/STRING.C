@@ -38,16 +38,123 @@ to others.
 #include "string.h"
 #include "ctype.h"
 
+#ifdef UTF8
+short UTF8Char = 0xFFFF;
+short UTF8Count = 0;
+
+int GetUTF8Count(short utf)
+{
+	if (utf < 0x7F)
+		return 1;
+	else if (utf <= 0x07FF)
+		return 2;
+	else if (utf <= 0xFFFF)
+		return 3;
+}
+
+char* GetUTF8Char(char *str)
+{
+	short c, trailer, middle;
+
+	UTF8Count = 1;
+
+	c = *str++;
+	if ((c & 0xE0) == 0xC0)
+	{
+		trailer = *str++ & 0x3F;
+		c = ((c & 0x1F) << 6) | trailer;
+		UTF8Count = 2;
+	}
+	else if ((c & 0xF0) == 0xE0)
+	{
+		middle = *str++ & 0x3F;
+		trailer = *str++ & 0x3F;
+		c = ((c & 0x1F) << 12) | (middle << 6) | trailer;
+		UTF8Count = 3;
+	}
+	UTF8Char = c;
+	return str;
+}
+
+char* SetUTF8Char(char *str, short utf)
+{
+	if (utf < 0x7F)
+	{
+		str[0] = (char)utf;
+		return str + 1;
+	}
+	else if (utf <= 0x07FF)
+	{
+		str[0] = (char)(((utf >> 6) & 0x1F) | 0xC0);
+		str[1] = (char)(((utf >> 0) & 0x3F) | 0x80);
+		return str + 2;
+	}
+	else if (utf <= 0xFFFF)
+	{
+		str[0] = (char) (((utf >> 12) & 0x0F) | 0xE0);
+		str[1] = (char) (((utf >>  6) & 0x3F) | 0x80);
+		str[2] = (char) (((utf >>  0) & 0x3F) | 0x80);
+		return str + 3;
+	}
+}
+
+void SetUTF8CharAt(char *str, int index, short utf)
+{
+	int i, len = strlen(str);
+	//short wide[255];
+	short *wide = (short*)NeedPtr((len + 1) * 2);
+	char *sp = str;
+
+	//basically mbstowcs
+	for (i = 0; i < len; i++)
+	{
+		sp = GetUTF8Char(sp);
+		wide[i] = UTF8Char;
+	}
+	wide[index] = utf;
+
+	sp = str; //rewind...
+
+	//wcstombs
+	for (i = 0; i < len; i++)
+	{
+		sp = SetUTF8Char(sp, wide[i]);
+	}
+	*sp = 0;
+
+	DisposePtr(wide);
+}
+
+#endif
 
 //Return the length of the string pointed to by 's'.
 global uint strlen(strptr s)
 {
+#ifdef UTF8
+	int r = 0;
+	while (*s++)
+	{
+		r++;
+		if ((*s & 0xE0) == 0xC0)
+		{
+			s++;
+			r++;
+		}
+		else if ((*s & 0xF0) == 0xE0)
+		{
+			s += 2;
+			r += 2;
+		}
+	}
+	return r;
+#else
 	strptr t;
 
 	t = s;
 	while (*t++)
 		;
 	return (t - s - 1);
+#endif
 }
 
 
@@ -155,12 +262,26 @@ global strptr reverse(strptr str)
 
 global strptr strlwr(strptr s)
 {
+#ifdef UTF8
+	strptr str = s;
+	char work[255];
+	strptr str2 = work;
+	while (*str)
+	{
+		str = GetUTF8Char(str);
+		str2 = SetUTF8Char(str2, tolower(UTF8Char));
+	}
+	*str2 = '\0';
+	strcpy(s, work);
+	return s;
+#else
 	strptr t;
 
 	for (t = s; *t != '\0'; ++t)
 		*t = tolower(*t);
 
 	return (s);
+#endif
 }
 
 

@@ -49,5 +49,13 @@ extern strptr strbcat(strptr dest, strptr src, int count);
 extern strptr reverse(strptr str);
 extern bool IsPrintStr(strptr str);
 
+#ifdef UTF8
+extern short UTF8Char, UTF8Count;
+extern int GetUTF8Count(short);
+extern char* GetUTF8Char(char*);
+extern char* SetUTF8Char(char*, short);
+extern void SetUTF8CharAt(char*, int, short);
+#endif
+
 #endif
 

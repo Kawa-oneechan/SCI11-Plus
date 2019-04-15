@@ -40,8 +40,9 @@ The `EXT` version of SCI11 adds the following tricks:
 *  **Ensuring you're trying to run an SCI11 game** by sniffing the format of the `RESOURCE.MAP` file. This feature can be easily toggled out by editing `KAWA.H`.
 *  **DbugStr outputs to file** instead of a secondary mono monitor. **New:** You can specify which file in `RESOURCE.CFG` via the `log` setting. Also I forgot to mention it takes format strings.
 *  **LDM/STM opcodes** as needed by the hottest new shit in SCI Companion.
-*  **Basic UTF-8 support**. Font files have 16-bit character counts, and using UTF-8 encoding is the most backwards-compatible way to reach them all. This feature can be easily toggled out by editing `KAWA.H`.
+*  **UTF-8 support**. Font files have 16-bit character counts, and using UTF-8 encoding is the most backwards-compatible way to reach them all. Includes kernel calls equivalent to `mbstowcs`/`wcstombs`. This feature can be easily toggled out by editing `KAWA.H`.
 *  **Colorful menus**. Menus, if enabled, are drawn in whatever colors were last used by `DrawStatus`. This feature can be easily toggled out by editing `KAWA.H`.
+*  **Full SBCS case mapping**. If you don't enable UTF-8 support, you can specify a casemap file to use, with your choice of DOS-437, Win-1252, or ISO-8859-1.
 
 ![Demonstration of color hacks.](http://helmet.kafuka.org/sci/.images/colorhaxdemo1.gif)
 ![Demonstration of stroked text.](http://helmet.kafuka.org/sci/.images/dsstroke.png)

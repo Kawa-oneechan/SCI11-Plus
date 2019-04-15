@@ -1,9 +1,5 @@
 /* KAWA's HACKS -- A REFERENCE GUIDE
  * ---------------------------------
- * INTERNALERRORS
- *   Instead of reading error messages from INTERP.ERR,
- *   have them in the program code itself. This makes
- *   the program bigger, but cleans up the game folder.
  * ENDOOM
  *   When exiting the game, if there's a 184.VOC with
  *   an 80x25 textmode screen and some coordinates,
@@ -28,9 +24,6 @@
  * UTF8
  *   Allow all 65536 characters in a font file to be
  *   used via UTF-8 encoding.
- * WIN1252
- *   Have the case folding functions use the Windows
- *   1252 codepage instead of DOS 437.
  * DBUGSTRFILE
  *   Instead of writing to a mono text screen, have
  *   DbugStr write to a text file for later checking,
@@ -39,9 +32,16 @@
  * COLORFULMENU
  *   Menus, if enabled, are drawn in whatever colors
  *   were last used by DrawStatus.
+ *
+ * ERRLANG <file>
+ *   Instead of reading error messages from INTERP.ERR,
+ *   have them in the program code itself. This makes
+ *   the program bigger, but cleans up the game folder.
+ * CASEMAP <file>
+ *   Use another casemap list instead of the built-in
+ *   DOS-437. Only used if UTF8 is *not* defined.
  */
 
-#define INTERNALERRORS
 #define ENDOOM
 #define NOOOPS
 #define ENSURESCI11
@@ -51,5 +51,5 @@
 #define DBUGSTRFILE
 #define COLORFULMENU
 
-//For INTERNALERRORS
 #define ERRLANG "ERRMSG_E.H"
+#define CASEMAP "CM_1252.H"

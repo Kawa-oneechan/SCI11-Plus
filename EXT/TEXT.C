@@ -108,35 +108,8 @@ global void RTextSize(RRect *r, strptr text, word font, word def)
 }
 
 #ifdef UTF8
-short UTF8Char = 0xFFFF;
-short UTF8Count = 0;
-char* GetUTF8Char(char* str)
+short UTF8FontHack(short c)
 {
-	short c, trailer, middle;
-
-	UTF8Count = 1;
-
-	if (GetNumChars() <= 256)
-	{
-		UTF8Char = *str++;
-		return str;
-	}
-
-	c = *str++;
-	if ((c & 0xE0) == 0xC0)
-	{
-		trailer = *str++ & 0x3F;
-		c = ((c & 0x1F) << 6) | trailer;
-		UTF8Count = 2;
-	}
-	else if ((c & 0xF0) == 0xE0)
-	{
-		middle = *str++ & 0x3F;
-		trailer = *str++ & 0x3F;
-		c = ((c & 0x1F) << 12) | (middle << 6) | trailer;
-		UTF8Count = 3;
-	}
-
 	//Handle stupid space-saving hack
 	if (c >= 0x2000 && c <= 0x2044) //General Punctuation overlaps Combining
 		c = c - 0x2000 + 0x300;		//Diacritical Marks.
@@ -153,9 +126,7 @@ char* GetUTF8Char(char* str)
 	//0x0300 General Punctuation
 	//0x0370 Greek and Coptic
 	//0x0400 Cyrillic
-
-	UTF8Char = c;
-	return str;
+	return c;
 }
 #endif
 
@@ -218,7 +189,7 @@ global word RTextWidth(strptr text, int index, int count, int defaultFont)
 #ifdef UTF8
 			str = GetUTF8Char(str) - 1;
 			count -= UTF8Count - 1;
-			c = UTF8Char;
+			c = UTF8FontHack(UTF8Char);
 #endif
 			width += RCharWidth(c);
 		}
@@ -611,7 +582,7 @@ global void RDrawText(strptr str, int first, int cnt, int defaultFont, int defau
 		{
 #ifdef UTF8
 			str = GetUTF8Char(str);
-			RDrawChar(UTF8Char);
+			RDrawChar(UTF8FontHack(UTF8Char));
 #else
 			RDrawChar(*str++);
 #endif

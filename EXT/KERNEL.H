@@ -195,6 +195,8 @@ KERNEL(DbugStr);
 KERNEL(DisposeScript);
 KERNEL(RemapColors);
 KERNEL(Kawa);
+KERNEL(Utf8to16);
+KERNEL(Utf16to8);
 
 extern int noShowBits;
 

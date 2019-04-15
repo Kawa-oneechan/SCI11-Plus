@@ -18,10 +18,17 @@
 	#include "types.h"
 #endif
 
-extern bool	islower(byte c);
-extern bool	isupper(byte c);
-extern char	_tolower(byte c);
+#ifdef UTF8
+extern bool islower(short c);
+extern bool isupper(short c);
+extern short _tolower(short c);
+extern short _toupper(short c);
+#else
+extern bool islower(byte c);
+extern bool isupper(byte c);
+extern char _tolower(byte c);
 extern char _toupper(byte c);
+#endif
 
 //need defines to avoid Microsoft C defaults
 #define	lower(c) tolower(c)
@@ -36,24 +43,10 @@ extern char _toupper(byte c);
 #define  isspace(c) strchr(" \t\n\r", c)
 #define  ispunct(c) !(isalnum(c) || isspace(c) || iscntrl(c))
 
-#ifdef WIN1252
+#ifdef CASEMAP
 #define	iseuro(c) ((c) >= 0x80 && (c) <= 0xff)
 #else
 #define	iseuro(c) ((c) >= 0x80 && (c) <= 0xa5)
-#define	iskana(c) ((c) >= 0xa6 && (c) <= 0xdf)
-#define	isgreek(c) ((c) >= 0xe0 && (c) <= 0xee)
-
-#define iskanji(c) \
-			((unsigned char)(c) >= 0x81 && \
-			 (unsigned char)(c) <= 0x9f || \
-			 (unsigned char)(c) >= 0xe0 && \
-			 (unsigned char)(c) <= 0xfc)
-#define iskanji2(c) \
-			((unsigned char)(c) >= 0x40 && \
-			 (unsigned char)(c) <= 0x7e || \
-			 (unsigned char)(c) >= 0x80 && \
-			 (unsigned char)(c) <= 0xfc)
-
 #endif
 
 #endif

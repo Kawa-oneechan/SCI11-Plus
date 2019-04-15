@@ -11,7 +11,7 @@
 // > General cleanup -- no ancient-style loose parameter type lists, // comments
 // > DoAlert says it waits for a CLICK, but only checks for keyboard events.
 // > SetAlertProc tried to set a functino with a different prototype.
-// > Internalized all the error messages. For no good reason. Define INTERNALERRORS to use.
+// > Internalized all the error messages. For no good reason. Define ERRLANG to use.
 
 #include "kawa.h"
 #include "types.h"
@@ -33,7 +33,7 @@ int	theViewNum, theLoopNum, theCelNum; // for debugging
 
 bool (*alertProc)(strptr) = (bool(*)(strptr))DoPanic;
 
-#ifndef INTERNALERRORS
+#ifndef ERRLANG
 static char errMsgBuf[ERRBUFSIZE];
 static char *errMsgFile = "INTERP.ERR";
 
@@ -152,8 +152,7 @@ global bool DoAlert(strptr text) //put up alert box and wait for a click
 	return (ret);
 }
 
-#ifdef INTERNALERRORS
-
+#ifdef ERRLANG
 #include ERRLANG
 
 char* ReadErrMsg(int errnum, char *textBuf)
