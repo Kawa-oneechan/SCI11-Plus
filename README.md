@@ -43,6 +43,7 @@ The `EXT` version of SCI11 adds the following tricks:
 *  **UTF-8 support**. Font files have 16-bit character counts, and using UTF-8 encoding is the most backwards-compatible way to reach them all. Includes kernel calls equivalent to `mbstowcs`/`wcstombs`. This feature can be easily toggled out by editing `KAWA.H`.
 *  **Colorful menus**. Menus, if enabled, are drawn in whatever colors were last used by `DrawStatus`. This feature can be easily toggled out by editing `KAWA.H`.
 *  **Full SBCS case mapping**. If you don't enable UTF-8 support, you can specify a casemap file to use, with your choice of DOS-437, Win-1252, or ISO-8859-1.
+*  **SCI32 font code rules**. In SCI11, the `|f..|` and `|c..|` control codes you can use in text strings for display use lookup tables set up with the `TextFonts` and `TextColors` kernel calls, so `|f2|` uses the third entry of the font list. In SCI2, they set the font and color directly. In SCI11+, you can use *both*. `|f2|` uses the third entry of the font list, but `|F2|` uses font #2.
 
 ![Demonstration of color hacks.](http://helmet.kafuka.org/sci/.images/colorhaxdemo1.gif)
 ![Demonstration of stroked text.](http://helmet.kafuka.org/sci/.images/dsstroke.png)
