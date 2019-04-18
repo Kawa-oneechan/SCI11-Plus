@@ -208,7 +208,7 @@ void ResLock(byte resType, uword resId, bool yes)
 		{
 			tmp = (LoadLink far**)Native(FNextNode(Pseudo(scan)));
 			if ((*scan)->type == resType)
-			ResLock(resType, (*scan)->id, yes);
+				ResLock(resType, (*scan)->id, yes);
 		}
 	}
 }
