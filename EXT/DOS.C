@@ -65,7 +65,7 @@ global KERNEL(CheckFreeSpace)
 	//Find out how much space there is.
 	path = Native(*(args+1));
 	if (*(path+1) == ':')
-		freeSpace = RGetFreeSpace(tolower(*path));
+		freeSpace = RGetFreeSpace((char)tolower(*path));
 	else
 		freeSpace = RGetFreeSpace(0);
 
@@ -123,7 +123,7 @@ global KERNEL(ValidPath)
 	else if (file[strlen(file)-1] == ':')
 	{
 		//Current directory on a specified drive is same as validity of drive.
-		c = tolower(file[0]);
+		c = (char)tolower(file[0]);
 		if (acc = existdrive(c))
 			RGetFreeSpace(c);
 		if (criticalError)
