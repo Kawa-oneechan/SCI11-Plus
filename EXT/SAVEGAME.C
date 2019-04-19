@@ -283,16 +283,16 @@ static bool near CheckSaveGame(strptr gameVer)
 	saveSize = inword();
 	heapSize = inword();
 	sci_fgets(vStr, 20, fd);
-/*	return ( //KAWA WAS HERE
+	return ( //KAWA WAS HERE
 		(saveSize == (uint)(&saveEnd - &saveStart)) &&
 		(heapSize == (uint)(handleBase - heapBase)) &&
 		(strcmp(vStr, gameVer) == 0)
-	); */
-	return(
+	);
+/*	return(
 		(saveSize == (&saveEnd - &saveStart)) &&
 		(heapSize == (handleBase - heapBase)) &&
 		(strcmp(vStr, gameVer) == 0)
-	);
+	); */
 }
 
 
@@ -310,11 +310,11 @@ ulong GetSaveLength()
 
 	//Find out how much memory we need.
 	memNeeded = &saveEnd - &saveStart;
-	//if ((handleBase - heapBase) > (int)memNeeded) //KAWA WAS HERE
-	if ((handleBase - heapBase) > memNeeded)
+	if ((handleBase - heapBase) > (int)memNeeded) //KAWA WAS HERE
+	//if ((uint)(handleBase - heapBase) > memNeeded)
 		memNeeded = handleBase - heapBase;
-	//if ((&sysPalette.palIntensity[256] - &sysPalette.palIntensity[0]) > (int)memNeeded) //KAWA WAS HERE
-	if ((&sysPalette.palIntensity[256] - &sysPalette.palIntensity[0]) > memNeeded)
+	if ((&sysPalette.palIntensity[256] - &sysPalette.palIntensity[0]) > (int)memNeeded) //KAWA WAS HERE
+	//if ((uint)(&sysPalette.palIntensity[256] - &sysPalette.palIntensity[0]) > memNeeded)
 		memNeeded = &sysPalette.palIntensity[256] - &sysPalette.palIntensity[0];
 	if (sizeof(RPalette) > memNeeded)
 		memNeeded = sizeof(RPalette);
@@ -385,8 +385,7 @@ static void near outword(word w)
 
 static void near outstr(strptr str)
 {
-	//unsigned int n = strlen(str); //KAWA WAS HERE
-	int n = strlen(str);
+	unsigned int n = strlen(str);
 
 	if (write(fd, str, strlen(str)) != n)
 		longjmp(saveErr, 1);
