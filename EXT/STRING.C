@@ -54,24 +54,33 @@ int GetUTF8Count(short utf)
 
 char* GetUTF8Char(char *str)
 {
-	short c, trailer, middle;
+	short c;
 
 	UTF8Count = 1;
 
 	c = *str++;
 	if ((c & 0xE0) == 0xC0)
 	{
-		trailer = *str++ & 0x3F;
-		c = ((c & 0x1F) << 6) | trailer;
+		c = ((c & 0x1F) << 6);
+		c |= (*str++ & 0x3F);
 		UTF8Count = 2;
 	}
 	else if ((c & 0xF0) == 0xE0)
 	{
-		middle = *str++ & 0x3F;
-		trailer = *str++ & 0x3F;
-		c = ((c & 0x1F) << 12) | (middle << 6) | trailer;
+		c = ((c & 0x1F) << 12);
+		c |= ((*str++ & 0x3F) << 6);
+		c |= (*str++ & 0x3F);
 		UTF8Count = 3;
 	}
+	// Four-byte sequences don't work out 'cos we use a 16-bit result.
+	/* else if ((c & 0xF8) == 0xF0)
+	{
+		c = ((c & 0x1F) << 18);
+		c |= ((*str++ & 0x3F) << 12);
+		c |= ((*str++ & 0x3F) << 6);
+		c |= (*str++ & 0x3F);
+		UTF8Count = 4;
+	} */
 	UTF8Char = c;
 	return str;
 }
@@ -101,7 +110,6 @@ char* SetUTF8Char(char *str, short utf)
 void SetUTF8CharAt(char *str, int index, short utf)
 {
 	int i, len = strlen(str);
-	//short wide[255];
 	short *wide = (short*)NeedPtr((len + 1) * 2);
 	char *sp = str;
 
