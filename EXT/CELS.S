@@ -454,8 +454,8 @@ StandardLine proc near uses si es ds bx
 
 		invoke DoColorKawaHax
 
-		; check for priority and skip color to determine whether to draw it
-		.if	(al != ss:skip) && (dh >= [di]) && (al < REMAPCOLORSTART)
+		; check for priority and skip color to determine whether to draw it   ( .- kawa added this bit)
+		.if	(al != ss:skip) && (dh >= [di]) && ((al < REMAPCOLORSTART) || (al == 255))
 			and	byte ptr [di], ah
 			or	byte ptr [di], dl
 
