@@ -410,7 +410,12 @@ rename	proc	oldName:ptr byte, newName:ptr byte
 	pop	es
 	mov	di, newName	; es:di = new name
 
-	dos	dosRename
+	mov	ax, 7156h
+	int	21h
+	.if	ax == 7100h
+		dos	dosRename
+	.endif
+
 	jc	@F
 	xor	ax, ax
 @@:
