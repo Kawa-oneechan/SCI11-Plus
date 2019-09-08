@@ -3,6 +3,10 @@
 ; PMachine routines for object-related operations.
 ;-------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 include macro.i
 
 include debug.i
@@ -59,11 +63,8 @@ endif
 ifdef PROFILER
 	sub	ssPtr, 4
 endif
-
 	ret
-
 GetProperty	endp
-
 
 
 ;---------------------------------------------------------------------------
@@ -98,11 +99,8 @@ endif
 ifdef PROFILER
 	sub	ssPtr, 4
 endif
-
 	ret
-
 SetProperty	endp
-
 
 
 ;---------------------------------------------------------------------------
@@ -130,17 +128,13 @@ endif
 ifdef PROFILER
 	sub	ssPtr, 4
 endif
-
 	ret
-
 GetPropAddr	endp
-
 
 
 NotObject:
 ;A message was passed to a non-object.  Complain and croak.
 	invoke	PError, si, bp, E_NOT_OBJECT, bx
-
 
 
 QuickMessage proc
@@ -230,7 +224,6 @@ ifdef DEBUG
 endif
 
 
-
 ;***************************************************************************
 ;This may be a good place for speedup by changing both the compiler and this
 ;code.  Look into whether this loop would be faster if number of parameters
@@ -261,7 +254,7 @@ DoMessage:
 	;Input:
 	;	ax = message selector
 	;	bx = pointer to object
-ifdef	PROFILER
+ifdef PROFILER
 	.if traceOn == 1
 		call	DoTrace
 	.endif
@@ -361,9 +354,7 @@ BadSelector:
 	invoke	PError, si, bp, E_BAD_SELECTOR, bx, ax
 
 assume	bx:nothing
-
 QuickMessage	endp
-
 
 
 Messager	proc	
@@ -383,7 +374,6 @@ Messager	proc
 	ret
 
 Messager	endp
-
 
 
 InvokeMethod	proc	uses si di, obj:ptr Obj, selector:word, n:word, args:word

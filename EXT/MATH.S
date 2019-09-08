@@ -5,16 +5,15 @@
 ;
 ; Modifications:  
 ;	04/02/90 Abdul.  Changed to use .MODEL directive and simplified
-;						  segments.  Microsoft MASM 5.1.
+;	segments.  Microsoft MASM 5.1.
 ;-------------------------------------------------------------------
 
-
-;-------------------------------------------------------------------
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
 
 include	macro.i
 include	math.i
-
-;-------------------------------------------------------------------
 
 ;-------------------------------------------------------------------
 
@@ -68,6 +67,7 @@ firstGuess	label	word
 		word	0ffffh	;80000000-100000000
 
 ;-------------------------------------------------------------------
+
 
 .CODE
 
@@ -148,9 +148,7 @@ GuessLoop:
 
 SqrtExit:
 	ret
-
 sqrt	endp
-
 
 
 LCGRandom	proc uses bx cx
@@ -194,13 +192,10 @@ LCGRandom	proc uses bx cx
 	mov	word ptr lcgSeed[2], dx
 
 	ret
-
 LCGRandom	endp
 
 
-
 abs	proc	value:word
-
 assume	ax:sword
 	mov	ax, value
 	.if	ax < 0
@@ -208,8 +203,6 @@ assume	ax:sword
 	.endif
 assume	ax:nothing
   	ret
-
 abs	endp
-
 
 end

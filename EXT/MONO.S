@@ -3,6 +3,10 @@
 ; Copies text strings to the graphics text page
 ;---------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 include	macro.i
 include	mono.i
 
@@ -19,6 +23,7 @@ monoInited		byte	0
 xlate			word	0
 dseg			word	TEXT1
 doff			word	0
+
 
 .CODE
 
@@ -37,9 +42,7 @@ DoXlate	proc
 DoXlate	endp
 
 
-
 MonoStr	proc uses si di es, tOffset:word, tSegment:word
-
 	.if !monoInited
 		call	MonoInit
 	.endif
@@ -87,13 +90,10 @@ ms2:
 	mov	doff, di
 	call	MonoNewline
 	ret
-
 MonoStr	endp
 
 
-
 MonoInit	proc	uses dx
-
 	; detect presence of mono monitor
 	mov	dx, MONO_CRTC_ADDR_REG
 	mov	al, CURSOR_LOC_REG
@@ -112,13 +112,10 @@ MonoInit	proc	uses dx
 		mov	monoInited, -1
 	.endif
 	ret
-
 MonoInit	endp
 
 
-
 MonoClear proc uses di cx es
-
 	mov	es, dseg
 	xor	di, di
 	mov	doff, di
@@ -126,13 +123,10 @@ MonoClear proc uses di cx es
 	mov	cx, 4000
 	rep	stosw
 	ret
-
 MonoClear endp
 
 
-
 MonoNewline proc uses cx dx
-
 	mov	ax, doff
 	mov	cx, 160
 	xor	dx, dx
@@ -144,13 +138,10 @@ MonoNewline proc uses cx dx
 		call	MonoScroll
 	.endif
 	ret
-
 MonoNewline endp
 
 
-
-MonoScroll proc uses si di 
-
+MonoScroll proc uses si di
 	push	ds
 	push	es
 	mov	ax, dseg
@@ -176,7 +167,6 @@ ss2:
 	pop	ds
 	mov	doff, si
 	ret
-
 MonoScroll endp
 
 end

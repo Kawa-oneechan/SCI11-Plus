@@ -203,7 +203,7 @@ DoColorKawaHax	proc near
 	.elseif	(ss:kawaHax == 2)	; draw darkened
 		; naive shitty but fast
 		; dec	al
-		
+
 		;proper
 		push	bx
 		xor	bh, bh

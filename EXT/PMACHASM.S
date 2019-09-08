@@ -4,6 +4,10 @@
 ; compiler.
 ;----------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 include macro.i
 
 include debug.i
@@ -68,9 +72,7 @@ endif
 	mov	scriptHandle, bx
 	UpdateScriptSeg
 	ret
-
 Dispatch	endp
-
 
 
 DoCall	proc	near
@@ -104,18 +106,16 @@ DoCall	proc	near
 	pop	tempVar
 	pop	parmVar
 	ret
-
 DoCall	endp
-
 
 
 ;-------------------------------------------------------------------------
 ; GetDispatchAddrInHeapFromC	interface to GetDispatchAddrInHeap from C
 ;
 ; entry:	scriptNum	= script number
-;		entry			= entry in script
-; exit:	objPtrPtr	= pointer to pointer to object
-;		scriptPtrPtr= pointer to pointer to script node
+;		entry		= entry in script
+; exit:		objPtrPtr	= pointer to pointer to object
+;		scriptPtrPtr	= pointer to pointer to script node
 ;-------------------------------------------------------------------------
 GetDispatchAddrInHeapFromC proc	uses si \
 				scriptNum:word, entry:word, \
@@ -128,24 +128,18 @@ GetDispatchAddrInHeapFromC proc	uses si \
 	mov	[si], bx
 	mov	si, scriptPtrPtr
 	mov	[si], ax
-
 	ret
-
 GetDispatchAddrInHeapFromC	endp
-
 
 
 GetDispatchAddr	proc	uses si di, scrptNde:word, entry:word
 ;Return a pointer to an entry in a script.
-
 	mov	cx, scrptNde
 	mov	bx, entry
 	call	GetDispatchAddrInHeap
 	mov	ax, bx
 	ret
-
 GetDispatchAddr	endp
-
 
 
 GetDispatchAddrInHeap	proc	near
@@ -185,9 +179,7 @@ GetDispatchAddrInHeap	proc	near
 		pop	es
 		invoke	PError, si, bp, E_BAD_DISPATCH, bx
 	.endif
-
 GetDispatchAddrInHeap	endp
-
 
 
 GetDispatchAddrInHunk	proc	near
@@ -207,10 +199,8 @@ GetDispatchAddrInHunk	proc	near
 	mov	di, (scriptNode ptr [di]).sHunk
 	mov	di, (hunkPtr ptr [di]).hSegment
 	mov	es, di
-	return
-
+	ret
 GetDispatchAddrInHunk	endp
-
 
 
 GetNewScript	proc	near
@@ -227,9 +217,7 @@ GetNewScript	proc	near
 	pop	bx
 	UpdateScriptSeg
 	ret
-
 GetNewScript	endp
-
 
 
 OP_ret_BYTE	 equ	048h
@@ -259,10 +247,8 @@ ifdef DEBUG
 		pop	es
 		pop	si
 	.endif
-endif
-
+endif ;DEBUG
 	ret
-
 NeedRetOpcode	endp
 
 end

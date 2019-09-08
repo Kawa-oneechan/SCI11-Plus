@@ -6,6 +6,10 @@
 ;                   segments.  Microsoft MASM 5.1.
 ;-------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 include	macro.i
 include	stdio.i
 include	dos.i
@@ -13,7 +17,6 @@ include	string.i
 include	fileio.i
 
 ;-------------------------------------------------------------------
-
 
 NO_HANDLE	equ	-1
 ERROR_CODE	equ	-1
@@ -23,21 +26,17 @@ ERROR_CODE	equ	-1
 .CODE
 
 ClearDosError	proc
-
 	push	ds
 	mov	ax, @data
 	mov	ds, ax
 	mov	criticalError, 0
 	pop	ds
 	return
-
 ClearDosError	endp
-
 
 
 creat	proc	fname:ptr byte, mode:word
 ;Create a file with name pointed to by 'fname' with attributes set in 'mode'.
-
 	call	ClearDosError
 	mov	dx, fname
 	mov	cx, mode
@@ -46,9 +45,7 @@ creat	proc	fname:ptr byte, mode:word
 		mov	ax, NO_HANDLE
 	.endif
 	ret
-
 creat	endp
-
 
 
 open	proc	fname:ptr byte, mode:word
@@ -57,7 +54,6 @@ open	proc	fname:ptr byte, mode:word
 ;	0 = _read
 ;	1 = _write
 ;	2 = _read/_write
-
 	call	ClearDosError
 	mov	dx, fname
 	mov	al, byte ptr mode
@@ -66,14 +62,11 @@ open	proc	fname:ptr byte, mode:word
 		mov	ax, NO_HANDLE
 	.endif
 	ret
-
 open	endp
-
 
 
 read	proc	fd:word, buf:ptr byte, n:word
 ;Read 'n' bytes from file 'fd' into 'buf'.
-
 	call	ClearDosError
 	mov	bx, fd
 	mov	cx, n
@@ -83,14 +76,11 @@ read	proc	fd:word, buf:ptr byte, n:word
 		xor	ax, ax
 	.endif
 	ret
-
 read	endp
-
 
 
 write	proc	fd:word, buf:ptr byte, n:word
 ;Write 'n' bytes from 'buf' to the file 'fd'.
-
 	call	ClearDosError
 	mov	bx, fd
 	mov	cx, n
@@ -100,14 +90,11 @@ write	proc	fd:word, buf:ptr byte, n:word
 		xor	ax, ax
 	.endif
 	ret
-
 write	endp
-
 
 
 close	proc	fd:word
 ;Close the file 'fd'.
-
 	call	ClearDosError
 	mov	bx, fd
 	dos	dosClose
@@ -117,7 +104,6 @@ close	proc	fd:word
 		mov	ax, 0
 	.endif
 	ret
-
 close	endp
 
 end

@@ -36,7 +36,7 @@ EMM_MAPPAGE		equ 44h
 EMM_RELEASE		equ 45h
 EMM_GETVERSION		equ 46h
 
-.data
+.DATA
 
 ems ARMType <		\
 	emsName,	\
@@ -53,7 +53,7 @@ handle		word NO_MEMORY		; handle of EMS memory we allocated
 pageFrame	word ?			; segment where EMS memory is bank-switched to
 emsName		byte "EMS", 0
 
-.code
+.CODE
 
 
 ;---------------------------------------------------------------------------
@@ -123,7 +123,6 @@ noEMS:
 	xor	ax, ax
 @@:
 	ret
-
 EMSDetect endp
 
 
@@ -134,7 +133,6 @@ EMSDetect endp
 ; exit:		ax	= handle, or NO_MEMORY if error
 ;---------------------------------------------------------------------------
 EMSAlloc proc	uses bx dx, nPages:word
-
 	mov	ah, EMM_ALLOC
 	mov	bx, nPages
 	int	EMM_INT
@@ -143,31 +141,26 @@ EMSAlloc proc	uses bx dx, nPages:word
 	.else
 		mov	ax, dx
 	.endif
-	
 	ret
-
 EMSAlloc endp
 
 
 ;---------------------------------------------------------------------------
 ; EMSMapPage	maps one page into EMS page frame
 ;
-; entry:	ax		= physical page
-;		bx		= logical page
-;		dx		= handle
-; exit:	ax	= 0 if success (ah = error code)
+; entry:	ax	= physical page
+;		bx	= logical page
+;		dx	= handle
+; exit:		ax	= 0 if success (ah = error code)
 ;---------------------------------------------------------------------------
 EMSMapPage	proc uses bx dx, physicalPage:byte, logicalPage:word, aHandle:word
-
 	mov	al, physicalPage
 	mov	bx, logicalPage
 	mov	dx, aHandle
 	mov	ah, EMM_MAPPAGE
 	int	EMM_INT
 	xor	al, al
-
 	ret
-
 EMSMapPage endp
 
 
@@ -179,12 +172,9 @@ EMSMapPage endp
 ;		dx	= segment of page frame
 ;---------------------------------------------------------------------------
 EMSGetPageFrame proc
-
-		xor	ax, ax
-		mov	dx, pageFrame
-		
-		ret
-
+	xor	ax, ax
+	mov	dx, pageFrame
+	ret
 EMSGetPageFrame endp
 
 
@@ -195,13 +185,10 @@ EMSGetPageFrame endp
 ; exit:		nothing
 ;---------------------------------------------------------------------------
 EMSFree proc	uses ax dx, aHandle:word
-
-		mov	ah, EMM_RELEASE
-		mov	dx, aHandle
-		int	EMM_INT
-		
-		ret
-
+	mov	ah, EMM_RELEASE
+	mov	dx, aHandle
+	int	EMM_INT
+	ret
 EMSFree endp
 
 
@@ -213,7 +200,6 @@ EMSFree endp
 ; exit:		ax	= success
 ;---------------------------------------------------------------------------
 init	proc private
-
 	invoke	EMSDetect
 	.if !ax
 		jmp noEMS
@@ -233,7 +219,7 @@ init	proc private
 	.if ax == NO_MEMORY
 		jmp noEMS
 	.endif
-	
+
 	mov	handle, ax
 	jmp	initEnd
 
@@ -261,7 +247,7 @@ init	endp
 ;---------------------------------------------------------------------------
 memcpy proc private uses bx cx si di ds es
 
-	; map the logical page into the pageframe
+; map the logical page into the pageframe
 	mov	si, ax
 	shr	bx, 1		; convert from byte offset to index
 	invoke EMSMapPage, 0, bx, handle
@@ -269,7 +255,7 @@ memcpy proc private uses bx cx si di ds es
 		jmp @F
 	.endif
 
-	; set up registers for copy
+; set up registers for copy
 	mov	bx, pageFrame
 	.if si == MEM2PAGE
 		push	es
@@ -282,15 +268,13 @@ memcpy proc private uses bx cx si di ds es
 		mov	si, dx
 	.endif
 
-	; copy data
+; copy data
 	cld
 	rep movsb
 
 	xor	ah, ah
-
 @@:
 	ret
-
 memcpy	endp
 
 
@@ -301,14 +285,12 @@ memcpy	endp
 ; exit:		nothing
 ;---------------------------------------------------------------------------
 term	proc private
-
 	.if handle != NO_MEMORY
 		invoke	EMSFree, handle
 	.endif
 	invoke	ARMFreePageMap, addr ems
 	mov	ems.active, FALSE
 	ret
-
 term	endp
-	end
 
+end

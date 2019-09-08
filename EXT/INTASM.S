@@ -3,6 +3,10 @@
 ; Grab/restore various interrupts.
 ;-------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 include	macro.i
 
 include	audio.i
@@ -69,6 +73,7 @@ disneyCntr	word	0
 ;-------------------------------------------------------------------
 .CODE
 
+
 SetInterrupts	proc
 ;Set the address of our various interrupt handlers.
 
@@ -121,13 +126,11 @@ SetInterrupts	proc
 
 	mov	interruptsSet, 1
 
-	return
-
+	ret
 SetInterrupts	endp
 
 
-
-ResetInterrupts	proc	
+ResetInterrupts	proc
 ;Set all interrupts back to their original handlers
 
 	.if	interruptsSet
@@ -151,14 +154,11 @@ ResetInterrupts	proc
 		mov	ds, ax
 	.endif
 
-	return
-
+	ret
 ResetInterrupts	endp
 
 
-
 SetTimerInt	proc	near
-
 	;Initialize the user timer interrupt counter.
 	mov	timerCounter, TIMER_COUNT
 	mov	adjustCounter, ADJ_COUNT
@@ -178,13 +178,11 @@ SetTimerInt	proc	near
 	out	timerPort, al
 	xchg	ah, al
 	out	timerPort, al
-	return
-
+	ret
 SetTimerInt	endp
 
 
-
-SetDisneyInt	proc	
+SetDisneyInt	proc
 	cli
 	mov	al, 36h			;timer 0, LSB, MSB, mode 3
 	out	timerPort+3, al
@@ -194,15 +192,12 @@ SetDisneyInt	proc
 	out	timerPort, al
 	mov	disneyCntr, DISNEY_INTS
 	sti
-	return
-
+	ret
 SetDisneyInt	endp
-
 
 
 ResetTimerInt	proc	near 
 ;Set the timer frequency back to normal (18.2/second)
-
 	mov	al, 36h			;timer 0, LSB, MSB, mode 3
 	out	timerPort+3, al
 	xor	al, al
@@ -215,10 +210,8 @@ ResetTimerInt	proc	near
 	mov	ax, es
 	mov	ds, ax
 
-	return
-
+	ret
 ResetTimerInt	endp
-
 
 
 TimerIntHandler	proc	far 
@@ -227,7 +220,6 @@ TimerIntHandler	proc	far
 ; it down the server list. Every 20th of a second, passes it to 
 ; the old BIOS low-level timer interrupt, to keep the system moving 
 ; as expected.
-
 	pushall
 	push	ds
 	push	es
@@ -294,24 +286,24 @@ DoEOI:
 	.endif
 
 	;Call each server in the timer interrupt list.
- lea bx, servers
-assume	bx:ptr Server
- mov cx, MaxServers
+	lea bx, servers
+	assume	bx:ptr Server
+	mov cx, MaxServers
 	.repeat
 		.if	[bx].inUse
 		push	bx		;save current server and count
 		push	cx
 
-			;Decrement this server's counter. If it reaches zero, 
-			;reload it and call the server.
-			dec	[bx].count
-			.if	zero?
-				mov	ax, [bx].freq
-				mov	[bx].count, ax
-				call	[bx].function
-			.endif
-		pop cx			;Restore pointer to server and count
-			pop	bx
+		;Decrement this server's counter. If it reaches zero, 
+		;reload it and call the server.
+		dec	[bx].count
+		.if	zero?
+			mov	ax, [bx].freq
+			mov	[bx].count, ax
+			call	[bx].function
+		.endif
+		pop	cx		;Restore pointer to server and count
+		pop	bx
 		.endif
 		add	bx, type Server
 	.untilcxz
@@ -321,28 +313,20 @@ assume	bx:nothing
 	pop	ds
 	popall
 	iret
-
 TimerIntHandler	endp
-
 
 
 NullInterrupt	proc	far 
 ;This routine must be far.
-
 	iret
-
 NullInterrupt	endp
-
 
 
 BreakExitHandler	proc	far
 ;Deal with abnormal termination due to a critical DOS error.
 ;This routine must be far.
-
 	invoke	exit, 1
-
 BreakExitHandler	endp
-
 
 
 CritErrorHandler	proc	far
@@ -452,32 +436,23 @@ CritErrorHandler	proc	far
 	.endif
 
 	iret
-
 CritErrorHandler	endp
 
 
-
 _cli	proc
-
 	cli
-	return
-
+	ret
 _cli	endp
 
 
-
 _sti	proc
-
 	sti
-	return
-
+	ret
 _sti	endp
-
 
 
 SysTime	proc	func:word
 ;Return word of system time data
-
 	.if	func == 3
 		; return packed calendar date
 		; from DOS cx = 1980-2099Y dh=1-12M dl=1-31D
@@ -530,14 +505,9 @@ SysTime	proc	func:word
 			mov	cl, 4
 		.endif
 		shl	ch, cl
-		or		ah, ch
+		or	ah, ch
 	.endif
-
 	ret
-
 SysTime	endp
 
-
-
 end
-

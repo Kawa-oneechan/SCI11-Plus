@@ -14,11 +14,11 @@ include	memmgr.i
 
 FREE_PAGE	equ	-1
 
-.data
+.DATA
 
 inARM		word	FALSE
 
-.code
+.CODE
 
 getFreePage	proto near	arm:ptr ARMType
 
@@ -215,7 +215,7 @@ ARMCopy		proc	uses es si di,	direction: word, arm:ptr ARMType, aPage: word, \
 				mov	cx, PAGESIZE
 				sub	cx, dx
 			.endif
-			
+
 			; copy the data
 			push	cx
 			mov	ax, direction
@@ -229,20 +229,20 @@ ARMCopy		proc	uses es si di,	direction: word, arm:ptr ARMType, aPage: word, \
 				mov	ax, NO_MEMORY
 				jmp	@F
 			.endif
-			
+
 			; bump down number of bytes--bump up pointer to data
 			sub	cx, dx
 			add	di, dx
 
 			; all other copies will start at bottom of page
 			mov	dx, 0	; dx = offset (0)
-			
+
 		.endif
 
 		getPageMap	bx
 
 	.until !cx
-		
+
 	mov	ax, 0
 
 @@:
@@ -352,6 +352,4 @@ getFreePage	proc near private uses cx si ds, arm:ptr ARMType
 	ret
 getFreePage	endp
 
-
-	end
-
+end

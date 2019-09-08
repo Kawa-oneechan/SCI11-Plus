@@ -86,7 +86,7 @@ else
 
 	;Call the debugger
 	invoke	Debug, si, cx, bp
-	
+
 	;Restore everything and dispatch to the op-code.
 	pop	bx			;recover address of op-code
 	pop	es
@@ -122,7 +122,7 @@ KStackUsage	endp
 
 
 ;-----------------------------------------------------------------------
-;			From here on only compiled if debugging enabled
+;	From here on only compiled if debugging enabled
 ;-----------------------------------------------------------------------
 ifdef	DEBUG
 
@@ -158,9 +158,7 @@ DebugOn	proc	uses si di
 		mov	cx, 256
 		rep	stosw
 	.endif
-
 	ret
-
 DebugOn	endp
 
 
@@ -174,7 +172,7 @@ DebugOff	proc	uses si di
 	mov	ax, debuggerIsOn
 	.if	ax
 		mov	debuggerIsOn, FALSE
-		
+
 		;Copy the saved op-code addresses to opTbl.
 		mov	si, opTableSaveHandle
 		push	ds
@@ -188,9 +186,7 @@ DebugOff	proc	uses si di
 		rep	movsw
 		pop	ds
 	.endif
-
 	ret
-
 DebugOff	endp
 
 
@@ -230,7 +226,7 @@ StackUsage	 	proc	uses si di bp, func:word
 		mov	ax, 0fffeh
 		sub	ax, sp
 		jmp	SUExit
-	.endif	
+	.endif
 
 	dec	ax
 	.if	zero?
@@ -346,10 +342,8 @@ assume	bx:ptr Obj
 	.endif
 
 	return
-
-DoTrace		endp
-
-endif
+DoTrace	endp
+endif ;PROFILER
 
 
 ;-----------------------------------------------------------------------
@@ -413,7 +407,7 @@ ShowHunks	proc	uses si di
 
 	ret
 ShowHunks	endp
-endif
+endif ;0
 
 
 ;-------------------------------------------------------------------------------
@@ -441,8 +435,8 @@ ShowHandles	proc	uses si
 
 	ret
 ShowHandles	endp
-endif
+endif	;0
 
-endif
+endif ;DEBUG
 
-	end
+end

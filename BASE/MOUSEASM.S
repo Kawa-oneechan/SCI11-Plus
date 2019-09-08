@@ -9,6 +9,10 @@
 ; compiler allows C interrupt functions
 ;-------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 include macro.i
 
 include event.i
@@ -114,22 +118,17 @@ showCursor:
 	.endif
 
 	ret
-
 InstallMouse	endp
-
 
 
 DisposeMouse	proc	uses si di
 ;Unhook timer tick routine and shut down the mouse
-
 	.if	haveMouse
 		mov	ax, mouseInstalled
 		int	mouseInt
 	.endif
 	ret
-
 DisposeMouse	endp
-
 
 
 SetMouse	proc	uses si, mpoint:ptr Point
@@ -178,16 +177,13 @@ assume	bx:nothing
 	invoke	MoveCursor, ax, bx
 
 	ret
-
 SetMouse	endp
-
 
 
 ;-----------------------------------------------------------------------
 ; Far event proc handler for Mouse generated interrupt
 ; This must be a far proc
 ;-----------------------------------------------------------------------
-
 HndlMouse	proc	far
 ;Mouse interupt handler. build an event record and post it
 
@@ -261,7 +257,6 @@ HndlMouse	proc	far
 				assume si: ptr RRect
 				mov	si, restrictRecPtr
 
-
 				.if	cx < [si].left
 					mov	cx,[si].left
 				.endif
@@ -302,7 +297,6 @@ HndlMouse	proc	far
 	pop	ds
 	popall
 	ret
-
 HndlMouse	endp
 
 end

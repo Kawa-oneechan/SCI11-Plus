@@ -5,6 +5,10 @@
 ;
 ;----------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 include	macro.i
 
 include debug.i
@@ -12,7 +16,7 @@ include kerndisp.i
 include object.i
 include pmachine.i
 
-	.DATA
+.DATA
 
 opTbl	label	word
 	word	OP_bnot		;00
@@ -277,6 +281,7 @@ opTbl	label	word
 
 .CODE	PM_TEXT
 
+
 ExecuteCode	proc
 ;On entry:
 ;	es:si -> code to execute.
@@ -288,7 +293,6 @@ ExecuteCode	proc
 	jmp	opTbl[bx]	;go do it
 
 ExecuteCode	endp
-
 
 
 OP_rest_ONE:
@@ -345,7 +349,6 @@ OP_lea_continue:
 	NextOpCode
 
 
-
 ;The following macro encapsulates the load offset operation:
 LoadOfsWord	macro	dest
 	getword
@@ -354,11 +357,9 @@ LoadOfsWord	macro	dest
 endm
 
 
-
 OP_lofsa_TWO:	LoadOfsWord	acc
 
 OP_lofss_TWO:	LoadOfsWord	stack
-
 
 
 OP_add:
@@ -392,7 +393,6 @@ OP_div:
 	NextOpCode
 
 
-
 OP_mod:
 ;Put S (mod acc) in the acc.
 	ppop	ax
@@ -416,7 +416,6 @@ ZeroDivide:
 	invoke	PError, si, bp, E_ZERO_MODULO
 
 
-
 OP_shr:
 ;Shift the value on the stack right by the amount in the acc.
 	ppop	ax
@@ -432,7 +431,6 @@ OP_shl:
 	shl	ax, cl
 	mov	acc, ax
 	NextOpCode
-
 
 
 OP_xor:
@@ -471,7 +469,6 @@ OP_bnot:
 ;Do a bitwise not of the acc.
 	xor	acc, 0ffffh
 	NextOpCode
-
 
 
 ;The following comparison operators compare the top value on the stack with
@@ -539,7 +536,6 @@ OP_ule:	Comp	ae
 ;Is the stack value <= acc?	(Unsigned)
 
 
-
 ;The following branch opcodes are optimized for taking the branch
 ;(and within this category, taking a short branch), on the assumption
 ;that we will generally be skipping over code, not executing it.
@@ -598,7 +594,6 @@ OP_jmp_TWO:
 	BranchWord
 
 
-
 ;The following macro encapsulates the immediate operations:
 
 ;Load an immediate value into dest.
@@ -621,7 +616,6 @@ OP_pushi_ONE:	LoadIByte	stack
 OP_pushi_TWO:	LoadIWord	stack
 
 
-
 ;The following macro encapsulates the pushes of special values.
 
 ;Load an immediate value into dest.
@@ -640,7 +634,6 @@ OP_push2:	PushSpec	2
 OP_pushSelf:	PushSpec	object
 
 
-
 OP_push:
 ;Push the value in the acc on the stack.
 	mov	ax, acc
@@ -657,7 +650,6 @@ OP_dup:
 	peek	ax
 	ppush	ax
 	NextOpCode
-
 
 
 ;Link to a procedure by creating a temporary variable space.  This is done
@@ -784,7 +776,6 @@ OP_ret:
 	retf
 
 
-
 OP_send_ONE:
 ;Send messages to an object whose ID is in the _acc.
 	mov	bx, acc	;get object address
@@ -821,7 +812,6 @@ SuperMessage:
 	shr	bx, 1
 	shr	bx, 1
 	invoke	PError, si, bp, E_LOAD_CLASS, bx
-
 
 
 ;Get a class address based on the class number.
@@ -865,13 +855,11 @@ OP_self_TWO:
 	NextOpCode
 
 
-
 OP_pprev:
 ;Push previous value of _acc on the stack.  This is left in the cx after
 ;a comparison.
 	ppush	cx
 	NextOpCode
-
 
 
 ;The following macros encapsulates load operations:
@@ -946,7 +934,6 @@ OP_lsti_TWO:	LoadWord	stack, tempVar, indexed
 
 OP_lspi_ONE:	LoadByte	stack, parmVar, indexed
 OP_lspi_TWO:	LoadWord	stack, parmVar, indexed
-
 
 
 ;The following macros encapsulates the store operations:
@@ -1049,7 +1036,6 @@ OP_sspi_ONE:	StoreByte	parmVar, stack, indexed
 OP_sspi_TWO:	StoreWord	parmVar, stack, indexed
 
 
-
 ;The following macro encapsulates the increment operations:
 IncrementByte	macro	dest, src, indexed
 ifb	<indexed>
@@ -1126,7 +1112,6 @@ OP_ispi_ONE:	IncrementByte	stack, parmVar, indexed
 OP_ispi_TWO:	IncrementWord	stack, parmVar, indexed
 
 
-
 ;The following macro encapsulates the decrement operations:
 DecrementByte	macro	dest, src, indexed
 ifb	<indexed>
@@ -1201,7 +1186,6 @@ OP_dsti_TWO:	DecrementWord	stack, tempVar, indexed
 
 OP_dspi_ONE:	DecrementByte	stack, parmVar, indexed
 OP_dspi_TWO:	DecrementWord	stack, parmVar, indexed
-
 
 
 ;These opcodes access properties of objects as quickly as possible.
@@ -1324,7 +1308,6 @@ OP_dpTos_TWO:
 	mov	ax, [bx]
 	ppush	ax
 	NextOpCode
-
 
 
 BadOp:

@@ -417,4 +417,4 @@ rename	proc	oldName:ptr byte, newName:ptr byte
 	ret
 rename	endp
 
-	end
+end

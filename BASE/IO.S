@@ -2,6 +2,10 @@
 ; io.s
 ;-------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup
+
 include	macro.i
 include	stdio.i
 include	dos.i
@@ -11,7 +15,6 @@ include	io.i
 
 
 lseek	proc	fd:word, ofs:dword, theOrg:word
-
 ;Input:
 ;	fd	file handle
 ;	ofs	double-word offset [ofsh, ofsl]
@@ -20,7 +23,7 @@ lseek	proc	fd:word, ofs:dword, theOrg:word
 ;		1 = current location + offset
 ;		2 = EOF + offset
 ;Output:
-; returns double-word file pointer
+;	returns double-word file pointer
 
 	call	ClearDosError
 	mov	bx, fd
@@ -32,10 +35,7 @@ lseek	proc	fd:word, ofs:dword, theOrg:word
 		mov	ax, -1
 		mov	dx, ax
 	.endif
-
 	ret
-
 lseek	endp
-
 
 end

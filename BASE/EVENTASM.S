@@ -1,6 +1,6 @@
 ;-------------------------------------------------------------------
 ; EVENTASM.S - Low level system specific event routines
-; Modifications:  
+; Modifications:
 ;   3/26/90 Abdul.  Changed to use .MODEL directive and simplified
 ;                   segments.  Microsoft MASM 5.1.
 ;-------------------------------------------------------------------
@@ -34,20 +34,19 @@ keyEvent	Event	<>
 
 ;-------------------------------------------------------------------
 
-	.CODE
+.CODE
 
 
 ;-------------------------------------------------------------------
 PollKeyboard	proc	uses si di bp
 ;-------------------------------------------------------------------
-; build a keyboard event 
+; build a keyboard event
 ;-------------------------------------------------------------------
 	mov	si, offset @data:keyEvent
 	mov	keyEvent.modifiers, 0
 	mov	bp, INP_POLL
 	call	keyboard
 	call	HandleEvent
-
 	ret
 PollKeyboard	endp
 
@@ -58,15 +57,12 @@ FlushKeyboard	proc	uses si di bp
 ; flush events from keyboard buffer
 ;-------------------------------------------------------------------
 assume	si:ptr Event
-
 	.repeat
 		lea	si, keyEvent
 		mov	bp, INP_POLL
 		call	keyboard
 	.until ![si].eType
-	
 	ret
-
 assume	si:nothing
 
 FlushKeyboard	endp
@@ -78,9 +74,7 @@ KeyboardDriver	proc	uses si di, function:word, event:word
 	mov	si, event
 	mov	bp, function
 	call	keyboard
-	
 	ret
-	
 KeyboardDriver	endp
 
 
@@ -89,14 +83,11 @@ GetModifiers	proc	uses si di bp
 ;-------------------------------------------------------------------
 ; Return state of modifier keys (bottom 4 bits only )
 ;-------------------------------------------------------------------
-
 	mov	bp, INP_MODIFIERS
 	call	keyboard
-
 	ret
-	
 GetModifiers	endp
-	
+
 
 ;-------------------------------------------------------------------
 PollJoystick	proc	uses si di bp
@@ -115,9 +106,7 @@ PollJoystick	proc	uses si di bp
 	sti
 
 	add	sp, eventSize
-
 	ret
-
 PollJoystick	endp
 
 
@@ -129,9 +118,7 @@ JoystickDriver	proc	uses si di, function:word, event:word
 	.if	word ptr joystick+_seg != 0
 		call	joystick
 	.endif
-
 	ret
-
 JoystickDriver	endp
 
 
@@ -141,12 +128,11 @@ HandleEvent	proc	near
 ; If appropriate, post the event in anEvent.  Event type is in AX.
 ;-------------------------------------------------------------------
 assume	si:ptr Event
-
 	.if	word ptr [si].eType == nullEvt
 		return
 	.endif
 
-	;Get the modifiers for the key
+;Get the modifiers for the key
 	push	ax
 	mov	ax, mouseX
 	mov	[si].where.h, ax
@@ -172,8 +158,6 @@ assume	si:ptr Event
 	return
 
 assume	si:nothing
-
 HandleEvent	endp
 
-	end
-
+end

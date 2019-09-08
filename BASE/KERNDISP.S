@@ -33,7 +33,7 @@ KNames		ends
 
 DGROUP	group	CONST,_BSS,_DATA,STACK,KNamePtrs
 
-endif
+endif ;DEBUG
 
 
 ;; This macro does all the work to add a kernel function call.  It declares
@@ -52,12 +52,12 @@ KNames	ends
 KNamePtrs	segment
 	word	offset DGROUP:func&_name
 KNamePtrs	ends
-endif
-	endm
+endif	;DEBUG
+endm	;kernel
 
 
 ;; This macro creates dummy (placeholder) entries in the tables.
-dummy		macro	func
+dummy	macro	func
 .CODE
 extrn	KDummy:proc
 .DATA
@@ -66,8 +66,9 @@ ifdef	DEBUG
 KNamePtrs	segment
 	word	offset DGROUP:dummy_name
 KNamePtrs	ends
-endif
-	endm
+endif	;DEBUG
+endm	;dummy
+
 
 .DATA
 
@@ -88,7 +89,7 @@ kernelDispTbl	label	dword
 ;Pictures.
 	kernel	DrawPic
 	kernel	Show
-	kernel	PicNotValid		;10
+	kernel	PicNotValid	;10
 
 ;Animated objects & views.
 	kernel	Animate
@@ -102,7 +103,7 @@ kernelDispTbl	label	dword
 
 ;Window/dialog/controls.
 	kernel	NewWindow
-	kernel	GetPort			;20
+	kernel	GetPort		;20
 	kernel	SetPort
 	kernel	DisposeWindow
 	kernel	DrawControl
@@ -116,7 +117,7 @@ kernelDispTbl	label	dword
 ;Events.
 	kernel	GetEvent
 	kernel	GlobalToLocal
-	kernel	LocalToGlobal		;30
+	kernel	LocalToGlobal	;30
 	kernel	MapKeyToDir
 
 ;Menu bar & status line.
@@ -132,7 +133,7 @@ kernelDispTbl	label	dword
 
 ;Mouse functions.
 	kernel	HaveMouse
-	kernel	SetCursor		;40
+	kernel	SetCursor	;40
 
 ;Save/restore/restart.
 	kernel	SaveGame
@@ -148,7 +149,7 @@ kernelDispTbl	label	dword
 	kernel	DisposeList
 	kernel	NewNode
 	kernel	FirstNode
-	kernel	LastNode		;50
+	kernel	LastNode	;50
 	kernel	EmptyList
 	kernel	NextNode
 	kernel	PrevNode
@@ -160,7 +161,7 @@ kernelDispTbl	label	dword
 	kernel	DeleteKey
 
 ;Mathematical functions.
-	kernel	Random			;60
+	kernel	Random		;60
 	kernel	Abs
 	kernel	Sqrt
 	kernel	GetAngle
@@ -174,7 +175,7 @@ kernelDispTbl	label	dword
 	kernel	StrEnd
 	kernel	StrCat
 	kernel	StrCmp
-	kernel	StrLen			;70
+	kernel	StrLen		;70
 	kernel	StrCpy
 	kernel	Format
 	kernel	GetFarText
@@ -186,7 +187,7 @@ kernelDispTbl	label	dword
 	kernel	CantBeHere
 	kernel	OnControl
 	kernel	InitBresen
-	kernel	DoBresen		;80
+	kernel	DoBresen	;80
 	kernel	Platform
 	kernel	SetJump
 
@@ -198,7 +199,7 @@ kernelDispTbl	label	dword
 	kernel	ShowFree
 	kernel	MemoryInfo
 	kernel	StackUsage
-	kernel	Profiler		;90
+	kernel	Profiler	;90
 
 ;new menu calls
 	kernel	GetMenu
@@ -212,9 +213,9 @@ kernelDispTbl	label	dword
 	kernel	CoordPri
 	kernel	StrAt
 	kernel	DeviceInfo
-	kernel	GetSaveDir		;100
+	kernel	GetSaveDir	;100
 	kernel	CheckSaveGame
-	
+
 	kernel	ShakeScreen
 	kernel	FlushResources
 
@@ -226,8 +227,8 @@ kernelDispTbl	label	dword
 
 	kernel	Graph
 	kernel	Joystick
-	kernel	ShiftScreen		;110
-	kernel	Palette								
+	kernel	ShiftScreen	;110
+	kernel	Palette
 
 	kernel	MemorySegment
 	kernel	PalVary
@@ -240,8 +241,8 @@ kernelDispTbl	label	dword
 	kernel	DoSync
 
 	kernel	AvoidPath
-	kernel	Sort			;120
-	kernel	ATan									
+	kernel	Sort		;120
+	kernel	ATan
 	kernel	Lock
 
 	kernel	RemapColors
@@ -255,7 +256,7 @@ kernelDispTbl	label	dword
 	kernel	AssertPalette
 
 	kernel	TextColors
-	kernel	TextFonts		;130
+	kernel	TextFonts	;130
 
 ;Event macros
 	kernel	Record
@@ -266,11 +267,10 @@ kernelDispTbl	label	dword
 
 	kernel	SetQuitStr
 	kernel	DbugStr
-	
+
 	dummy	; StrSplit
 	dummy	; FrameOut
 
 kernelMax	dw	($-kernelDispTbl)/4 - 1
 
-	end
-
+end

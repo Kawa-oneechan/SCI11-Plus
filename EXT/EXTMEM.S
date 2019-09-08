@@ -14,53 +14,55 @@ include	extmem.i
 include	stdio.i
 
 ; DOS functions
-DOS_GETVECT			equ 35h
+DOS_GETVECT		equ	35h
 
 ; Interrupt vectors
-BOOTSTRAP_INT		equ 19h
+BOOTSTRAP_INT		equ	19h
 
 ; Heuristic (though conservative) guesses
 LOWEST_DEVICEDRIVER_SEG	equ	0500h
-ROM_BIOS_SEG				equ	0f000h
+ROM_BIOS_SEG		equ	0f000h
 
 ; Extended memory functions
-EXTMEM_INT			equ 15h
+EXTMEM_INT		equ	15h
 
-EXTMEM_MEMCPY		equ 87h
-EXTMEM_MEMAVAIL	equ 88h
+EXTMEM_MEMCPY		equ	87h
+EXTMEM_MEMAVAIL		equ	88h
 
 ; protected mode data structures
 descriptor struc
-	segmentLen		word	0
-	address			byte	3 dup (0)
+	segmentLen	word	0
+	address		byte	3 dup (0)
 	accessRights	byte	0
-	reserved			byte	2 dup (0)
+	reserved	byte	2 dup (0)
 descriptor ends
 
-.data
+
+.DATA
 
 gdt label byte	; would prefer to use a struc, but MASM won't nest them
-dummy				descriptor <>
-romBiosData		descriptor <>
-source			descriptor <>
-dest				descriptor <>
-romBiosCode		descriptor <>
+dummy		descriptor <>
+romBiosData	descriptor <>
+source		descriptor <>
+dest		descriptor <>
+romBiosCode	descriptor <>
 romBiosStack	descriptor <>
 
 extMem ARMType <	\
-	extMemName,		\
-	'+',				\
-	init,				\
-	memcpy,			\
-	term,				\	
-	PAGESIZE			\
+	extMemName,	\
+	'+',		\
+	init,		\
+	memcpy,		\
+	term,		\
+	PAGESIZE	\
 >
 
 extMemName	byte	"extended", 0
-msgBufLen	equ $ - extMemName
+msgBufLen	equ	$ - extMemName
 msgBuf		byte	msgBufLen dup (?)
 
-.code
+
+.CODE
 
 ;---------------------------------------------------------------------------
 ; init	determine if extended memory is available, and if so, how much.
@@ -77,29 +79,29 @@ init	proc private uses si di es ds
 	pop	ax
 	cmp	sp, ax
 	jne	noExtMem
-	
+
 ; examine the two interrupt vectors that users of extended memory generally
 ; hook into.  if either of the vectors seem to be hooked, bag it.
 	dos	DOS_GETVECT, BOOTSTRAP_INT
 	mov	ax, es
 	.if	ax >= LOWEST_DEVICEDRIVER_SEG
 		cmp	ax, ROM_BIOS_SEG
-		jb		noExtMem
+		jb	noExtMem
 	.endif
-	
+
 	dos	DOS_GETVECT, EXTMEM_INT
 	mov	ax, es
 	cmp	ax, LOWEST_DEVICEDRIVER_SEG
 	.if	ax >= LOWEST_DEVICEDRIVER_SEG
 		cmp	ax, ROM_BIOS_SEG
-		jb		noExtMem
+		jb	noExtMem
 	.endif
 
 ; see how much extended memory is available
 	xor	al, al
 	mov	ah, EXTMEM_MEMAVAIL
-	int	EXTMEM_INT				; returns ax = K of extended memory
-	jc		noExtMem
+	int	EXTMEM_INT	; returns ax = K of extended memory
+	jc	noExtMem
 
 	mov	cl, PAGESIZE_LOG2 - 10
 	shr	ax, cl
@@ -110,14 +112,14 @@ init	proc private uses si di es ds
 	mov	extMem.nFreePages, ax
 
 ; do a test copy to be sure that extended memory works, just in case we're
-; on an 80186 
+; on an 80186
 	push	ds
 	pop	es
 
 ; push the count
-	mov	cx, msgBufLen	
+	mov	cx, msgBufLen
 	push	cx
-	
+
 ; push the source address
 	lea	di, extMemName
 	call	segAdr2Linear
@@ -131,21 +133,21 @@ init	proc private uses si di es ds
 	push	dx
 
 ; and let her rip
-	call	linearMemCpy	
+	call	linearMemCpy
 	add	sp, 10
-	or		ah, ah
+	or	ah, ah
 	jne	noExtMem
-	
+
 ; compare to see that the copy worked
 	lea	si, msgBuf
 	lea	di, extMemName
-	mov	cx, msgBufLen	
+	mov	cx, msgBufLen
 	cld
 	repe	cmpsb
 	jne	noExtMem
 
 ; allocate the pageMap
-	invoke ARMAllocPageMap, addr extMem
+	invoke	ARMAllocPageMap, addr extMem
 	jmp	initEnd
 
 noExtMem:
@@ -157,40 +159,37 @@ initEnd:
 	mov	extMem.active, ax
 
 	ret
-
 init	endp
 
+
 ;---------------------------------------------------------------------------
-; memcpy		moves data from memory to/from extended memory page
+; memcpy	moves data from memory to/from extended memory page
 ;
-; entry:	es:di = data
-;			ax		= direction (PAGE2MEM or MEM2PAGE)
-;			bx		= page
-;			cx		= count
-;			dx		= offset into page
-; exit:	ah		= 0 if success
+; entry:	es:di	= data
+;		ax	= direction (PAGE2MEM or MEM2PAGE)
+;		bx	= page
+;		cx	= count
+;		dx	= offset into page
+; exit:		ah	= 0 if success
 ;---------------------------------------------------------------------------
 memcpy proc private	uses bx cx dx si di
-
 	mov	si, ax
 
 ; push the count
 	push	cx
-	
 	mov	cx, dx
 
 ; convert the segmented address and the page to linear addresses
-
 ; jump around according to direction we're copying
 	cmp	si, PAGE2MEM
-	je		pushPage
+	je	pushPage
 
 pushSegAdr:
 	call	segAdr2Linear
 	push	ax
 	push	dx
 	cmp	si, PAGE2MEM
-	je		doCopy
+	je	doCopy
 
 pushPage:
 	mov	dx, cx
@@ -198,7 +197,7 @@ pushPage:
 	push	ax
 	push	dx
 	cmp	si, PAGE2MEM
-	je		pushSegAdr
+	je	pushSegAdr
 
 doCopy:
 	call	linearMemCpy
@@ -212,14 +211,14 @@ doCopy:
 	.endif
 
 	ret
-
 memcpy endp
+
 
 ;---------------------------------------------------------------------------
 ; term	free the page map and deactivate
 ;
 ; entry:	nothing
-; exit:	nothing
+; exit:		nothing
 ;---------------------------------------------------------------------------
 term	proc private
 
@@ -227,20 +226,20 @@ term	proc private
 	mov	extMem.active, FALSE
 
 	ret
-
 term	endp
 
+
 ;---------------------------------------------------------------------------
-; linearMemCpy		copies to/from linearly addressed memory (16M adress space)
+; linearMemCpy	copies to/from linearly addressed memory (16M adress space)
 ;
 ; entry:	aSource	= linear source address
-; 			aDest		= linear destination address
+; 		aDest	= linear destination address
 ;
-; exit:	ah			= 0 if success, else error code
+; exit:		ah	= 0 if success, else error code
 ;---------------------------------------------------------------------------
 linearMemCpy	 proc near private uses cx si es, \
-													destHi:byte, destLo,	\
-								 					srcHi:byte, srcLo, count
+				destHi:byte, destLo,	\
+				srcHi:byte, srcLo, count
 	mov	cx, count
 
 	mov	dest.accessRights, 93h
@@ -256,7 +255,7 @@ linearMemCpy	 proc near private uses cx si es, \
 	mov	al, srcHi
 	mov	source.address[2], al
 	mov	source.segmentLen, cx
-	
+
 	push	ds
 	pop	es
 	lea	si, gdt
@@ -265,9 +264,9 @@ linearMemCpy	 proc near private uses cx si es, \
 	mov	ah, EXTMEM_MEMCPY
 	int	EXTMEM_INT
 
-	; if carry, but ah is 0 (for whatever warped reason), set ah to -1
-	; to make sure the error is observed
-	.if 	carry?
+; if carry, but ah is 0 (for whatever warped reason), set ah to -1
+; to make sure the error is observed
+	.if	carry?
 		.if	!ah
 			mov	ah, 0ffh
 		.endif
@@ -276,46 +275,42 @@ linearMemCpy	 proc near private uses cx si es, \
 	.endif
 
 	ret
-
 linearMemCpy	endp
+
 
 ;---------------------------------------------------------------------------
 ; page2Linear	converts a page number to a linear address
 ;
-; entry:	bx		= page number
-;			dx		= offset into page
-; exit:	dl:ax	= linear address
+; entry:	bx	= page number
+;		dx	= offset into page
+; exit:		dl:ax	= linear address
 ;---------------------------------------------------------------------------
 page2Linear	proc near private uses cx
-
 	mov	cx, dx
 	mov	ax, bx
-	shr	ax, 1						; convert from offset to index
+	shr	ax, 1		; convert from offset to index
 	mov	dx, PAGESIZE
-	mul	dx							; dl:ax = offset into extended memory
+	mul	dx		; dl:ax = offset into extended memory
 	add	ax, cx
-	adc	dx, 0						
+	adc	dx, 0
 	add	dl, 1 shl (20 - 16)	; add 1M to form linear address in dl:ax
 	ret
-
 page2Linear	endp
+
 
 ;---------------------------------------------------------------------------
 ; segAdr2Linear	converts a segmented address to a linear address
 ;
 ; entry:	es:di	= segmented address
-; exit:	dl:ax	= linear address
+; exit:		dl:ax	= linear address
 ;---------------------------------------------------------------------------
 segAdr2Linear	proc near private
-
 	mov	ax, es
 	mov	dx, 16
-	mul	dx							; dx:ax = segment converted to linear
-	add	ax, di					; add the offset to the linear
+	mul	dx		; dx:ax = segment converted to linear
+	add	ax, di		; add the offset to the linear
 	adc	dx, 0
 	ret
-
 segAdr2Linear endp
 
-	end
-
+end

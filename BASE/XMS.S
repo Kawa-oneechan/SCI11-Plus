@@ -5,6 +5,10 @@
 ; see Ray Duncan, Extending DOS, for details
 ;---------------------------------------------------------------------------
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 include	macro.i
 
 include	armasm.i
@@ -27,7 +31,7 @@ XMM_ALLOC	equ 09h
 XMM_RELEASE	equ 0Ah
 XMM_MEMCPY	equ 0Bh
 
-.data
+.DATA
 
 xms	ARMType	<	\
 	xmsName,	\
@@ -52,7 +56,7 @@ xmmParmBlock ends
 
 xmmParms	xmmParmBlock <>
 
-.code
+.CODE
 
 ;---------------------------------------------------------------------------
 ; init	determine if XMS memory is available, and if so, how much.
@@ -62,7 +66,6 @@ xmmParms	xmmParmBlock <>
 ; exit:		ax	success
 ;---------------------------------------------------------------------------
 init	proc private uses es
-
 	mov	xms.nPages, 0
 	mov	xms.nFreePages, 0
 
@@ -107,11 +110,8 @@ init	proc private uses es
 
 	mov	ax, xms.nFreePages
 	mov	xms.active, ax
-
 	ret
-
 init	endp
-
 
 
 ;---------------------------------------------------------------------------
@@ -125,7 +125,6 @@ init	endp
 ; exit:		ah	0 if success
 ;---------------------------------------------------------------------------
 memcpy proc private	uses ax dx si
-
 	mov	si, ax
 
 	push	si	; push the direction
@@ -163,9 +162,7 @@ doCopy:
 	.endif
 
 	ret
-
 memcpy endp
-
 
 
 ;---------------------------------------------------------------------------
@@ -175,7 +172,6 @@ memcpy endp
 ; exit:		nothing
 ;---------------------------------------------------------------------------
 term	proc private
-
 	mov	ah, XMM_RELEASE
 	mov	dx, xmmHandle
 	call	xmmEntry
@@ -184,9 +180,7 @@ term	proc private
 	mov	xms.active, FALSE
 
 	ret
-
 term	endp
-
 
 
 ;---------------------------------------------------------------------------
@@ -242,9 +236,7 @@ xmmMemCpy	 proc near private uses es bx cx dx si di, \
 	.endif
 
 	ret
-
 xmmMemCpy	endp
-
 
 
 ;---------------------------------------------------------------------------
@@ -264,7 +256,6 @@ page2XMSOfs	proc near private	uses cx
 	add	ax, cx
 	adc	dx, 0		; dx:ax = offset into XMS allocation
 	ret
-
 page2XMSOfs	endp
 
 end

@@ -73,7 +73,6 @@ assume	bx:nothing
 	.endif
 
 	ret
-
 RSetFont endp
 
 
@@ -851,6 +850,5 @@ SetCursorData proc uses si di bp, data:word
 
 	ret
 SetCursorData endp
-
 
 end

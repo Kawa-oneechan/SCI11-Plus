@@ -9,6 +9,10 @@
 ;*
 ;*************************************************************************
 
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
+
 .model	medium, c, os_dos
 
 MIDI_S equ 1
@@ -113,27 +117,24 @@ UARTmode	db	0	;Flag showing MPU in UART mode
 priInfo		db	0
 
 
-
-CallDriver	MACRO	arg1
+CallDriver	macro	arg1
 	push	bp
 	mov	bp,arg1
 	call	Driver
 	pop	bp
-ENDM
+endm
 
 
-
-getb	MACRO	arg1
+getb	macro	arg1
 	mov	arg1,ds:[bp]
 	inc	bp
 	shl	si,1
 	inc	word ptr (Sound ptr es:[bx+si]).tIndex
 	shr	si,1
-ENDM
+endm
 
 
-
-BackupList	MACRO	;Backup ChNew, ChPri, ChVoice, ChBed, and voices left
+BackupList	macro	;Backup ChNew, ChPri, ChVoice, ChBed, and voices left
 	push	ax
 	mov	ax,word ptr ChNew
 	mov	word ptr ChNewCopy,ax
@@ -201,11 +202,10 @@ BackupList	MACRO	;Backup ChNew, ChPri, ChVoice, ChBed, and voices left
 	mov	word ptr ChBedCopy[14],ax
 	pop	ax
 	mov	vLeftCopy,al
-ENDM
+endm
 
 
-
-RestoreList	MACRO	;Restore ChNew, ChPri, ChVoice, ChBed, and voices left
+RestoreList	macro	;Restore ChNew, ChPri, ChVoice, ChBed, and voices left
 	push	ax
 	mov	ax,word ptr ChNewCopy
 	mov	word ptr ChNew,ax
@@ -273,11 +273,10 @@ RestoreList	MACRO	;Restore ChNew, ChPri, ChVoice, ChBed, and voices left
 	mov	word ptr ChBed[14],ax
 	pop	ax
 	mov	al,vLeftCopy
-ENDM
+endm
 
 
-
-PreemptChn1	MACRO	;Preempt a channel off of the ChNew list
+PreemptChn1	macro	;Preempt a channel off of the ChNew list
 	push	di
 	push	cx
 	push	ax
@@ -305,11 +304,10 @@ p12:	inc	di
 	mov	ChBed[di],0
 p13:	pop	cx
 	pop	di
-ENDM
+endm
 
 
-
-PreemptChn2	MACRO	;Preempt a channel off of the ChNew list
+PreemptChn2	macro	;Preempt a channel off of the ChNew list
 	push	di
 	push	cx
 	push	ax
@@ -326,7 +324,7 @@ p22:	inc	di
 	jne	p21
 	pop	ax
 	cmp	dh,0ffh
-	je		p23
+	je	p23
 	xor	cx,cx
 	mov	cl,dh
 	mov	di,cx
@@ -337,11 +335,10 @@ p22:	inc	di
 	mov	ChBed[di],0
 p23:	pop	cx
 	pop	di
-ENDM
+endm
 
 
-
-SwapChnls	MACRO	;Swap two channels on the ChNew list
+SwapChnls	macro	;Swap two channels on the ChNew list
 	push	ax
 	mov	al,ChNew[di]
 	mov	ah,ChNew[si]
@@ -360,11 +357,10 @@ SwapChnls	MACRO	;Swap two channels on the ChNew list
 	mov	ChBed[di],ah
 	mov	ChBed[si],al
 	pop	ax
-ENDM
+endm
 
 
-
-UpdateChannel1	MACRO	;Update a channel from node information
+UpdateChannel1	macro	;Update a channel from node information
 	push	ax
 	push	dx
 	push	si
@@ -419,11 +415,10 @@ local2Upd1:
 	pop	si
 	pop	dx
 	pop	ax
-ENDM
+endm
 
 
-
-UpdateChannel2	MACRO	;Update a channel from node information
+UpdateChannel2	macro	;Update a channel from node information
 	push	ax
 	push	dx
 	push	si
@@ -478,8 +473,7 @@ local2Upd2:
 	pop	si
 	pop	dx
 	pop	ax
-ENDM
-
+endm
 
 
 ;---------------------------------------------------------------------------
@@ -532,7 +526,6 @@ outTest:
 	pop	bp
 	ret
 DoSound	endp
-
 
 
 DispatchC	proc	near	;Branch to correct procedure
@@ -746,8 +739,6 @@ DispatchC	endp
 
 ;---------------------------------------------------------------------------
 
-;---------------------------------------------------------------------------
-
 PatchReq	proc	far	;Determine patch requirements
 	mov	word ptr Driver,ax
 	mov	word ptr Driver+2,es
@@ -760,7 +751,6 @@ PatchReq	proc	far	;Determine patch requirements
 
 	ret
 PatchReq	endp
-
 
 
 Init	proc	far	;Initialize sound driver
@@ -780,23 +770,11 @@ Init	proc	far	;Initialize sound driver
 Init	endp
 
 
-
 Terminate	proc	far	;Terminate driver
 	push	bx
 	push	cx
 	push	es
 	push	si
-
-;**	xor	si,si	;If any sounds are still playing, kill them
-;**loopTrmNodes:
-;**	cmp	dword ptr PlayList[si],0
-;**	je	noTermNode
-;**	les	ax,PlayList[si]
-;**	call	EndSound
-;**noTermNode:
-;**	add	si,4
-;**	cmp	si,64
-;**	jne	loopTrmNodes
 
 	mov	cl,15		;Leave the devices volume at maximum
 	CallDriver DMasterVol
@@ -810,7 +788,6 @@ outTerminate:
 	pop	bx
 	ret
 Terminate	endp
-
 
 
 ProcessSounds	proc	far	;Inc or dec process counter
@@ -828,12 +805,10 @@ processExit:
 ProcessSounds	endp
 
 
-
 SoundOn	proc	far	;Turn sound on or off
 	CallDriver DSoundOn
 	ret
 SoundOn	endp
-
 
 
 RestoreSound	proc	far	;Put sound back on playlist
@@ -910,7 +885,6 @@ assume bx:nothing
 RestoreSound	endp
 
 
-
 MasterVol	proc	far	;Change master volume
 	cmp	cl,255	;If the volume is 255, then
 	je	volOK	;we just want a return value
@@ -924,7 +898,6 @@ volOK:
 
 	ret
 MasterVol	endp
-
 
 
 SetReverb	proc	far	;Change reverb mode
@@ -962,7 +935,6 @@ outSetReverb:
 	pop	es
 	ret
 SetReverb	endp
-
 
 
 PlaySound	proc	far	;Add sound to playlist
@@ -1160,7 +1132,7 @@ endChnl:
 	pop	ax
 
 resetCritical:
-	cmp	es:[bx].sState,2	;** That funky bed sound thing
+	cmp	es:[bx].sState,2		;** That funky bed sound thing
 	jne	notFunkyBed
 	mov	di,14
 loopFunkyBed:
@@ -1174,7 +1146,7 @@ notFunkyBed:
 	xor	di,di				;If there is no available
 PfindPri:					;spot, and all sounds on
 	cmp	word ptr PlayList[di+2],0	;the PlayList are of a
-	je		placeHere		;higher priority, then
+	je	placeHere			;higher priority, then
 	les	bx,PlayList[di]			;exit the procedure
 	cmp	es:[bx].sPriority,dl
 	jbe	insertHere
@@ -1190,7 +1162,7 @@ keepInsrting:
 	mov	bx,si				;middle of the play list,
 	add	bx,4				;then move everyone down one
 	cmp	bx,di
-	je		placeHere
+	je	placeHere
 	mov	bx,word ptr PlayList[si]
 	mov	word ptr PlayList[si+4],bx
 	mov	bx,word ptr PlayList[si+2]
@@ -1227,7 +1199,6 @@ assume bx:nothing
 PlaySound	endp
 
 
-
 EndSound	proc	far	;End a sound
 	pushf
 	cli
@@ -1238,7 +1209,6 @@ EndSound	proc	far	;End a sound
 	popf
 	ret
 EndSound	endp
-
 
 
 PauseSound	proc	far	;Pause/unpause a sound
@@ -1266,12 +1236,12 @@ lookPause:
 goodPauseNode:
 	mov	al,es:[bx].sPause
 	cmp	cl,0
-	je		unPause
+	je	unPause
 	inc	al
 	jmp	short storePause
 unPause:
 	cmp	al,0
-	je		storePause
+	je	storePause
 	dec	al
 storePause:
 	mov	es:[bx].sPause,al
@@ -1305,7 +1275,6 @@ assume bx:nothing
 PauseSound	endp
 
 
-
 FadeSound	proc	far	;Fade a sound to given level
 assume	bx:ptr Sound
 	pushf
@@ -1329,7 +1298,6 @@ assume bx:nothing
 FadeSound	endp
 
 
-
 HoldSound	proc	far	;Hold/release a sound
 	push	bx
 
@@ -1339,7 +1307,6 @@ HoldSound	proc	far	;Hold/release a sound
 	pop	bx
 	ret
 HoldSound	endp
-
 
 
 MuteSound	proc	far	;Mute/unmute an entire node
@@ -1379,7 +1346,6 @@ storeMute:
 	ret
 assume bx:nothing
 MuteSound	endp
-
 
 
 ChangeVol	proc	far	;Change sound node volume
@@ -1425,7 +1391,7 @@ movePriNodes:
 	mov	word ptr PlayList[si],0		;Remove the node from the
 	mov	word ptr PlayList[si+2],0	;PlayList
 	cmp	si,((LISTSIZE - 1) * 4)
-	je		CPaddNode
+	je	CPaddNode
 CPmoveNodes:
 	mov	cx,word ptr PlayList[si+4]
 	mov	word ptr PlayList[si],cx
@@ -1443,7 +1409,7 @@ CPaddNode:
 	xor	di,di
 CPfindPri:
 	cmp	word ptr PlayList[di+2],0
-	je		CPplaceHere
+	je	CPplaceHere
 	les	bx,PlayList[di]
 	mov	es:[bx].sPriority,dl
 	jbe	CPinsertHere
@@ -1482,7 +1448,6 @@ assume	bx:nothing
 ChangePri	endp
 
 
-
 GetSignal	proc	far	;Get signal value of a node
 	push	bx
 
@@ -1492,7 +1457,6 @@ GetSignal	proc	far	;Get signal value of a node
 	pop	bx
 	ret
 GetSignal	endp
-
 
 
 GetSignalRset	proc	far	;Get signal value of a node
@@ -1507,7 +1471,6 @@ GetSignalRset	proc	far	;Get signal value of a node
 GetSignalRset	endp
 
 
-
 GetDataInc	proc	far	;Get datainc value of a node
 	push	bx
 
@@ -1517,7 +1480,6 @@ GetDataInc	proc	far	;Get datainc value of a node
 	pop	bx
 	ret
 GetDataInc	endp
-
 
 
 GetSMPTE	proc	far	;Get smpte value of a node
@@ -1627,7 +1589,6 @@ assume bx:nothing
 SendNoteOff	endp
 
 
-
 ;---------------------------------------------------------
 ;SendNoteOn -	Send a NoteOn to a given channel in
 ;		a given node
@@ -1703,7 +1664,6 @@ outSendNon:
 	ret
 assume bx:nothing
 SendNoteOn	endp
-
 
 
 SendContrlr	proc	far	;Send controller to a node
@@ -1821,7 +1781,6 @@ assume bx:nothing
 SendContrlr	endp
 
 
-
 ;---------------------------------------------------------
 ;SendPChange -	Send a ProgramChange to a given channel in
 ;		a given node
@@ -1896,7 +1855,6 @@ assume bx:nothing
 SendPChange	endp
 
 
-
 SendPBend	proc	far	;Send pitch bend to a node
 assume bx:ptr Sound
 	push	ax
@@ -1959,7 +1917,6 @@ outSPB:
 SendPBend	endp
 
 
-
 ;---------------------------------------------------------------------------
 ; Internal Functions
 
@@ -2020,7 +1977,6 @@ outDoEnd:
 	ret
 	assume bx:nothing
 DoEnd	endp
-
 
 
 DoChannelList	proc	near	;Update channel list
@@ -2559,7 +2515,6 @@ nextChNode:
 DoChannelList	endp
 
 
-
 DoFade	proc	near	;Process node fade properties
 assume bx:ptr Sound
 	push	bx
@@ -2623,7 +2578,7 @@ endFade:
 	mov	cl,es:[bx].sFadeDest		;Stop the fade and check to see if we
 	and	cl,80h				;need to end the sound
 	cmp	cl,0
-	je		outDoFade
+	je	outDoFade
 	mov	ax,bx
 	call	DoEnd
 	mov	updateChnls,1
@@ -2634,7 +2589,6 @@ outDoFade:
 	ret
 	assume bx:nothing
 DoFade	endp
-
 
 
 DoChangeVol	proc	near	;Change sound node volume
@@ -2667,7 +2621,7 @@ volNodeOnList:
 loopChnlVol:
 	mov	cl,ChList[si]
 	cmp	cl,255
-	je		nextChEntry
+	je	nextChEntry
 	mov	ch,cl
 	and	cl,0f0h
 	cmp	cl,dl
@@ -2841,13 +2795,10 @@ assume bx:nothing
 SoundServer	endp
 
 
-
 ;Removed DAC code - SampleActive - @DAC
 
 
-
 ;Removed DAC code - DoSamples - @DAC
-
 
 
 ParseNode	proc	near	;Parse a node
@@ -3116,7 +3067,6 @@ endParse:
 ParseNode	endp
 
 
-
 NoteOff	proc	near	;Turn note off
 assume bx:ptr Sound
 	push	si
@@ -3148,7 +3098,6 @@ outNoteOff:
 	ret
 	assume bx:nothing
 NoteOff	endp
-
 
 
 NoteOn	proc	near	;Turn note on
@@ -3198,7 +3147,6 @@ outNoteOn:
 NoteOn	endp
 
 
-
 PolyAfterTch	proc	near	;Do poly aftertouch
 	getb	ch	;Put note # in ch and
 	getb	cl	;pressure in cl
@@ -3211,7 +3159,6 @@ PolyAfterTch	proc	near	;Do poly aftertouch
 noPolyAfter:
 	ret
 PolyAfterTch	endp
-
 
 
 Controller	proc	near	;Do control change
@@ -3359,7 +3306,6 @@ noPChange:
 ProgramChange	endp
 
 
-
 ChnlAfterTch	proc	near	;Do channel aftertouch
 	getb	cl	;Put pressure in cl
 
@@ -3371,7 +3317,6 @@ ChnlAfterTch	proc	near	;Do channel aftertouch
 noChnlAfter:
 	ret
 ChnlAfterTch	endp
-
 
 
 PitchBend	proc	near	;Do pitch bend
@@ -3427,12 +3372,10 @@ noPBend:
 PitchBend	endp
 
 
-
 SysEx	proc	near	;Process SysEx
 	call	SkipMidi	;We don't support it
 	ret
 SysEx	endp
-
 
 
 ControlChnl	proc	near	;Control channel commands
@@ -3536,7 +3479,6 @@ outConCh:
 ControlChnl	endp
 
 
-
 SkipMidi	proc	near	;Skip next MIDI command
 	cmp	ah,SYSEX
 	jne	notSYSEX
@@ -3558,7 +3500,6 @@ skipOnly1:
 SkipMidi	endp
 
 
-
 ScaleVolume	proc	near	;Scale volume controller
 	push	ax
 	mov	al,cl	; cVol	x
@@ -3575,7 +3516,6 @@ outScale:
 	pop	ax
 	ret
 ScaleVolume	endp
-
 
 
 FindNode	proc	near	;Find a node on the playlist
@@ -3599,7 +3539,6 @@ outFnode:
 	pop	cx
 	ret
 FindNode	endp
-
 
 
 FixupHeader	proc	near	;Create sound resource header
@@ -3666,7 +3605,7 @@ findDevTracks:
 	mov	cl,ds:[bp]
 	inc	bp
 	cmp	cl,0ffh
-	je		writeHeader
+	je	writeHeader
 	inc	bp
 	mov	cx,ds:[bp]
 	add	bp,4
