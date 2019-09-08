@@ -27,7 +27,6 @@ extern KERNEL(SetDebug);
 extern KERNEL(ShowSends);
 extern KERNEL(ShowFree);
 extern KERNEL(InspectObj);
-extern KERNEL(Profiler);
 
 extern void ShowSends(bool);
 extern void WriteResUse(int,int);

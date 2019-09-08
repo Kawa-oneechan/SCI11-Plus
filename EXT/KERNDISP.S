@@ -199,7 +199,7 @@ kernelDispTbl	label	dword
 	kernel	ShowFree
 	kernel	MemoryInfo
 	kernel	StackUsage
-	kernel	Profiler	;90
+	dummy			;90
 
 ;new menu calls
 	kernel	GetMenu

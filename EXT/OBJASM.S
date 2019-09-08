@@ -40,29 +40,15 @@ endif
 ; exit:		ax		property value, or aborts if property is invalid
 ;---------------------------------------------------------------------------
 GetProperty	proc	uses di, obj:ptr Obj, property:word
-
 	;Get a pointer to the property.
 	mov	bx, obj
 	mov	ax, property
-
-ifdef PROFILER
-	add	ssPtr, 4
-	mov	di, ssPtr
-	mov	[di+_off], bx
-	mov	[di+_seg], ax
-endif
-
 	GetPropAddrMacro
-	
 	.if !zero?
 		mov	ax, [bx]
 	.else
 		invoke	PError, si, bp, E_INVALID_PROPERTY, ax
 	.endif
-
-ifdef PROFILER
-	sub	ssPtr, 4
-endif
 	ret
 GetProperty	endp
 
@@ -76,29 +62,15 @@ GetProperty	endp
 ; exit:		none, aborts if property is invalid
 ;---------------------------------------------------------------------------
 SetProperty	proc	uses di, obj:ptr Obj, property:word, value:word
-
 	mov	bx, obj
 	mov	ax, property
-
-ifdef PROFILER
-	add	ssPtr, 4
-	mov	di, ssPtr
-	mov	[di+_off], bx
-	mov	[di+_seg], ax
-endif
-
 	GetPropAddrMacro
-
 	.if !zero?
 		mov	ax, value
 		mov	[bx], ax
 	.else
 		invoke	PError, si, bp, E_INVALID_PROPERTY, ax
 	.endif
-
-ifdef PROFILER
-	sub	ssPtr, 4
-endif
 	ret
 SetProperty	endp
 
@@ -111,23 +83,10 @@ SetProperty	endp
 ; exit:		ax		address of property, aborts if property is invalid
 ;---------------------------------------------------------------------------
 GetPropAddr	proc	uses di, obj:ptr Obj, property:word
-
 	mov	bx, obj
 	mov	ax, property
-
-ifdef PROFILER
-	add	ssPtr, 4
-	mov	di, ssPtr
-	mov	[di+_off], bx
-	mov	[di+_seg], ax
-endif
-
 	GetPropAddrMacro
 	mov	ax, bx
-
-ifdef PROFILER
-	sub	ssPtr, 4
-endif
 	ret
 GetPropAddr	endp
 
@@ -254,11 +213,6 @@ DoMessage:
 	;Input:
 	;	ax = message selector
 	;	bx = pointer to object
-ifdef PROFILER
-	.if traceOn == 1
-		call	DoTrace
-	.endif
-endif
 	shr	cx, 1
 	mov	si, cx		;save the number of parameters
 

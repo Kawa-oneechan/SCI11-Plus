@@ -156,7 +156,6 @@ global strptr ArgNameRead(strptr arg)
 //NoDebug stubs
 global void Debug(Hunkptr ip, uword *sp) { ip; sp; NoDebugError(1); }
 global KERNEL(InspectObj) { args; NoDebugError(3); }
-global KERNEL(Profiler) { NoDebugError(4); }
 global KERNEL(SetDebug) {args; NoDebugError(5); }
 global KERNEL(ShowFree) { NoDebugError(6); }
 global KERNEL(ShowSends) { NoDebugError(7); }
@@ -314,10 +313,6 @@ static void near ListOp(Hunkptr, strptr);
 static char near GetCommand(strptr);
 static bool near GetInput(strptr, strptr, int);
 static void near WriteHunkUse(uint);
-
-#ifdef PROFILER
-static void near Profiler(ProCmd command, strptr fileName, strptr comment);
-#endif
 
 #define INSPECTWINDOW 220
 #define BIGWINDOW 290
@@ -1915,162 +1910,6 @@ static strptr near GetObjName(Obj *obj)
 	strptr *name = GetPropAddr(obj, s_name);
 	return name ? *name : NULL;
 }
-
-
-#define PRO_SIZE 0x3f00
-
-KERNEL(Profiler)
-{
-#ifdef PROFILER
-	ProCmd command;
-	strptr fileName, comment;
-
-	if ((command = (ProCmd)arg(1)) == PRO_REPORT || command == TRACE_RPT)
-	{
-		fileName = (strptr)arg(2);
-		comment = (argCount == 3) ? (strptr)arg(3) : "";
-	}
-	else
-		fileName = comment = NULL;
-	Profiler(command, fileName, comment);
-#else
-	args = args;
-#endif
-}
-
-#ifdef PROFILER
-static void near Profiler(ProCmd command, strptr fileName, strptr comment)
-{
-	Obj *obj;
-	uint selector;
-	uint far *pb;
-	uint pi, pl, count, totalCount;
-	char str[100], selStr[30];
-	int fd;
-
-	switch (command)
-	{
-		case PRO_OPEN:
-			//Get a buffer for storing the profiling information, the turn profiling on.
-			proBufSize = 2 * sizeof(uint) * PRO_SIZE;
-			if (!proBuffer)
-				proBuffer = GetResHandle(proBufSize + 4);
-			ClearHandle(proBuffer);
-			proIndex = 0;
-			break;
-
-		case PRO_CLOSE:
-			//Turn the profiler off, then deallocate the buffer.
-			proOn = FALSE;
-			DisposeServer(ProfileHandler);
-			DisposeHandle(proBuffer);
-			proBuffer = 0;
-			break;
-
-		case PRO_ON:
-			proOn = TRUE;
-			InstallServer(ProfileHandler, 1);
-			break;
-
-		case PRO_OFF:
-			proOn = FALSE;
-			DisposeServer(ProfileHandler);
-			break;
-
-		case PRO_CLEAR:
-			//Clear the profiler buffer.
-			if (proBuffer)
-			{
-				proOn = FALSE;
-				ClearHandle(proBuffer);
-				proIndex = 0;
-				proOn = TRUE;
-			}
-			break;
-
-		case PRO_REPORT:
-			if ((fd = open(fileName, O_WRONLY)) == -1 && (fd = creat(fileName, 0)) == -1)
-			{
-				proOn = TRUE;
-				return;
-			}
-			lseek(fd, 0L, LSEEK_END); //Seek to end of file.
-			//Write the comment to the file.
-			sprintf(str ,"\r\n***** %s\r\n", comment);
-			write(fd, str, strlen(str));
-			//Write statistics out.
-			pb = (uint far*)*proBuffer; //pointer to profiler buffer
-			pl = 0; //last profiler index
-			totalCount = 0;
-			forever
-			{
-				//Search for the next message in the buffer.
-				for (pi = pl; pi < 2 * PRO_SIZE && *(pb + pi) == 0; pi += 2)
-					;
-
-				if (pi >= 2 * PRO_SIZE)
-					break;
-				pl = pi;
-				obj = (Obj*)Native(*(pb + pi));
-				selector = *(pb + pi + 1);
-				count = 0;
-				//Now count occurences of this object/selector pair.
-				for (; pi < 2 * PRO_SIZE ; pi += 2)
-				{
-					if ((Obj*)Native(*(pb + pi)) == obj && *(pb + pi + 1) == selector)
-					{
-						*(pb + pi)= *(pb + pi + 1)= 0;
-						++count;
-					}
-				}
-				//Write out the line for this object/selector pair.
-				totalCount += count;
-				sprintf(str, "%6d (%s %s:)\r\n",
-					count,
-					GetObjName(obj),
-					GetSelectorName(selector, selStr));
-				write(fd, str, strlen(str));
-			}
-			sprintf(str ,"\r\n***** Total count = %d\r\n", totalCount);
-			write(fd, str, strlen(str));
-			close(fd);
-			break;
-
-		case TRACE_ON:
-			ClearHandle(proBuffer);
-			proIndex = 0;
-			traceOn = TRUE;
-			break;
-
-		case TRACE_OFF:
-			traceOn = FALSE;
-			break;
-
-		case TRACE_RPT:
-			if ((fd = open(fileName, O_WRONLY)) == -1 && (fd = creat(fileName, 0)) == -1)
-				return;
-			lseek(fd, 0L, LSEEK_END); //Seek to end of file.
-			write(fd, comment, strlen(comment));
-			write(fd, "\r\n", 1);
-			pb = (uint far*)*proBuffer;
-			pl = proIndex / 2;
-			for (pi = 0 ; pi < pl; pi += 3)
-			{
-				count = *(pb + pi) / 6;
-				obj = (Obj*)Native(*(pb + pi + 1));
-				selector = *(pb + pi + 2);
-				while (count--)
-					write(fd, "\t", 1);
-				sprintf(str, "(%s %s:)\r\n",
-				GetObjName(obj),
-				GetSelectorName(selector, selStr));
-				write(fd, str, strlen(str));
-			}
-			close(fd);
-			break;
-	}
-}
-#endif
 
 
 static char resSym[] = "vpstnmwfcpbPCaSMMh";
