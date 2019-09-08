@@ -1,13 +1,14 @@
 ;-------------------------------------------------------------------
 ; FILEIO.S
 ; File open, close, and i/o routines.
-; Modifications:  
+; Modifications:
 ;   3/12/90 Abdul.  Changed to use .MODEL directive and simplified
 ;                   segments.  Microsoft MASM 5.1.
 ;-------------------------------------------------------------------
 
-
-;-------------------------------------------------------------------
+;KAWA WAS HERE
+;-------------
+; > General cleanup -- some tabs and between-proc spacing
 
 include	macro.i
 
@@ -19,40 +20,33 @@ include	fileio.i
 
 ;-------------------------------------------------------------------
 
-NO_HANDLE	   equ	-1
-ERROR_CODE	   equ	-1
+NO_HANDLE	equ	-1
+ERROR_CODE	equ	-1
 
 ;-------------------------------------------------------------------
 
-	.DATA
-
+.DATA
 
 criticalError	word	0
-oldCritErr		dword	?
-
+oldCritErr	dword	?
 
 ;-------------------------------------------------------------------
 
-	.CODE
-
+.CODE
 
 readfar	proc	fd:word, handle:word, n:word
 ;Read 'n' bytes from file 'fd' into the hunk pointed to by 'handle'.
-
 	mov	bx, handle
 	mov	dx, [bx]
 	mov	ax, [bx+_seg]
 	invoke	ReadDos, fd, ax::dx, n
-
 	ret
 readfar	endp
 
 
 ReadDos	proc	uses ds di, fd:word, handle:far ptr byte, n:word
-
 ; Special dos read function to use real far pointer rather than the pointer
 ; through the handle.  This is necessary for the pk Explode function
-
 	call	ClearDosError
 	mov	bx, fd
 	mov	cx, n
@@ -63,15 +57,12 @@ ReadDos	proc	uses ds di, fd:word, handle:far ptr byte, n:word
 	.if	carry?
 		xor	ax, ax
 	.endif
-
 	ret
-
 ReadDos endp
 
 
 WriteDos	proc uses ds fd:word, buffer:far ptr word, n:word
 ;Write 'n' bytes from file 'fd' into the far pointer 'buffer'.
-
 	call	ClearDosError
 	mov	bx, fd
 	mov	cx, n
@@ -80,49 +71,39 @@ WriteDos	proc uses ds fd:word, buffer:far ptr word, n:word
 	.if	carry?
 		xor	ax, ax
 	.endif
-
 	ret
-
 WriteDos endp
 
 
 unlink	proc	fname:ptr byte
 ;Unlink the file 'fname'
-
 	call	ClearDosError
 	mov	dx, fname
 	dos	dosUnlink
 	.if	carry?
 		xor	ax, ax
 	.endif
-
 	ret
-
 unlink	endp
-
 
 
 filelength	proc	fd:word
 ;Return the (long) length of the file corresponding to a handle.
-
 	xor	bx, bx
 	invoke	lseek, fd, 0, 2
-	push	ax											;save returned values
+	push	ax			;save returned values
 	push	dx
 	xor	bx, bx
-	invoke	lseek, fd, 0, bx					;seek back to start of file
+	invoke	lseek, fd, 0, bx	;seek back to start of file
 	pop	dx
 	pop	ax
-
 	ret
 filelength	endp
-
 
 
 getcwd	proc	uses si di, dirStr:ptr byte
 ;Put the current directory into the string pointed to by dirStr.
 ;Note that this must also contain the current device.
-
 assume	di:ptr byte
 
 	mov	di, ds
@@ -152,23 +133,19 @@ assume	di:ptr byte
 	.if	cx
 		mov	di, dirStr
 		mov	[di+2], '/'
-	.endif		
+	.endif
 
 	invoke	strlwr, dirStr
 	mov	ax, dirStr
 
 	ret
-
 assume	di:nothing
-
 getcwd	endp
-
 
 
 firstfile	proc	fname:ptr byte, attr:word, DTA:ptr byte
 ;_Find the first file which matches 'firstName' with attribute 'firstAttr'.
 ;Put results in 'firstDTA'
-
 	mov	dx, DTA
 	dos	dosSetDTA
 	mov	dx, fname
@@ -179,16 +156,13 @@ firstfile	proc	fname:ptr byte, attr:word, DTA:ptr byte
 	.else
 		mov	ax, 1
 	.endif
-
 	ret
-
 firstfile	endp
 
 
 nextfile	proc	DTA:ptr byte
 ;_Find the next file from search started using DTA
 ;Put results in DTA
-
 	mov	dx, DTA
 	dos	dosSetDTA
 	dos	dosNext
@@ -197,10 +171,9 @@ nextfile	proc	DTA:ptr byte
 	.else
 		mov	ax, 1
 	.endif
-
 	ret
-
 nextfile	endp
+
 
 existsdriveAB	proc
 ;Check for the validity of drive a: or b: by checking
@@ -209,7 +182,7 @@ existsdriveAB	proc
 ;	input: dl=0 for drive a: check, 1 for drive b: check
 ;
 ;  returns: ax
-;    ax =  0 ---- drive requested does not exist       
+;    ax =  0 ---- drive requested does not exist
 ;    ax != 0 ---- drive requested exists
 
 	int	dosEquipCfg
@@ -223,14 +196,14 @@ existsdriveAB	proc
 		mov	ax, bx
 		and   ax, 00c0h
 		.if	!ax
-			push	ds						;only 1 floppy drive
+			push	ds		;only 1 floppy drive
 			mov	ax, 50h
 			mov	ds, ax
 			mov	bx, 04h
 			mov	ax, 1
-			and	al, [bx]				;if drive assigned as a: ax=0 else ax=1
-			xor	al, dl				;if drive requested=drive assigned ax=FALSE
-			xor	al, 1					;ax=TRUE if drive requested=drive assigned
+			and	al, [bx]	;if drive assigned as a: ax=0 else ax=1
+			xor	al, dl		;if drive requested=drive assigned ax=FALSE
+			xor	al, 1		;ax=TRUE if drive requested=drive assigned
 			pop	ds
 		.endif
 	.endif
@@ -253,24 +226,24 @@ existdrive	proc	theDrive:word
 
 	;Try changing drives, and see if we get to the requested one.
 	mov	dl, byte ptr theDrive
-	or		dl, 20h		; convert to lower case
+	or	dl, 20h		; convert to lower case
 	sub	dl, 'a'
 
-   ;If this is a: or b:, test if it exists
+	;If this is a: or b:, test if it exists
 	.if	dl <= 1
-      call	existsdriveAB
+		call	existsdriveAB
 		.if	!ax
-         ;no b: drive
-		   xor	bx, bx
-		   jmp	EDExit
-	   .endif
+			;no b: drive
+			xor	bx, bx
+			jmp	EDExit
+		.endif
 	.endif
 
 	dos	dosSetDrive
-	dos	dosCurDrive			;see if we got there
+	dos	dosCurDrive		;see if we got there
 	xor	bx, bx
 	.if	al == dl
-		inc	bx					;got there -- a valid drive
+		inc	bx		;got there -- a valid drive
 	.endif
 
 	mov	dl, cl
@@ -279,19 +252,14 @@ existdrive	proc	theDrive:word
 EDExit:
 	mov	ax, bx
 	ret
-
 existdrive	endp
 
 
-
-ResetDisk	proc	
+ResetDisk	proc
 ;Reset the disk subsystem.
-
 	dos	dosResetDisk
 	return
-
 ResetDisk	endp
-
 
 
 RGetFreeSpace	proc	drive:byte
@@ -305,7 +273,7 @@ RGetFreeSpace	proc	drive:byte
 		xor	dl, dl
 	.else
 		.if dl
-			or		dl, 20h		; convert to lower case
+			or	dl, 20h	; convert to lower case
 			sub	dl, 'a'-1
 		.endif
 	.endif
@@ -325,7 +293,6 @@ RGetFreeSpace	proc	drive:byte
 	.endif
 
 	ret
-
 RGetFreeSpace	endp
 
 
@@ -351,8 +318,8 @@ Exists	proc	fileSpec:ptr byte
 	mov	bx, fileSpec
 	mov	ax, word ptr [bx]
 	.if	ax == ':a' || ax == ':A' || ax == ':b' || ax == ':B'
-		xor	ah, ah								;get rid of colon
-		or		al, 20h								;guarantee lowercase
+		xor	ah, ah		;get rid of colon
+		or	al, 20h		;guarantee lowercase
 		invoke existdrive, ax
 	.endif
 
@@ -380,9 +347,7 @@ Exists	proc	fileSpec:ptr byte
 	; return the result
 	pop	ax
 	ret
-
 Exists	endp
-	
 
 
 MyCritErrorHandler	proc	far
@@ -391,12 +356,12 @@ MyCritErrorHandler	proc	far
 	;Pop DOS's return address off the stack
 	add	sp,6
 
-	;Set the carry flag in the flags which will 
+	;Set the carry flag in the flags which will
 	;be returned to the caller
-	mov	bp,sp
-	mov	ax,[bp+22]								;get the original flags
-	or		ax,1										;set the carry
-	mov	[bp+22],ax								;and put the flags back
+	mov	bp, sp
+	mov	ax, [bp+22]	;get the original flags
+	or	ax, 1		;set the carry
+	mov	[bp+22], ax	;and put the flags back
 
 	;Restore all registers from the stack
 	pop	ax
@@ -410,7 +375,6 @@ MyCritErrorHandler	proc	far
 	pop	es
 
 	iret
-
 MyCritErrorHandler	endp
 
 
@@ -418,37 +382,36 @@ drivecheck	proc	drvStr:ptr byte
 ;Return TRUE if drvStr points to strings starting with either "a:" or "b:",
 ;FALSE otherwise.
 
-	xor	ax, ax					;setup for FALSE return
+	xor	ax, ax			;setup for FALSE return
 	mov	bx, drvStr
 	mov	bx, word ptr [bx]
-	or		bl, 20h					; convert to lowercase
+	or	bl, 20h			; convert to lowercase
 	.if	(bl == 'a' || bl == 'b') && bh == ':'
 		inc	ax
 	.endif
-
 	return
-
 drivecheck	endp
 
+
 ;---------------------------------------------------------------------------
-; rename		rename a DOS file
+; rename	rename a DOS file
 ;
 ; entry:	oldName	= old filename
-;			newName	= new filename
-; exit:	ax			= 0: success
-;						  2: file not found
-;						  3: path not found
-;						  5: access denied
-;						 11: not same device	
+;		newName	= new filename
+; exit:	ax	= 0: success
+;		  2: file not found
+;		  3: path not found
+;		  5: access denied
+;		 11: not same device
 ;---------------------------------------------------------------------------
 rename	proc	oldName:ptr byte, newName:ptr byte
-	mov	dx, oldName		; ds:dx = old name
+	mov	dx, oldName	; ds:dx = old name
 	push	ds
 	pop	es
-	mov	di, newName		; es:di = new name
+	mov	di, newName	; es:di = new name
 
 	dos	dosRename
-	jc		@F
+	jc	@F
 	xor	ax, ax
 @@:
 	ret
