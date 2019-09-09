@@ -9,6 +9,7 @@
 ;KAWA WAS HERE
 ;-------------
 ; > General cleanup -- some tabs and between-proc spacing
+; > LFN support -- WIP
 
 include	macro.i
 
@@ -141,6 +142,29 @@ assume	di:ptr byte
 	ret
 assume	di:nothing
 getcwd	endp
+
+
+; Turns all spaces into underscores so real DOS and don't put
+; spaces in an 8.3 filename. Call before invoking a DOS file
+; function.
+; Expects things are already set up with the new name in ES:DI
+KawaMangleFile	proc
+	push ax
+	push bx
+	push cx
+	mov bx, di
+	.repeat
+		mov	cl, byte ptr [bx]
+		.if	cl == ' '
+			mov byte ptr [bx], '_'
+		.endif
+		inc	bx
+	.until	cl == 0
+	pop cx
+	pop bx
+	pop ax
+	ret
+KawaMangleFile	endp
 
 
 firstfile	proc	fname:ptr byte, attr:word, DTA:ptr byte
@@ -413,9 +437,10 @@ rename	proc	oldName:ptr byte, newName:ptr byte
 	mov	ax, 7156h
 	int	21h
 	.if	ax == 7100h
+		invoke	KawaMangleFile
 		dos	dosRename
 	.endif
-
+	
 	jc	@F
 	xor	ax, ax
 @@:
