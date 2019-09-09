@@ -35,6 +35,29 @@ oldCritErr	dword	?
 
 .CODE
 
+
+; Turns all spaces into underscores so real DOS doesn't put
+; spaces in an 8.3 filename. Call before invoking a DOS file
+; function.
+KawaMangleFile	proc	fname:ptr byte
+	push ax
+	push bx
+	push cx
+	mov bx, fname
+	.repeat
+		mov cl, byte ptr [bx]
+		.if cl == ' '
+			mov byte ptr [bx], '_'
+		.endif
+		inc bx
+	.until cl == 0
+	pop cx
+	pop bx
+	pop ax
+	ret
+KawaMangleFile	endp
+
+
 readfar	proc	fd:word, handle:word, n:word
 ;Read 'n' bytes from file 'fd' into the hunk pointed to by 'handle'.
 	mov	bx, handle
@@ -80,7 +103,14 @@ unlink	proc	fname:ptr byte
 ;Unlink the file 'fname'
 	call	ClearDosError
 	mov	dx, fname
-	dos	dosUnlink
+
+	mov	ax, 7141h	; LFN Unlink
+	int	21h
+	.if	ax == 7100h
+		invoke	KawaMangleFile, dx
+		dos	dosUnlink
+	.endif
+
 	.if	carry?
 		xor	ax, ax
 	.endif
@@ -123,7 +153,11 @@ assume	di:ptr byte
 
 	xor	dl, dl		;default drive
 	mov	si, di
-	dos	dosCurDir
+	mov	ax, 7147h	; LFN Current Directory
+	int	21h
+	.if	ax == 7100h
+		dos	dosCurDir
+	.endif
 
 	;Replace the starting '\' with a '/' if a '/' appears in the pathname
 	invoke	strlen, dirStr
@@ -142,29 +176,6 @@ assume	di:ptr byte
 	ret
 assume	di:nothing
 getcwd	endp
-
-
-; Turns all spaces into underscores so real DOS and don't put
-; spaces in an 8.3 filename. Call before invoking a DOS file
-; function.
-; Expects things are already set up with the new name in ES:DI
-KawaMangleFile	proc
-	push ax
-	push bx
-	push cx
-	mov bx, di
-	.repeat
-		mov	cl, byte ptr [bx]
-		.if	cl == ' '
-			mov byte ptr [bx], '_'
-		.endif
-		inc	bx
-	.until	cl == 0
-	pop cx
-	pop bx
-	pop ax
-	ret
-KawaMangleFile	endp
 
 
 firstfile	proc	fname:ptr byte, attr:word, DTA:ptr byte
@@ -434,16 +445,16 @@ rename	proc	oldName:ptr byte, newName:ptr byte
 	pop	es
 	mov	di, newName	; es:di = new name
 
-	mov	ax, 7156h
+	mov	ax, 7156h	; LFN Rename
 	int	21h
 	.if	ax == 7100h
-		invoke	KawaMangleFile
+		invoke	KawaMangleFile, di
 		dos	dosRename
 	.endif
 	
-	jc	@F
-	xor	ax, ax
-@@:
+	.if	carry?
+		xor	ax, ax
+	.endif
 	ret
 rename	endp
 
