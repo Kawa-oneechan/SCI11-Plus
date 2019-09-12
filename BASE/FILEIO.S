@@ -411,9 +411,9 @@ rename	proc	oldName:ptr byte, newName:ptr byte
 	mov	di, newName	; es:di = new name
 
 	dos	dosRename
-	jc	@F
-	xor	ax, ax
-@@:
+	.if	carry?
+		xor	ax, ax
+	.endif
 	ret
 rename	endp
 

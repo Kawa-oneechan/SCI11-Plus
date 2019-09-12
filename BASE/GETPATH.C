@@ -1,9 +1,9 @@
-/* GETPATH.C PATH AROUND AN OBSTACLE PLOYGON
+/* GETPATH.C PATH AROUND AN OBSTACLE POLYGON
 **
 ** Algorithm by Larry Scott
 **
 ** NAME---GETPATH---
-** POLYGON must be closed and not self intersecting (JORDAN ploygon)
+** POLYGON must be closed and not self intersecting (JORDAN polygon)
 ** all points of polygon must lie with screen limits and the polygon
 ** must be defined in a screen clockwise direction.
 */
@@ -91,7 +91,7 @@ AvdPoint* getpath(AvdPoint *A, AvdPoint *B, polygon *polylist, int opt)
 #ifdef TEST
 	int count;
 
-	//make ploygons clockwise
+	//make polygons clockwise
 	/* The following code, TestClockwise and InvertPolygon are
 	 * only needed if some polygons may be defined in a counter
 	 * clockwise direction. Clockwise refers to users view point
@@ -640,10 +640,10 @@ static int near testColinear(AvdPoint *P, int *n)
 }
 #endif
 
-/* PATH AROUND ALL OBSTACLE PLOYGONS
+/* PATH AROUND ALL OBSTACLE POLYGONS
  *
  * NAME---AVDPATH---
- *  polygons must be closed and not self intersecting (JORDAN ploygon)
+ *  polygons must be closed and not self intersecting (JORDAN polygon)
  *  and defined in a clockwise direction.
  * input:
  *  line segment A-B & polygonList
@@ -1067,7 +1067,7 @@ static void near setPolyDirections(polyNode *Npath, int polyDirections, int tota
 }
 
 
-/* OPTIMIZE PATH AROUND ALL OBSTACLE PLOYGONS
+/* OPTIMIZE PATH AROUND ALL OBSTACLE POLYGONS
  *
  * NAME---OPTPATH---
  * input:
@@ -1942,12 +1942,12 @@ intersection?  yes          no             yes           no
 }
 
 
-/* POLYPATH.C PATH AROUND AN OBSTACLE PLOYGON
+/* POLYPATH.C PATH AROUND AN OBSTACLE POLYGON
  *
  * Algorithm by Larry Scott
  *
  * NAME---POLYPATH---
- *  POLYGON must be closed and not self intersecting (JORDAN ploygon)
+ *  POLYGON must be closed and not self intersecting (JORDAN polygon)
  * input:
  *  line segment A-B & POLYGON P1, P2, ...PN
  * output:

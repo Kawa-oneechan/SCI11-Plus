@@ -68,7 +68,7 @@ EMSDetect proc uses bx dx
 ; open the EMM "file" to see if EMS is installed and available
 	lea	dx, emmName
 	dos	DOS_OPEN, DOS_OPEN_READ
-	jc		noEMS
+	jc	noEMS
 
 ; make sure that it's not a real file, but a device
 	mov	bx, ax					; bx = "file" handle
