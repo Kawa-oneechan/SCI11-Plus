@@ -3,14 +3,14 @@
 The `BASE` folder contains a cleaned-up version of the SCI11 interpreter source, ready to build. It has no extra features, only some warning-suppressing fixes and a lot of style changes. Oh, and no version stamp checks.
 The `EXT` folder contains my personal project, which takes the base version and adds a bunch of new features to it.
 
-Included is a minimal copy of a very old MSVC, required to compile all this. To use this in DOSBox, mount `SCI11` as C: and run `GO.BAT`. `cd BASE` or `cd EXT`, then simply run `make` and sit back. If all goes well you should end up with two interpreter files, `SIERRA.EXE` and `SCI.EXE`. On a real MS-DOS machine, it's much the same as long as the directories match up.
+Included is a minimal copy of a very old MSVC, required to compile all this. To use this in DOSBox, mount `SCI11` as C: and run `GO.BAT`. `cd BASE` or `cd EXT`, then simply run `make` and sit back. If all goes well you should end up with a `SIERRA.EXE` interpreter file. On a real MS-DOS machine, it's much the same as long as the directories match up.
 
 You may want to edit `INFO.C` to taste.
 
 The following interpreters are available. Invoke `make <target>` with one of the following:
 
 *  `sierra`: no debugger and no menu support.
-*  `sci`: debugger, stil no menu support.
+*  `sci`: debugger, still no menu support.
 *  `sierram`: no debugger, but menu support is in.
 *  `scitestr`: both debugger and menu are in.
 *  `clean`: don't build but remove all objects, map files, and binaries.
