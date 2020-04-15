@@ -1737,8 +1737,8 @@ global KERNEL(AvoidPath)
 		//wants full path
 		B.x = arg(3);
 		B.y = arg(4);
-		//handle no obstacle case... just act like a RMoveTo
 
+		//handle no obstacle case... just act like an RMoveTo
 		if (!arg(5))
 		{
 			P = (AvdPoint *) NeedPtr(3*sizeof(AvdPoint));
@@ -1751,12 +1751,16 @@ global KERNEL(AvoidPath)
 		}
 
 		theList = (List*)Native(arg(5));
+
 		//the number of polygons
 		size = arg(6);
+
+		//optimize path or not?
 		if (argCount >= 7)
 			opt = arg(7);
-		else //optimize path or not?
+		else
 			opt = 1;
+
 		if (polylist = RNewPtr(sizeof(polygon) * (size + 1)))
 		{
 			for (it = FirstNode(theList), i = 0; it; i++, it = NextNode(it))
@@ -1836,7 +1840,7 @@ global KERNEL(ListOps)
 			for (it = FirstNode((List *)Native(arg(2))); it; it = NextNode(it))
 			{
 				him = (Obj*)Native(((KNode*)Native(it))->nVal);
-				InvokeMethod((Obj*)Native(((KNode *)Native(it))->nVal), arg(3), argCount - 3, arg(4), arg(5),			arg(6), arg(7), arg(8), arg(9), arg(10));
+				InvokeMethod((Obj*)Native(((KNode *)Native(it))->nVal), arg(3), argCount - 3, arg(4), arg(5), arg(6), arg(7), arg(8), arg(9), arg(10));
 			}
 			break;
 		case LFirstTrue:
