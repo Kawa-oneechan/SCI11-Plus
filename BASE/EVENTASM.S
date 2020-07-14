@@ -155,7 +155,7 @@ assume	si:ptr Event
 	.endif
 
 	invoke	RPostEvent, si
-	return
+	ret
 
 assume	si:nothing
 HandleEvent	endp
