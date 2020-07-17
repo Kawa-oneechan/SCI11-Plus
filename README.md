@@ -1,4 +1,4 @@
-# SCI11+ -- SCI With Bits On
+# SCI11+ — SCI With Bits On
 
 The `BASE` folder contains a cleaned-up version of the SCI11 interpreter source, ready to build. It has no extra features, only some warning-suppressing fixes and a lot of style changes. Oh, and no version stamp checks.
 The `EXT` folder contains my personal project, which takes the base version and adds a bunch of new features to it.
@@ -38,13 +38,17 @@ The `EXT` version of SCI11 adds the following tricks:
 *  **Button and edit controls respond to the `back` and `color` properties**. Draw any button in any color without going full custom.
 *  **Outlined text rendering**. The `Display` kernel command now has a `#stroke`/`dsSTROKE` parameter that takes a bitfield specifying which of eight parts of an outline to draw around the text.
 *  **Ensuring you're trying to run an SCI11 game** by sniffing the format of the `RESOURCE.MAP` file. This feature can be easily toggled out by editing `KAWA.H`.
-*  **DbugStr outputs to file** instead of a secondary mono monitor. **New:** You can specify which file in `RESOURCE.CFG` via the `log` setting. Also I forgot to mention it takes format strings.
-*  **LDM/STM opcodes** as needed by the hottest new shit in SCI Companion.
+*  **DbugStr outputs to file** instead of a secondary mono monitor. This feature can be easily toggled out by editing `KAWA.H`. **New:** You can specify which file in `RESOURCE.CFG` via the `log` setting. Also I forgot to mention it takes format strings.
+*  **LDM/STM opcodes** as needed by the hottest new shit in SCI Companion. If your copy of SCI Companion supports the derefence operator, you'll need these opcodes to use it. It's just a neater and faster alternative to the `Memory` kernel call.
 *  **UTF-8 support**. Font files have 16-bit character counts, and using UTF-8 encoding is the most backwards-compatible way to reach them all. Includes kernel calls equivalent to `mbstowcs`/`wcstombs`. This feature can be easily toggled out by editing `KAWA.H`.
 *  **Colorful menus**. Menus, if enabled, are drawn in whatever colors were last used by `DrawStatus`. This feature can be easily toggled out by editing `KAWA.H`.
 *  **Full SBCS case mapping**. If you don't enable UTF-8 support, you can specify a casemap file to use, with your choice of DOS-437, Win-1252, or ISO-8859-1.
 *  **SCI32 font code rules**. In SCI11, the `|f..|` and `|c..|` control codes you can use in text strings for display use lookup tables set up with the `TextFonts` and `TextColors` kernel calls, so `|f2|` uses the third entry of the font list. In SCI2, they set the font and color directly. In SCI11+, you can use *both*. `|f2|` uses the third entry of the font list, but `|F2|` uses font #2.
+*  **Color 255 works in views**. A logic bug prevents color #255 (usually pure white) from showing up in views — any color below 253 is considered "plain" instead of remapped, but they forgot to exclude 255, which ended up never drawn.
+*  **Correct hex escapes in message text**. You can use expressions like `\x64` in message text to insert that character. But the programmers messed up while writing their own decoder and accidentally put `01234567890ABCDEF`, with an extra zero, breaking most of the set you could insert that way. The fix can be easily toggled out by editing `KAWA.H`.
+*  **Allow digits in stage directions**. Message lines can contain stage directions in parenthesis, but these can only consist of letters. SCI32 also allowed numbers, and so does SCI1++. This feature can be easily toggled out by editing `KAWA.H`.
 
 ![Demonstration of color hacks.](http://helmet.kafuka.org/sci/.images/colorhaxdemo1.gif)
 ![Demonstration of stroked text.](http://helmet.kafuka.org/sci/.images/dsstroke.png)
 ![Demonstration of colorful menus.](http://helmet.kafuka.org/sci/.images/colormenus.png)
+
