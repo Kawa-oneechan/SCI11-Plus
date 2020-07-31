@@ -213,7 +213,11 @@ global RWindow* RNewWindow(register RRect *fr, register RRect *uFr, strptr title
 	RCopyRect(fr, &frame);
 
 	//Adjust frame unless this is a custom window
+#ifdef ALTCUSTOMWINDOWLOGIC
+	if (!(wind->wType & CUSTOMWIND))
+#else
 	if (wind->wType != CUSTOMWIND)
+#endif
 	{
 		if (!(type & NOBORDER))
 		{
@@ -303,7 +307,11 @@ global void RDrawWindow(RWindow *wind)
 		}
 
 		//A custom window is draw by the user
+#ifdef ALTCUSTOMWINDOWLOGIC
+		if (!(wind->wType & CUSTOMWIND))
+#else
 		if (wind->wType != CUSTOMWIND)
+#endif
 		{
 			//if nothing else we fill the entire frame
 			RCopyRect(&wind->frame, &r);

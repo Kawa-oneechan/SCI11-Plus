@@ -1,4 +1,4 @@
-/* KAWA's HACKS -- A REFERENCE GUIDE
+\/* KAWA's HACKS -- A REFERENCE GUIDE
  * ---------------------------------
  * ENDOOM
  *   When exiting the game, if there's a 184.VOC with
@@ -32,6 +32,11 @@
  * COLORFULMENU
  *   Menus, if enabled, are drawn in whatever colors
  *   were last used by DrawStatus.
+ * ALTCUSTOMWINDOWLOGIC
+ *   When set, windows won't draw anything at all if
+ *   bit 0x80 (wCustom) is set. Otherwise, only the
+ *   exact value 0x80 works. Some Sierra games
+ *   mistakenly use 0x81.
  *
  * ERRLANG <file>
  *   Instead of reading error messages from INTERP.ERR,
