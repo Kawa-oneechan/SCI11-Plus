@@ -2687,8 +2687,6 @@ KERNEL(Utf8to16)
 	short *wide = (short*)Native(arg(1));
 	char *str = (char*)Native(arg(2));
 	int i, len = (int)arg(3);
-	if (wide == 0)
-		wide = (short*)NeedPtr((len + 1) * 2);
 	for (i = 0; i < len; i++)
 	{
 #ifdef UTF8
@@ -2710,8 +2708,6 @@ KERNEL(Utf16to8)
 	char *str = (char*)Native(arg(1));
 	short *wide = (short*)Native(arg(2));
 	int i, len = (int)arg(3);
-	if (str == 0)
-		str = (char*)NeedPtr((len + 1));
 	for (i = 0; i < len; i++)
 	{
 #ifdef UTF8
