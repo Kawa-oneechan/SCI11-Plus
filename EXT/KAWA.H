@@ -1,4 +1,4 @@
-\/* KAWA's HACKS -- A REFERENCE GUIDE
+/* KAWA's HACKS -- A REFERENCE GUIDE
  * ---------------------------------
  * ENDOOM
  *   When exiting the game, if there's a 184.VOC with
