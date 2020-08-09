@@ -40,7 +40,7 @@ short _toupper(short c)
 	if (c >= 'a' && c <= 'z')
 		return c - 'a' + 'A';
 	else if (c >= 0x80 && c <= 0x17f)
-		return euroToLower(c);
+		return euroToUpper(c);
 	else
 		return c;
 }
