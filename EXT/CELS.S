@@ -95,6 +95,7 @@ REMAPOFFSETINC	equ	0ffh
 
 public kawaHax
 kawaHax		byte	0
+kawaPicHax	byte	?
 
 .CODE
 
@@ -455,7 +456,7 @@ StandardLine proc near uses si es ds bx
 		invoke DoColorKawaHax
 
 		; check for priority and skip color to determine whether to draw it   ( .- kawa added this bit)
-		.if	(al != ss:skip) && (dh >= [di]) && ((al < REMAPCOLORSTART) || (al == 255))
+		.if	(al != ss:skip) && (dh >= [di]) && ((al < ss:kawaPicHax) || (al == 255))
 			and	byte ptr [di], ah
 			or	byte ptr [di], dl
 
@@ -706,9 +707,12 @@ DrawCelZ proc
 
 
 	call	DrawSetup	; setup the cel rectangle, priorities, etc.
+	
+	mov kawaPicHax, REMAPCOLORSTART	; reset our hack 0fdh
 
 	.if	theViewNum == -1	; if it's a picture
 		mov	skip, 0ffh
+		mov kawaPicHax, 0ffh	; allow the remap colors in pictures
 	.endif
 
 	mov	cx, endX	; check to see if we are drawing the cel at all
