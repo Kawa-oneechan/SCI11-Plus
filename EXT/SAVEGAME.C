@@ -277,17 +277,12 @@ KERNEL(CheckSaveGame)
 static bool near CheckSaveGame(strptr gameVer)
 {
 	char vStr[20];
-	uint saveSize, heapSize;
+	int saveSize, heapSize;
 
 	if (setjmp(saveErr) != 0) return FALSE;
 	saveSize = inword();
 	heapSize = inword();
 	sci_fgets(vStr, 20, fd);
-/*	return ( //KAWA WAS HERE
-		(saveSize == (uint)(&saveEnd - &saveStart)) &&
-		(heapSize == (uint)(handleBase - heapBase)) &&
-		(strcmp(vStr, gameVer) == 0)
-	); */
 	return(
 		(saveSize == (&saveEnd - &saveStart)) &&
 		(heapSize == (handleBase - heapBase)) &&
@@ -385,8 +380,7 @@ static void near outword(word w)
 
 static void near outstr(strptr str)
 {
-	//unsigned int n = strlen(str); //KAWA WAS HERE
-	int n = strlen(str);
+	size_t n = strlen(str);
 
 	if (write(fd, str, strlen(str)) != n)
 		longjmp(saveErr, 1);
