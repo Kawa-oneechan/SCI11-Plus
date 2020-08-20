@@ -257,6 +257,7 @@ global word* DrawControl(Obj *item)
 				RTextFace(DIM);
 			nRect = RTextBox(text, 0, &r, TEJUSTCENTER, font);
 			RTextFace(0);
+			PenColor(0);
 
 			//back it out for frame
 			RInsetRect(&r, -1, -1);
