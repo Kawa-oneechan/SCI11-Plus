@@ -1714,8 +1714,8 @@ global KERNEL(StrAt)
 	while (cnt--)
 		sp = GetUTF8Char(sp);
 	acc = UTF8Char;
-	//TODO: set
-	if (argCount = 3)
+	//TODO: allow setting
+	if (argCount == 3)
 	{
 		//if ((short)arg(3) < 0x80)
 		//	*(sp - UTF8Count) = (byte)arg(3);
