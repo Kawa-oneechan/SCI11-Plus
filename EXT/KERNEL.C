@@ -1636,6 +1636,24 @@ global KERNEL(StrCase)
 	strptr str = Native(arg(1));
 	char work[255];
 	strptr str2 = work;
+	if (GetNumChars() <= 256)
+	{
+		/*
+		Fall back to SBCS if the current port uses a font
+		with 256 or fewer characters.  Assume the best.
+		At worst, an input like "Pokémon" will uppercase
+		as "POKéMON" thanks to Unicode and ISO-8859-1
+		overlapping the way they do, which is a better
+		result than "POKoN". -- KAWA
+		*/
+		if (argCount == 2 && arg(2) > 0)
+			for (; *str != '\0'; ++str)
+				*str = toupper(*str);
+		else
+			for (; *str != '\0'; ++str)
+				*str = tolower(*str);
+		return;
+	}
 	if (argCount == 2 && arg(2) > 0)
 	{
 		while (*str)
@@ -1708,28 +1726,16 @@ global KERNEL(ShakeScreen)
 //is present, set the byte to that value.
 global KERNEL(StrAt)
 {
-#ifdef UTF8
-	memptr sp = (memptr)Native(arg(1));
-	int cnt = (int)arg(2) + 1;
-	while (cnt--)
-		sp = GetUTF8Char(sp);
-	acc = UTF8Char;
-	//TODO: allow setting
-	if (argCount == 3)
-	{
-		//if ((short)arg(3) < 0x80)
-		//	*(sp - UTF8Count) = (byte)arg(3);
-		SetUTF8CharAt((memptr)Native(arg(1)), (int)arg(2), (short)arg(3));
-		//acc = (short)arg(3);
-	}
-#else
 	memptr sp;
-
+	/*
+	There used to be a path for UTF-8 here. I removed it shortly after
+	fixing a dumb if-with-assignment bug figuring that the proper, safer
+	way to do it would be to use Utf8to16 and its counterpart. -- KAWA
+	*/
 	sp = (memptr)Native(arg(1)) + (int)arg(2);
 	acc = *sp;
 	if (argCount == 3)
 		*sp = (byte)arg(3);
-#endif
 }
 
 

@@ -138,33 +138,12 @@ void SetUTF8CharAt(char *str, int index, short utf)
 //Return the length of the string pointed to by 's'.
 global uint strlen(strptr s)
 {
-/*
-#ifdef UTF8
-	int r = 0;
-	while (*s++)
-	{
-		r++;
-		if ((*s & 0xE0) == 0xC0)
-		{
-			s++;
-			r++;
-		}
-		else if ((*s & 0xF0) == 0xE0)
-		{
-			s += 2;
-			r += 2;
-		}
-	}
-	return r;
-#else
-*/
 	strptr t;
 
 	t = s;
 	while (*t++)
 		;
 	return (t - s - 1);
-//#endif
 }
 
 
