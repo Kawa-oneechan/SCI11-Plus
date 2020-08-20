@@ -401,7 +401,7 @@ static void massageText(char far *dst, char far *src)
 			src++;
 
 			//check first digit
-			c = _toupper(*src);
+			c = (char)_toupper(*src);
 			if (!(cp = strchr(hexDigits, c)))
 			{
 				*dp++ = *src;
@@ -414,7 +414,7 @@ static void massageText(char far *dst, char far *src)
 			}
 
 			//check second digit
-			c = _toupper(*src);
+			c = (char)_toupper(*src);
 			if (!(cp = strchr(hexDigits, c)))
 			{
 				src--;

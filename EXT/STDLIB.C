@@ -40,7 +40,7 @@ global int atoi(strptr str)
 		++str;
 		forever
 		{
-			c = lower(*str++);
+			c = (char)lower(*str++);
 			if (isdigit(c))
 				c = c - '0';
 			else if (c >= 'a' && c <= 'f')

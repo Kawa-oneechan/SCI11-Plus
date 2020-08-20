@@ -1648,10 +1648,10 @@ global KERNEL(StrCase)
 		*/
 		if (argCount == 2 && arg(2) > 0)
 			for (; *str != '\0'; ++str)
-				*str = toupper(*str);
+				*str = (char)toupper(*str);
 		else
 			for (; *str != '\0'; ++str)
-				*str = tolower(*str);
+				*str = (char)tolower(*str);
 		return;
 	}
 	if (argCount == 2 && arg(2) > 0)
@@ -2682,6 +2682,9 @@ KERNEL(Kawa)
 			acc = isDebugVersion;
 #ifdef TESTER
 			acc |= 2;
+#endif
+#ifdef UTF8
+			acc |= 4;
 #endif
 			break;
 	}
