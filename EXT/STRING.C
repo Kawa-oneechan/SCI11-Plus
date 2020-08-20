@@ -107,32 +107,6 @@ char* SetUTF8Char(char *str, short utf)
 	}
 }
 
-void SetUTF8CharAt(char *str, int index, short utf)
-{
-	int i, len = strlen(str);
-	short *wide = (short*)NeedPtr((len + 1) * 2);
-	char *sp = str;
-
-	//basically mbstowcs
-	for (i = 0; i < len; i++)
-	{
-		sp = GetUTF8Char(sp);
-		wide[i] = UTF8Char;
-	}
-	wide[index] = utf;
-
-	sp = str; //rewind...
-
-	//wcstombs
-	for (i = 0; i < len; i++)
-	{
-		sp = SetUTF8Char(sp, wide[i]);
-	}
-	*sp = 0;
-
-	DisposePtr(wide);
-}
-
 #endif
 
 //Return the length of the string pointed to by 's'.
