@@ -48,7 +48,7 @@ The `EXT` version of SCI11 adds the following tricks:
 *  **Correct hex escapes in message text**. You can use expressions like `\x64` in message text to insert that character. But the programmers messed up while writing their own decoder and accidentally put `01234567890ABCDEF`, with an extra zero, breaking most of the set you could insert that way. The fix can be easily toggled out by editing `KAWA.H`.
 *  **Allow digits in stage directions**. Message lines can contain stage directions in parenthesis, but these can only consist of letters. SCI32 also allowed numbers, and so does SCI1++. This feature can be easily toggled out by editing `KAWA.H`.
 
-![Demonstration of color hacks.](http://helmet.kafuka.org/sci/.images/colorhaxdemo1.gif)
-![Demonstration of stroked text.](http://helmet.kafuka.org/sci/.images/dsstroke.png)
-![Demonstration of colorful menus.](http://helmet.kafuka.org/sci/.images/colormenus.png)
+![Demonstration of color hacks.](.assets/colorhaxdemo1.gif)
+![Demonstration of stroked text.](.assets/dsstroke.png)
+![Demonstration of colorful menus.](.assets/colormenus.png)
 
