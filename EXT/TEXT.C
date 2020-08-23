@@ -119,7 +119,7 @@ short UTF8FontHack(short c)
 	//0x0000 C0 and Basic Latin
 	//0x0080 C1 and Latin Supplement
 	//0x0100 Latin Extended-A
-	//0x0180 Latin Extended-B
+	//0x0180 Latin Extended-B (free space)
 	//0x0200 CJK Symbols and Punctuation
 	//0x0240 Hiragana
 	//0x02A0 Katakana

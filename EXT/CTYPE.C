@@ -31,6 +31,8 @@ short _tolower(short c)
 		return c - 'A' + 'a';
 	else if (c >= 0x80 && c <= 0x17f)
 		return euroToLower(c);
+	else if (c >= 0x370 && c <= 0x52F)
+		return euroToLowerTbl[(((int)c-0x370)+0x180)-128];
 	else
 		return c;
 }
@@ -41,6 +43,8 @@ short _toupper(short c)
 		return c - 'a' + 'A';
 	else if (c >= 0x80 && c <= 0x17f)
 		return euroToUpper(c);
+	else if (c >= 0x370 && c <= 0x52F)
+		return euroToUpperTbl[(((int)c-0x370)+0x180)-128];
 	else
 		return c;
 }
