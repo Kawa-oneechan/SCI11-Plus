@@ -17,12 +17,14 @@ bool islower(short c)
 {
 	return ((c >= 'a' && c <= 'z') ||
 			((c >= 0x80 && c <= 0x17f) && (euroToLower(c) == c)));
+//TODO: #ifndef UTF8_SMALLMAP
 }
 
 bool isupper(short c)
 {
 	return ((c >= 'A' && c <= 'Z') ||
 			((c >= 0x80 && c <= 0x17f) && (euroToUpper(c) == c)));
+//TODO: #ifndef UTF8_SMALLMAP
 }
 
 short _tolower(short c)
@@ -31,8 +33,10 @@ short _tolower(short c)
 		return c - 'A' + 'a';
 	else if (c >= 0x80 && c <= 0x17f)
 		return euroToLower(c);
+#ifndef UTF8_SMALLMAP
 	else if (c >= 0x370 && c <= 0x52F)
 		return euroToLowerTbl[(((int)c-0x370)+0x180)-128];
+#endif
 	else
 		return c;
 }
@@ -43,8 +47,10 @@ short _toupper(short c)
 		return c - 'a' + 'A';
 	else if (c >= 0x80 && c <= 0x17f)
 		return euroToUpper(c);
+#ifndef UTF8_SMALLMAP
 	else if (c >= 0x370 && c <= 0x52F)
 		return euroToUpperTbl[(((int)c-0x370)+0x180)-128];
+#endif
 	else
 		return c;
 }

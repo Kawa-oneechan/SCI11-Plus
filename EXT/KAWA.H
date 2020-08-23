@@ -24,6 +24,11 @@
  * UTF8
  *   Allow all 65536 characters in a font file to be
  *   used via UTF-8 encoding.
+ * UTF8_SMALLMAP
+ *   For casemapping, only include the Latin alphabet.
+ *   When enabled, casemapping a string with e.g.
+ *   Cyrillic writing in it will have no result for
+ *   those characters.
  * DBUGSTRFILE
  *   Instead of writing to a mono text screen, have
  *   DbugStr write to a text file for later checking,
@@ -53,6 +58,7 @@
 #define MSG_FIXHEXDIGITS
 #define MSG_ALLOWDIGITSINDIRECTIONS
 #define UTF8
+//#define UTF8_SMALLMAP
 #define DBUGSTRFILE
 #define COLORFULMENU
 

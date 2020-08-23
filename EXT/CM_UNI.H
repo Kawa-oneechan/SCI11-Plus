@@ -171,6 +171,7 @@ static short near euroToLowerTbl[]=
 	0x17E, 0x17E, //Z-caron
 	0x17F, //long s
 
+#ifndef UTF8_SMALLMAP
 	//Skip over Latin-B, CJK, Kana, GenPunct.
 
 	//TODO: Greek and Coptic
@@ -307,6 +308,7 @@ static short near euroToLowerTbl[]=
 	0x47D, 0x47D, //titlo Omega
 	0x47F, 0x47F, //Ot
 	0x481, 0x481, //Koppa
+#endif
 };
 
 static short near euroToUpperTbl[]=
@@ -482,6 +484,7 @@ static short near euroToUpperTbl[]=
 	0x17D, 0x17E, //Z-caron
 	0x17F, //long s
 
+#ifndef UTF8_SMALLMAP
 	//Skip over Latin-B, CJK, Kana, GenPunct.
 
 	//TODO: Greek and Coptic
@@ -618,4 +621,5 @@ static short near euroToUpperTbl[]=
 	0x47C, 0x47C, //titlo Omega
 	0x47E, 0x47E, //Ot
 	0x480, 0x480, //Koppa
+#endif
 };
