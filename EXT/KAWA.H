@@ -42,11 +42,11 @@
  *   bit 0x80 (wCustom) is set. Otherwise, only the
  *   exact value 0x80 works. Some Sierra games
  *   mistakenly use 0x81.
- *
- * ERRLANG <file>
+ * INTERNALERRORS
  *   Instead of reading error messages from INTERP.ERR,
  *   have them in the program code itself. This makes
  *   the program bigger, but cleans up the game folder.
+ *
  * CASEMAP <file>
  *   Use another casemap list instead of the built-in
  *   DOS-437. Only used if UTF8 is *not* defined.
@@ -61,6 +61,7 @@
 //#define UTF8_SMALLMAP
 #define DBUGSTRFILE
 #define COLORFULMENU
+//#define ALTCUSTOMWINDOWLOGIC
+#define INTERNALERRORS
 
-#define ERRLANG "ERRMSG_E.H"
 #define CASEMAP "CM_1252.H"
