@@ -50,7 +50,7 @@ global bool InitSoundDriver()
 #ifdef IBM
 	if ((soundDrv = LoadHandle(soundDriver)) == (Handle)NULL)
 	{
-		RAlert(E_CANT_FIND, soundDriver);
+		RAlert(E_NO_AUDIO_DRVR, soundDriver);
 		return (FALSE);
 	}
 	LockHandle(soundDrv);
