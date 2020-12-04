@@ -2103,7 +2103,6 @@ global KERNEL(FileIO)
 			acc = kawaWord;
 			break;
 		case fileWriteWord:
-			DoAlert(cpy);
 			kawaWord = arg(3);
 			acc = write(arg(2), &kawaWord, 2);
 			break;
