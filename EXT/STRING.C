@@ -23,34 +23,13 @@ to others.
 //-------------
 // > General cleanup -- no ancient-style loose parameter type lists, // comments
 
-#ifdef SC
-	#define NeedPtr(n) Allocate(n)
-	#include "etc.h" //Allocate is in SC's etc.c
-#else
-	#ifdef SCI
-		#include "memmgr.h" //NeedPtr is in SCI's memmgr.c
-	#else
-		#define NeedPtr(n) malloc(n)
-		#include "stdlib.h" //malloc is in stdlib library
-	#endif
-#endif
-
+#include "memmgr.h"
 #include "string.h"
 #include "ctype.h"
 
 #ifdef UTF8
 short UTF8Char = 0xFFFF;
 short UTF8Count = 0;
-
-int GetUTF8Count(short utf)
-{
-	if (utf < 0x7F)
-		return 1;
-	else if (utf <= 0x07FF)
-		return 2;
-	else if (utf <= 0xFFFF)
-		return 3;
-}
 
 char* GetUTF8Char(char *str)
 {
@@ -81,6 +60,17 @@ char* GetUTF8Char(char *str)
 		c |= (*str++ & 0x3F);
 		UTF8Count = 4;
 	} */
+	// Therefore, skip decoding and return a ? for those.
+	else if ((c & 0xF8) == 0xF0)
+	{
+		c = 0x003F;
+		str += 3;
+		UTF8Count = 4;
+	}
+	//Catch surrogate pairs
+	if (c >= 0xD800 && c <= 0xDFFF)
+		c = 0x003F;
+
 	UTF8Char = c;
 	return str;
 }
