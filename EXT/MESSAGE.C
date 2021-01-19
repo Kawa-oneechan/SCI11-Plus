@@ -282,8 +282,7 @@ static void getSize(uint module, byte noun, byte verb, byte cond, byte seq)
 }
 
 //set reference values for this message, returning FALSE if message not found.
-static bool
-getRefValues(uint module, byte noun, byte verb, byte cond, byte seq, byte *refNoun, byte *refVerb, byte *refCond)
+static bool getRefValues(uint module, byte noun, byte verb, byte cond, byte seq, byte *refNoun, byte *refVerb, byte *refCond)
 {
 	IndexEntry far *indexEntry;
 	MsgStack stack;
