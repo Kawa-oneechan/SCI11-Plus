@@ -3,7 +3,8 @@
  * ENDOOM
  *   When exiting the game, if there's a 184.VOC with
  *   an 80x25 textmode screen and some coordinates,
- *   show that.
+ *   show that. NOTE: That resource is what enables
+ *   the SCI11+ features in ScummVM.
  * NOOOPS
  *   Use better "Oops!" errors that aren't as confusing
  *   to see, and more informative.
@@ -21,6 +22,14 @@
  *   parenthetical with lowercase characters or digits
  *   is reconsidered not a stage direction at all.
  *   SCI2 allows digits.
+ * SCI2_ARRAYS
+ *   Adds the Array kernel call from SCI2.
+ * SCI2_FILEOPS
+ *   Add byte and short functions from SCI2 to the
+ *   File kernel call.
+ * KAWAS_CUSTOM_KERNEL
+ *   Adds my custom kernel function with assorted
+ *   useless stuff.
  * UTF8
  *   Allow all 65536 characters in a font file to be
  *   used via UTF-8 encoding.
@@ -57,6 +66,9 @@
 #define ENSURESCI11
 #define MSG_FIXHEXDIGITS
 #define MSG_ALLOWDIGITSINDIRECTIONS
+#define SCI2_ARRAYS
+#define SCI2_FILEOPS
+#define KAWAS_CUSTOM_KERNEL
 #define UTF8
 //#define UTF8_SMALLMAP
 #define DBUGSTRFILE

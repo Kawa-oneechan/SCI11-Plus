@@ -6,7 +6,9 @@
 #include "stdio.h"
 #include "errmsg.h"
 #include "memmgr.h"
+#include "kawa.h"
 
+#ifdef SCI2_ARRAYS
 enum {
 	ARRAYNEW,
 	ARRAYSIZE,
@@ -310,3 +312,8 @@ global KERNEL(Array)
 			break;
 	}
 }
+#else
+global KERNEL(Array)
+{
+}
+#endif

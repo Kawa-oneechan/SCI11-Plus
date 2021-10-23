@@ -1998,8 +1998,10 @@ global KERNEL(FileIO)
 	uint mode;
 	int fd, fd2, cnt;
 	char cpy[CPYBUFLEN];
+#ifdef SCI2_FILEOPS
 	short kawaWord;
 	char kawaByte;
+#endif
 
 	diskIOCritical = FALSE;
 
@@ -2088,6 +2090,7 @@ global KERNEL(FileIO)
 			close(fd);
 			close(fd2);
 //KAWA
+#ifdef SCI2_FILEOPS
 			break;
 		case fileReadByte:
 			cnt = read(arg(2), &kawaByte, 1);
@@ -2106,6 +2109,7 @@ global KERNEL(FileIO)
 			kawaWord = arg(3);
 			acc = write(arg(2), &kawaWord, 2);
 			break;
+#endif
 	}
 
 	diskIOCritical = TRUE;
@@ -2650,9 +2654,9 @@ KERNEL(RemapColors)
 	}
 }
 
-
 KERNEL(Kawa)
 {
+#ifdef KAWAS_CUSTOM_KERNEL
 	int i;
 
 	switch(arg(1))
@@ -2687,8 +2691,8 @@ KERNEL(Kawa)
 #endif
 			break;
 	}
+#endif
 }
-
 
 KERNEL(Utf8to16)
 {
