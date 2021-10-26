@@ -466,10 +466,12 @@ StandardLine proc near uses si es ds bx
 			and	byte ptr [di], ah
 			or	byte ptr [di], dl
 
-			xor	bh,bh
-			mov 	bl, al
+			xor	bh, bh
+			mov	bl, al
 			sub	bl, REMAPCOLORSTART
 			.if	(ss:remapOn[bx] == 0)
+; KAWA: instead of skipping, draw it as normal!
+				mov	es:[di], al
 				jmp outloop1
 			.endif
 			.if	(ss:remapDepth[bx])
@@ -816,23 +818,22 @@ ScaledLine proc near uses si di bx cx es ds
 		invoke DoColorKawaHax
 
 		; check for priority and skip color to determine whether to draw it
-
 		.if	(al != ss:skip) && (dh >= [di]) && (al < REMAPCOLORSTART)
 			and	byte ptr [di], ah
 			or	byte ptr [di], dl
 
 			; plot the color (remapping if required)
 			mov	es:[di], al
-
-		.elseif (al >= REMAPCOLORSTART) && (al <= REMAPCOLOREND) && (ss:remapOn) && (dh >= [di])
+		.elseif (al >= REMAPCOLORSTART) && (al <= REMAPCOLOREND) && (dh >= [di])
 			and	byte ptr [di], ah
 			or	byte ptr [di], dl
-
-			push 	bx
-					xor	bh, bh
-			mov 	bl, al
+			push bx
+			xor	bh, bh
+			mov bl, al
 			sub	bl, REMAPCOLORSTART
 			.if	(ss:remapOn[bx] == 0)
+; KAWA: instead of skipping, draw it as normal!
+				mov	es:[di], al
 				jmp outloop2
 			.endif
 			.if	(ss:remapDepth[bx])
@@ -842,6 +843,7 @@ ScaledLine proc near uses si di bx cx es ds
 					jmp outloop2
 				.endif
 			.endif
+
 			mov	bh,bl
 			xor	bl,bl
 			mov	ss:currMappingIndex, bx
