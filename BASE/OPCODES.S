@@ -710,20 +710,20 @@ OP_callk_continue:
 		;Set up the parameter pointer for the call.
 		getbyte		;get number of parameters
 		sub	bp, ax	;point to top of parameter space
-	mov	ax, restArgs
+		mov	ax, restArgs
 		sub	bp, ax
 		shr	ax, 1
 		add	[bp], ax
-	mov	restArgs, 0
+		mov	restArgs, 0
 		;Save the instruction and stack pointers, in case
 		;the kernel routine (e.g. SaveGame) needs them.
 		mov	ip, si
 		;Dispatch to the routine.
-	mov	ax, es
+		mov	ax, es
 		push  es
 		invoke	KernelCall ptr kernelDispTbl[bx], bp
 		sub	bp, 2
-	pop	es
+		pop	es
 		pop	pmsp
 
 		UpdateScriptSeg
