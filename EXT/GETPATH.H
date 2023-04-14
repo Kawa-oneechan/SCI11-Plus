@@ -43,12 +43,12 @@ struct polyPatch
 	int P_j;				//end intersection node of given polygon
 	int Q_j;				//end intersection node of patch loop
 	AvdPoint Q_U;			//end intersection point of patch loop
-	int delete;
+	int deleteIt;
 };
 typedef struct polyPatch polyPatch;
 
-extern AvdPoint* getpath(AvdPoint*, AvdPoint*, polygon*, int);
-extern int ptIntr(AvdPoint*, AvdPoint*, int);
+extern AvdPoint* GetPath(AvdPoint*, AvdPoint*, polygon*, int);
+extern int PointInterior(AvdPoint*, AvdPoint*, int);
 extern AvdPoint* MergePolygons(AvdPoint*, polygon*);
 
 #define sign(x) ((x) > 0 ? 1: (x) < 0 ? -1 : 0)
