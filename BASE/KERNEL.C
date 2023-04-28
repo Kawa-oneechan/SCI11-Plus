@@ -1775,7 +1775,7 @@ global KERNEL(AvoidPath)
 			polylist[i].n = 0;
 			polylist[i].type = 0;
 			polylist[i].info = 0;
-			acc = Pseudo(getpath(&A, &B, polylist, opt));
+			acc = Pseudo(GetPath(&A, &B, polylist, opt));
 			DisposePtr(polylist);
 		}
 	}
@@ -1785,7 +1785,7 @@ global KERNEL(AvoidPath)
 		size = (int)GetProperty((Obj*)Native(arg(3)), s_size);
 		if (size < 3)
 			Panic(E_BAD_POLYGON);
-		acc = (int)ptIntr(&A, (AvdPoint*)Native(GetProperty((Obj*)Native(arg(3)), s_points)), size);
+		acc = (int)PointInterior(&A, (AvdPoint*)Native(GetProperty((Obj*)Native(arg(3)), s_points)), size);
 	}
 }
 
