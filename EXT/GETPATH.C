@@ -62,8 +62,8 @@ static AvdPoint picWindPoly[4];
 AvdPoint* GetPath(AvdPoint *A, AvdPoint *B, polygon *polylist, int opt)
 {
 	int pathType;
-	int i; //, j, k;
-	AvdPoint exitPoint, entryPoint; //, *P; //, Pt;
+	int i;
+	AvdPoint exitPoint, entryPoint;
 	AvdPoint I1, I2;
 	int nodeI1, nodeI2;
 	enum PathStartType pathStart = fromA;
@@ -255,37 +255,6 @@ AvdPoint* GetPath(AvdPoint *A, AvdPoint *B, polygon *polylist, int opt)
 		break;
 	}
 
-	/*
-	//This may not be needed anymore
-	//kludge to prevent deleting of second point
-	if (!opt && P[2].x != ENDOFPATH)
-	{
-		// if first two points are the same and if direction
-		// not blocked eliminate duplicate point, otherwise
-		// leave duplicate in to stop motion around obstacle.
-		if (FALSE && (P[0].x == P[1].x) && (P[0].y == P[1].y))
-		{
-			Pt = *A;
-			if (A->x < B->x) Pt.x += 2;
-			if (B->x < A->x) Pt.x -= 2;
-			if (A->y < B->y) Pt.y += 2;
-			if (B->y < A->y) Pt.y -= 2;
-			for (i = 0, j = 0; polylist[i].n != 0; ++i)
-			{
-				if (PointInterior(&Pt, polylist[i].polyPoints, polylist[i].n))
-				{
-					j = 1;
-					break;
-				}
-			}
-
-			if (!j)
-				for (k = 0; P[k].x != ENDOFPATH; ++k)
-					P[k] = P[k + 1];
-		}
-	}
-	*/
-
 	//Re invert previously inverted polygons
 	for (i = 0; polylist[i].n != 0; ++i)
 		if (polylist[i].info & INVERTED)
@@ -363,31 +332,17 @@ static long near NearPoint(AvdPoint *P, AvdPoint *polygon, int n, AvdPoint *R, i
 
 			if ((v_dot(&tmp1, &tmp2) <= 0) && (v_dot(&tmp1, &tmp3) >= 0))
 				//P-R is normal to A-B
-
 				/*
-				A
-				***************************
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				P----------*R
-				*
-				*
-				*
-				***************************
-				B
-				*/
-
+					      A
+					**************
+					      *
+					      *
+					P-----*R
+					      *
+					      *
+					**************
+					      B
+			*/
 			{
 				//Distance P-R is:
 				//ABS{[(B-A)^(0, 0, 1)]#(A-P)/|B-A|}
@@ -427,34 +382,17 @@ static long near NearPoint(AvdPoint *P, AvdPoint *polygon, int n, AvdPoint *R, i
 			{
 				//P-R is not normal to A-B, for example
 				/*
-				P*
-				*
-				*
-				*
-				*
-				*
-				R * A
-				***************************
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				*
-				***************************
-				B
-				*/
+					  P*
+					    *
+					     *
+					    R * A
+					**************
+					      *
+					      *
+					      *
+					**************
+					      B
+			*/
 				dot1 = (long)DistanceEstimate(&A, P, &offScreen);
 				dot2 = (long)DistanceEstimate(&B, P, &offScreen);
 				//dot1 = v_dot(&tmp2, &tmp2);
@@ -542,28 +480,28 @@ static int near TestColinear(AvdPoint *P, int *n)
 *    A, I1, N4, N3, N2, I2, I3, M5, M4, M3, M2, I4, B
 *   WITH OPTIMIZATION: opt = TRUE
 *    A, N4, M5, M4, B
-*
-*                                              M7 ********* M8
-*                                                *        *
-*               N0     N1                       *         *
-*               ********                       *          * M0
-*              *        *                     *            *
-*             *          *                   *              *
-*            *            *                 *                *
-*           *              *               *                  *
-*       N5 *                *          M6 *                    *
-*          *I1               * I2        I3*                 I4 * M1
-*  A-------*------------------*-------------*------------------*----------B
-*          *                   *N2           *                * M2
-*          *                  *               *               *
-*          *                 *                 *              *
-*       N4 ****************** N3                *             *
-*                                                *            * M3
-*                                                 *          *
-*                                                  *        *
-*                                                   *      *
-*                                                 M5 ****** M4
-*
+
+												M7 ********* M8
+												  *        *
+				 N0     N1                       *         *
+				 ********                       *          * M0
+				*        *                     *            *
+			   *          *                   *              *
+			  *            *                 *                *
+			 *              *               *                  *
+		 N5 *                *          M6 *                    *
+			*I1               * I2        I3*                 I4 * M1
+	A-------*------------------*-------------*------------------*----------B
+			*                   *N2           *                * M2
+			*                  *               *               *
+			*                 *                 *              *
+		 N4 ****************** N3                *             *
+												  *            * M3
+												   *          *
+													*        *
+													 *      *
+												   M5 ****** M4
+
 * - DESIGNATES SUBTRACTION OF 2 VECTORS (returns a vector)
 * + DESIGNATES ADDITION OF 2 VECTORS (returns a vector)
 * # DESIGNATES DOT PRODUCT OF 2 VECTORS (returns a scalar)
@@ -794,30 +732,29 @@ static void near ReducePolyList(polygon *polylist, polyNode *nodePath)
 	AvdPoint I1, I2;
 	AvdPoint tmp1, tmp2;
 
-	//Eliminate any overlaped polygons.
+	//Eliminate any overlapping polygons.
 	//For example polygon2 can be eliminated in the following case:
 	/*
-	********************
-	*                  *
-	*                  *
-	*     polygon2     *
-	*                 *
-	*               *
-	*             *
-	*********  *           *  **********
-	*        *  *         *  *         *
-	I1*         *  *I3   I4*  *          *I2
-	A-----------*----------*--*-----*--*-----------*---------B
-	*           *  *   *  *            *
-	*            *  * *  *             *
-	*             *  *  *              *
-	*              *   *               *
-	*               * *                *
-	*                *                 *
-	*                                  *
-	*            polygon1              *
-	*                                  *
-	************************************
+		           ********************
+		           *                  *
+		           *     polygon2     *
+		            *                 *
+		             *               *
+		              *             *
+		    *********  *           *  **********
+		    *        *  *         *  *         *
+		  I1*         *  *I3   I4*  *          *I2
+		A---*----------*--*-----*--*-----------*---B
+		    *           *  *   *  *            *
+		    *            *  * *  *             *
+		    *             *  *  *              *
+		    *              *   *               *
+		    *               * *                *
+		    *                *                 *
+		    *                                  *
+		    *            polygon1              *
+		    *                                  *
+		    ************************************
 	*/
 	//First polygon in polylist is checked againest the others to
 	//see if any polygons in the list can be eliminated.
@@ -1069,8 +1006,6 @@ AvdPoint* MergePolygons(AvdPoint *poly, polygon *polylist)
 	}
 
 	TestColinear(P, &i);
-	//newPoly[i].x = ENDOFPATH;
-	//newPoly[i].y = ENDOFPATH;
 
 	//return the new polygon
 	for (i = 0; P[i].x != ENDOFPATH; ++i);
@@ -1116,33 +1051,24 @@ static void near MergePolygon(AvdPoint *P, int n, polygon *poly)
 			{
 				//Is this an exit from P intersection? For example:
 				/*
-				*P[i+1]
-				*
-				*
-				*
-				INSIDE   *   OUTSIDE
-				*
-				*
-				Q[j]---------*---------------->Q[j+1]   This is an exiting intersection
-				*
-				*
-				*
-				*
-				P[i]*
+					For example:
+					            *P[i+1]
+					           *
+					  INSIDE  *  OUTSIDE
+					         *
+					Q[j]----*--->Q[j+1]   This is an exiting
+					       *              intersection
+					      *
+					 P[i]*
 
-				*P[i+1]
-				*
-				*
-				*
-				INSIDE    *   OUTSIDE
-				*
-				*
-				Q[j+1]<------*-----------------Q[j]     This is an entering intersection
-				*
-				*
-				*
-				*
-				P[i]*
+					              *P[i+1]
+					             *
+					   INSIDE   *   OUTSIDE
+					           *
+					Q[j+1]<---*-----Q[j]   This is an entering
+					         *             intersection
+					        *
+					   P[i]*
 				*/
 				//test for exit or entry
 				v_subtract(&P[(P_i + 1 + n) % n], &P[P_i], &tmp1);
@@ -1303,49 +1229,49 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 	{
 		if (((Api<Apj) && ((Api < Bpi) && (Bpi < Apj))) || ((Api>Apj) && ((Api < Bpi) || (Bpi < Apj))))
 			/*
-			patch A
-			*-----------------------------*
-			|                             |
-			|    patch B                  |
-			|  *----------...             |
-			|  |                          |
-			|  |                          |
-			|  |       ********           |
-			|  |      *        *          |
-			|  *-----*          *         |
-			|       *            *--------*
-			|      *              *
-			|     *                *
-			|     *                 *
-			*-----*                  *
-			*                   *
-			*                  *
-			*                 *
-			******************
+				     patch A
+				*-----------------------------*
+				|                             |
+				|    patch B                  |
+				|  *----------...             |
+				|  |                          |
+				|  |                          |
+				|  |       ********           |
+				|  |      *        *          |
+				|  *-----*          *         |
+				|       *            *--------*
+				|      *              *
+				|     *                *
+				|     *                 *
+				*-----*                  *
+				      *                   *
+				      *                  *
+				      *                 *
+				      ******************
 			*/
 			return(TRUE);
 
 		if (((Api<Apj) && ((Api < Bpj) && (Bpj < Apj))) || ((Api>Apj) && ((Api < Bpj) || (Bpj < Apj))))
 			/*
-			patch A
-			*-----------------------------*
-			|                             |
-			|    patch B                  |
-			|  *----------*               |
-			|             |               |
-			|             |               |
-			|          ********           |
-			|         *        *          |
-			|        *          *         |
-			|       *            *--------*
-			|      *              *
-			|     *                *
-			|     *                 *
-			*-----*                  *
-			*                   *
-			*                  *
-			*                 *
-			******************
+				     patch A
+				*-----------------------------*
+				|                             |
+				|    patch B                  |
+				|  *----------*               |
+				|             |               |
+				|             |               |
+				|          ********           |
+				|         *        *          |
+				|        *          *         |
+				|       *            *--------*
+				|      *              *
+				|     *                *
+				|     *                 *
+				*-----*                  *
+				      *                   *
+				      *                  *
+				      *                 *
+				      ******************
 			*/
 			return(TRUE);
 	}
@@ -1353,48 +1279,48 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 	{
 		if (((Bpi<Bpj) && ((Bpi < Api) && (Api < Bpj))) || ((Bpi>Bpj) && ((Bpi < Api) || (Api < Bpj))))
 			/*
-			patch B
-			*-----------------------------*
-			|                             |
-			|    patch A                  |
-			|  *----------...             |
-			|  |                          |
-			|  |                          |
-			|  |       ********           |
-			|  |      *        *          |
-			|  *-----*          *         |
-			|       *            *--------*
-			|      *              *
-			|     *                *
-			|     *                 *
-			*-----*                  *
-			*                   *
-			*                  *
-			*                 *
-			******************
+				     patch B
+				*-----------------------------*
+				|                             |
+				|    patch A                  |
+				|  *----------...             |
+				|  |                          |
+				|  |                          |
+				|  |       ********           |
+				|  |      *        *          |
+				|  *-----*          *         |
+				|       *            *--------*
+				|      *              *
+				|     *                *
+				|     *                 *
+				*-----*                  *
+				      *                   *
+				      *                  *
+				      *                 *
+				      ******************
 			*/
 			return(FALSE);
 		if (((Bpi<Bpj) && ((Bpi < Apj) && (Apj < Bpj))) || ((Bpi>Bpj) && ((Bpi < Apj) || (Apj < Bpj))))
 			/*
-			patch B
-			*-----------------------------*
-			|                             |
-			|    patch A                  |
-			|  *----------*               |
-			|             |               |
-			|             |               |
-			|          ********           |
-			|         *        *          |
-			|        *          *         |
-			|       *            *--------*
-			|      *              *
-			|     *                *
-			|     *                 *
-			*-----*                  *
-			*                   *
-			*                  *
-			*                 *
-			******************
+				     patch B
+				*-----------------------------*
+				|                             |
+				|    patch A                  |
+				|  *----------*               |
+				|             |               |
+				|             |               |
+				|          ********           |
+				|         *        *          |
+				|        *          *         |
+				|       *            *--------*
+				|      *              *
+				|     *                *
+				|     *                 *
+				*-----*                  *
+				      *                   *
+				      *                  *
+				      *                 *
+				      ******************
 			*/
 			return(FALSE);
 	}
@@ -1405,174 +1331,174 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 			if (Api == Bpi)
 				if (DistanceEstimate(&poly[A->P_i], &A->P_U, &offScreen) < DistanceEstimate(&poly[A->P_i], &B->P_U, &offScreen))
 					/*
-					patch A
-					*----------------*
-					|                |
-					|  ************************
-					|  *                      *
-					|  *                      *-------*
-					|  *                      *       |
-					|  *                      *       |
-					|  *                      *---*p  |
-					|  *                      *   |a  |
-					|  *                      *   |t  |
-					|  *                      *   |c  |
-					|  *                      *   |h  |
-					|  *                      *   |B  |
-					|  *                      *---*   |
-					|  *                      *       |
-					|  *                      *       |
-					|  *                     *        |
-					|  *                    *         |
-					|  *********************          |
-					|                                 |
-					*---------------------------------*
+						  patch A
+						*----------------*
+						|                |
+						|  ************************
+						|  *                      *
+						|  *                      *-------*
+						|  *                      *       |
+						|  *                      *       |
+						|  *                      *---*p  |
+						|  *                      *   |a  |
+						|  *                      *   |t  |
+						|  *                      *   |c  |
+						|  *                      *   |h  |
+						|  *                      *   |B  |
+						|  *                      *---*   |
+						|  *                      *       |
+						|  *                      *       |
+						|  *                     *        |
+						|  *                    *         |
+						|  *********************          |
+						|                                 |
+						*---------------------------------*
 					*/
 					return(TRUE);
 				else
 					/*
-					patch A
-					*----------------*
-					|                |
-					|  ************************
-					|  *                      *
-					|  *                      *
-					|  *                      *
-					|  *                      *
-					|  *                      *---*p
-					|  *                      *   |a
-					|  *                      *   |t
-					|  *                      *   |c
-					|  *                      *   |h
-					|  *                      *   |B
-					|  *                      *---*
-					|  *                      *
-					|  *                      *-------*
-					|  *                      *       |
-					|  *                      *       |
-					|  *                     *        |
-					|  *                    *         |
-					|  *********************          |
-					|                                 |
-					*---------------------------------*
+						  patch A
+						*----------------*
+						|                |
+						|  ************************
+						|  *                      *
+						|  *                      *
+						|  *                      *
+						|  *                      *
+						|  *                      *---*p
+						|  *                      *   |a
+						|  *                      *   |t
+						|  *                      *   |c
+						|  *                      *   |h
+						|  *                      *   |B
+						|  *                      *---*
+						|  *                      *
+						|  *                      *-------*
+						|  *                      *       |
+						|  *                      *       |
+						|  *                     *        |
+						|  *                    *         |
+						|  *********************          |
+						|                                 |
+						*---------------------------------*
 					*/
 					return(FALSE);
 			if (Apj == Bpi)
 				if (DistanceEstimate(&poly[A->P_j], &A->Q_U, &offScreen) > DistanceEstimate(&poly[A->P_j], &B->P_U, &offScreen))
 					/*
-					patch A
-					*----------------*
-					|                |
-					|    patch B     |
-					|    *-----*     |
-					|    |     |     |
-					|    |     |     |
-					|  ************************
-					|  *                      *
-					|  *                      *
-					|  *                      *
-					|  *                      *---*
-					|  *                      *   |
-					|  *                      *   |
-					|  *                      *   |
-					|  *                      *   |
-					|  *                     *    |
-					|  *                    *     |
-					|  *********************      |
-					|                             |
-					*-----------------------------*
+						  patch A
+						*----------------*
+						|                |
+						|    patch B     |
+						|    *-----*     |
+						|    |     |     |
+						|    |     |     |
+						|  ************************
+						|  *                      *
+						|  *                      *
+						|  *                      *
+						|  *                      *---*
+						|  *                      *   |
+						|  *                      *   |
+						|  *                      *   |
+						|  *                      *   |
+						|  *                     *    |
+						|  *                    *     |
+						|  *********************      |
+						|                             |
+						*-----------------------------*
 					*/
 					return(TRUE);
 				else
 					/*
-					patch A
-					*---------*
-					|         |
-					|         |   patch B
-					|         |   *-----*
-					|         |   |     |
-					|         |   |     |
-					|  ************************
-					|  *                      *
-					|  *                      *
-					|  *                      *
-					|  *                      *---*
-					|  *                      *   |
-					|  *                      *   |
-					|  *                      *   |
-					|  *                      *   |
-					|  *                     *    |
-					|  *                    *     |
-					|  *********************      |
-					|                             |
-					*-----------------------------*
+						  patch A
+						*---------*
+						|         |
+						|         |   patch B
+						|         |   *-----*
+						|         |   |     |
+						|         |   |     |
+						|  ************************
+						|  *                      *
+						|  *                      *
+						|  *                      *
+						|  *                      *---*
+						|  *                      *   |
+						|  *                      *   |
+						|  *                      *   |
+						|  *                      *   |
+						|  *                     *    |
+						|  *                    *     |
+						|  *********************      |
+						|                             |
+						*-----------------------------*
 					*/
 					return(FALSE);
 		}
 		if (Api != Bpi)
 			/*
-			patch A                            patch B
-			*-------------*                    *-------------*
-			|             |                    |             |
-			|             |                    |             |
-			|          ********                |          ********
-			|         *        *               |         *        *
-			|        *          *              |        *          *
-			|       *            *--------*    |       *            *--------*
-			|      *              *       |p   |      *              *       |p
-			|     *                *      |a   |     *                *      |a
-			|     *                 *     |t   |     *                 *     |t
-			*-----*                  *    |c   *-----*                  *    |c
-			*                   *   |h         *                   *   |h
-			*                  *    |B         *                  *    |A
-			*                 *-----*          *                 *-----*
-			******************                 ******************
+				  patch A                            patch B
+				*-------------*                    *-------------*
+				|             |                    |             |
+				|             |                    |             |
+				|          ********                |          ********
+				|         *        *               |         *        *
+				|        *          *              |        *          *
+				|       *            *--------*    |       *            *--------*
+				|      *              *       |p   |      *              *       |p
+				|     *                *      |a   |     *                *      |a
+				|     *                 *     |t   |     *                 *     |t
+				*-----*                  *    |c   *-----*                  *    |c
+				      *                   *   |h         *                   *   |h
+				      *                  *    |B         *                  *    |A
+				      *                 *-----*          *                 *-----*
+				      ******************                 ******************
 			*/
 			return(FALSE);
 		if (DistanceEstimate(&poly[A->P_i], &A->P_U, &offScreen) < DistanceEstimate(&poly[A->P_i], &B->P_U, &offScreen))
 			/*
-			patch A
-			*-----------------------------*
-			|                             |
-			|    patch B                  |
-			|  *----------*               |
-			|  |          |               |
-			|  |          |               |
-			|  |       ********           |
-			|  |      *        *          |
-			|  |     *          *         |
-			|  |    *            *--------*
-			|  |   *              *
-			|  |  *                *
-			|  *--*                 *
-			*-----*                  *
-			*                   *
-			*                  *
-			*                 *
-			******************
+				  patch A
+				*-----------------------------*
+				|                             |
+				|    patch B                  |
+				|  *----------*               |
+				|  |          |               |
+				|  |          |               |
+				|  |       ********           |
+				|  |      *        *          |
+				|  |     *          *         |
+				|  |    *            *--------*
+				|  |   *              *
+				|  |  *                *
+				|  *--*                 *
+				*-----*                  *
+				      *                   *
+				      *                  *
+				      *                 *
+				      ******************
 			*/
 			return(TRUE);
 		else
 			/*
-			patch B
-			*-----------------------------*
-			|                             |
-			|    patch A                  |
-			|  *----------*               |
-			|  |          |               |
-			|  |          |               |
-			|  |       ********           |
-			|  |      *        *          |
-			|  |     *          *         |
-			|  |    *            *--------*
-			|  |   *              *
-			|  |  *                *
-			|  *--*                 *
-			*-----*                  *
-			*                   *
-			*                  *
-			*                 *
-			******************
+				  patch B
+				*-----------------------------*
+				|                             |
+				|    patch A                  |
+				|  *----------*               |
+				|  |          |               |
+				|  |          |               |
+				|  |       ********           |
+				|  |      *        *          |
+				|  |     *          *         |
+				|  |    *            *--------*
+				|  |   *              *
+				|  |  *                *
+				|  *--*                 *
+				*-----*                  *
+				      *                   *
+				      *                  *
+				      *                 *
+				      ******************
 			*/
 			return(FALSE);
 	}
@@ -1581,101 +1507,101 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 		//if A wraps around it dominates B.
 		if (DistanceEstimate(&poly[A->P_i], &A->P_U, &offScreen) > DistanceEstimate(&poly[A->P_i], &A->Q_U, &offScreen))
 			/*
-			patch A
-			*--------------------------------*
-			|                                |
-			|          ********              |
-			|         *        *             |
-			|        *          *--------*   |
-			|       *            *       |p  |
-			|      *              *      |a  |
-			|     *                *     |t  |
-			|     *                 *    |c  |
-			*-----*                  *   |h  |
-			*                   *  |B  |
-			*-----*                  *---*   |
-			|     *                 *        |
-			|     ******************         |
-			|                                |
-			*--------------------------------*
+				  patch A
+				*--------------------------------*
+				|                                |
+				|          ********              |
+				|         *        *             |
+				|        *          *--------*   |
+				|       *            *       |p  |
+				|      *              *      |a  |
+				|     *                *     |t  |
+				|     *                 *    |c  |
+				*-----*                  *   |h  |
+				      *                   *  |B  |
+				*-----*                  *---*   |
+				|     *                 *        |
+				|     ******************         |
+				|                                |
+				*--------------------------------*
 			*/
 			return(TRUE);
 	}
 
-	//if either patches wrap around then their can not be a dominance.
+	//if either patches wrap around then there can not be a dominance.
 	if (DistanceEstimate(&poly[A->P_i], &A->P_U, &offScreen) > DistanceEstimate(&poly[A->P_i], &A->Q_U, &offScreen))
 		/*
-		patch A
-		*-----------------------------*
-		|                             |
-		|          ********           |
-		|         *        *          |
-		|        *          *         |
-		|       *            *        |
-		|      *              *       |
-		|     *                *      |
-		|     *                 *     |
-		*-----*                  *    |
-		*                   *   |
-		*-----*                  *    |
-		|     *                 *     |
-		|     ******************      |
-		|                             |
-		*-----------------------------*
+			  patch A
+			*-----------------------------*
+			|                             |
+			|          ********           |
+			|         *        *          |
+			|        *          *         |
+			|       *            *        |
+			|      *              *       |
+			|     *                *      |
+			|     *                 *     |
+			*-----*                  *    |
+			      *                   *   |
+			*-----*                  *    |
+			|     *                 *     |
+			|     ******************      |
+			|                             |
+			*-----------------------------*
 		*/
 		return(FALSE);
 	if (DistanceEstimate(&poly[B->P_i], &B->P_U, &offScreen) > DistanceEstimate(&poly[B->P_i], &B->Q_U, &offScreen))
 		/*
-		patch B
-		*-----------------------------*
-		|                             |
-		|          ********           |
-		|         *        *          |
-		|        *          *         |
-		|       *            *        |
-		|      *              *       |
-		|     *                *      |
-		|     *                 *     |
-		*-----*                  *    |
-		*                   *   |
-		*-----*                  *    |
-		|     *                 *     |
-		|     ******************      |
-		|                             |
-		*-----------------------------*
+			  patch B
+			*-----------------------------*
+			|                             |
+			|          ********           |
+			|         *        *          |
+			|        *          *         |
+			|       *            *        |
+			|      *              *       |
+			|     *                *      |
+			|     *                 *     |
+			*-----*                  *    |
+			      *                   *   |
+			*-----*                  *    |
+			|     *                 *     |
+			|     ******************      |
+			|                             |
+			*-----------------------------*
 		*/
 		return(FALSE);
 
 	if (DistanceEstimate(&poly[B->P_i], &B->P_U, &offScreen) > DistanceEstimate(&poly[B->P_i], &A->P_U, &offScreen))
 		if (DistanceEstimate(&poly[B->P_i], &A->Q_U, &offScreen) > DistanceEstimate(&poly[B->P_i], &B->P_U, &offScreen))
 			/*
-			*************
-			*            *
-			*------------*             *
-			p |            *              *
-			a |            *               *
-			t |            *                *
-			c |   patchB   *                 *
-			h |  *---------*                  *
-			A |  |         *                   *
-			|  *---------*                  *
-			*------------*                 *
-			******************
+				               *************
+				               *            *
+				  *------------*             *
+				p |            *              *
+				a |            *               *
+				t |            *                *
+				c |   patchB   *                 *
+				h |  *---------*                  *
+				A |  |         *                   *
+				  |  *---------*                  *
+				  *------------*                 *
+				               ******************
 			*/
 			return(TRUE);
 	/*
-	********                          ********
-	*       *                         *       *
-	*------------*        *           *------------*        *
-	p |            *         *          |            *         *
-	a |            *          *         |            *          *
-	t |            *           *        *------------*           *
-	c |   patchB   *            *                    *            *
-	h |  *---------*             *      *------------*             *
-	A |  |         *              *     |            *              *
-	|  *---------*             *      |            *             *
-	*------------*            *       *------------*            *
-	*************                     *************
+		               ********                          ********
+		               *       *                         *       *
+		  *------------*        *           *------------*        *
+		p |            *         *          |            *         *
+		a |            *          *         |            *          *
+		t |            *           *        *------------*           *
+		c |   patchB   *            *                    *            *
+		h |  *---------*             *      *------------*             *
+		A |  |         *              *     |            *              *
+		  |  *---------*             *      |            *             *
+		  *------------*            *       *------------*            *
+		               *************                     *************
 	*/
 	return(FALSE);
 }
@@ -1741,18 +1667,14 @@ start:
 		if ((P2.y == M->y) && (M->x < P2.x))
 		{
 			/* types of intersections checked here:
-			*           *       *    *             *            *
-			*           *     *      *             *          *
-			*           *   *        *             *        *
-			*           * *          *             *      *
-			<---------*-----------*------------*****---------******-------------M
-			*                             *
-			*                              *
-			*                               *
-			*                                *
-			*                                 *
-
-			intersection?  yes          no             yes           no
+				   *       *     *   *         *        *
+				    *       *   *     *         *      *
+				     *       * *       *         *    *
+				<-----*-------*---------***-------****-------M
+				      *                    *
+				      *                     *
+				intersection?
+				    yes      no         yes        no
 			*/
 			if (P3.y != P2.y)
 			{
@@ -1800,20 +1722,20 @@ start:
 *
 * EXAMPLE:
 * POLYPATH(A, B, path) returns (1, N4, N2, -1, x1, y1, x2, y2)
-*
-*                 N0     N1
-*                 ********
-*                *        *
-*               *          *
-*              *            *
-*             *              *
-*         N5 *                *
-*            *(x1,y1)=I1       * (x2,y2)=I2
-*  A---------*------------------*---------------B
-*            *                   *N2
-*            *                  *
-*            *                 *
-*         N4 ****************** N3
+
+					 N0     N1
+					 ********
+					*        *
+				   *          *
+				  *            *
+				 *              *
+			 N5 *                *
+			   *(x1,y1)=I1        * (x2,y2)=I2
+	A---------*--------------------*---------------B
+			  *                   *N2
+			  *                  *
+			  *                 *
+		   N4 ****************** N3
 */
 
 static int near PolygonPath(AvdPoint *A, AvdPoint *B, AvdPoint *points, int n, AvdPoint *I1, AvdPoint *I2, int *nodeI1, int *nodeI2)
@@ -2010,67 +1932,59 @@ start:
 			* all polygon must be defined in a mathematical counter
 			* clockwise direction.
 			* For example:
-			P1      P2                           There is an
-			A-----*********----------------------B     intersection at P2
-			*
-			*
-			OUTSIDE    *     INSIDE
-			*
-			*
-			*
-			P3
+				      P1    P2                  There is an
+				A-----*******---------------B   intersection at P2
+				             *
+				   OUTSIDE    *     INSIDE
+				               *
+				                P3
 
+				                *
+				   INSIDE      *
+				              *   OUTSIDE
+				             *
+				      P1  P2*              There is no
+				A----*******-----------B   intersection at P2
 
-
-			*
-			*
-			INSIDE      *
-			*   OUTSIDE
-			*
-			P1     P2*                           There is no
-			A-----*********----------------------B     intersection at P2
 
 			IF A=P2 OR B=P2
 
-			P1      P2,A                         There is an
-			*********----------------------B     intersection at P2
-			*
-			*
-			OUTSIDE    *     INSIDE
-			*
-			*
-			*
-			P3
+				P1    P2,A                       There is an
+				*******----------------------B   intersection at P2
+				       *
+				        *
+				OUTSIDE  *    INSIDE
+				          *
+				           *
+				            P3
 
-			P1      P2,A                         There is no
-			B-----*********                            intersection at P2
-			*
-			*
-			OUTSIDE    *     INSIDE
-			*
-			*
-			*
-			P3
+				      P1    P2,A          There is no
+				B-----*******             intersection at P2
+				             *
+				     OUTSIDE  *   INSIDE
+				               *
+				                *
+				                 P3
 
-			P1      P2,B                         There is an
-			*********----------------------A     intersection at P2
-			*
-			*
-			OUTSIDE    *     INSIDE
-			*
-			*
-			*
-			P3
+				P1    P2,B                    There is an
+				*******-------------------A   intersection at P2
+				       *
+				OUTSIDE *   INSIDE
+				         *
+				          *
+				           P3
 
-			P3
-			*
-			*
-			INSIDE      *   OUTSIDE
-			*
-			*
-			P1   P2,B*                           There is no
-			A-----*********                            intersection at P2
+
+				                 P3
+				                 *
+				                *
+				    INSIDE     *   OUTSIDE
+				              *
+				             *
+				    P1  P2,B*         There is no
+				A---********          intersection at P2
 			*/
+
 			//See if A-B contains P2.
 			v_subtract(&P2, A, &tmp1);
 			v_subtract(&P2, B, &tmp2);
@@ -2132,71 +2046,60 @@ start:
 				* Otherwise D is not an intersection.
 				* This is because all polygons must be defined in a counter clockwise direction.
 				* For example:
-				A,P2     P3             There is an no
-				B---------------*******               intersection at P2
-				*
-				*
-				OUTSIDE  *   INSIDE
-				*
-				P1*
 
-				P1*
-				*   OUTSIDE
-				*
-				INSIDE   *
-				*P2     P3             There is an
-				B---------------*******               intersection at P2
-				A
+					         A,P2     P3      There is an no
+					B----------*******        intersection at P2
+					          *
+					OUTSIDE  *   INSIDE
+					        *
+					     P1*
 
-				P1*
-				*
-				*   OUTSIDE
-				INSIDE *
-				*P2     P3                  There is no
-				*******-------------B      intersection at P2
-				A
+					       P1*
+					           *   OUTSIDE
+					   INSIDE   *
+						         *P2     P3       There is an
+						B---------*******         intersection at P2
+						          A
 
+						   P1*
+						      *   OUTSIDE
+						INSIDE *
+						        *P2     P3        There is no
+						         *******------B   intersection at P2
+						         A
 
-				A,P2     P3                  There is no
-				*******-------------B      intersection at P2
-				*
-				*
-				OUTSIDE *   INSIDE
-				*
-				P1*
+					        A,P2     P3           There is no
+					          *******---------B   intersection at P2
+					         *
+					OUTSIDE *   INSIDE
+					       *
+					    P1*
 
-				P1*
-				*    OUTSIDE
-				*
-				INSIDE  *
-				*P2    P3                   There is an
-				A----------*******-------------B      intersection at P2
+					    P1*
+					       *    OUTSIDE
+					INSIDE  *
+					         *P2    P3            There is an
+					A----------*******--------B   intersection at P2
 
+					          P2     P3
+					A---------*******---------B   There is no
+					         *                    intersection at P2
+					OUTSIDE *   INSIDE
+					       *
+					    P1*
 
-				P2     P3
-				A----------*******-------------B      There is no
-				*                           intersection at P2
-				*
-				OUTSIDE *   INSIDE
-				*
-				P1*
+					     *
+					      *  OUTSIDE
+					INSIDE *
+					        *P2    P3             There is an
+					B--------*******----------B   intersection at P2
 
-				*
-				*
-				*  OUTSIDE
-				INSIDE *
-				*P2    P3                   There is an
-				B----------*******-------------B      intersection at P2
-
-
-
-				P2     P3
-				B----------*******-------------B      There is no
-				*                           intersection at P2
-				*
-				OUTSIDE *   INSIDE
-				*
-				P1*
+					         P2     P3
+					B---------******---------B   There is no
+					         *                   intersection at P2
+					OUTSIDE *  INSIDE
+					       *
+					    P1*
 				*/
 				//See if P2 == A
 				v_subtract(&P2, A, &tmp1);
@@ -2220,25 +2123,19 @@ start:
 			//If intersection at P2 then check crossing node or not.
 			//For example:
 			/*
-			*P3
-			*
-			*
-			*
-			P2 *
-			A----------*--------------------      Not crossing node
-			*
-			*
-			*
-			*
-			P1*
+				           *P3
+				         *
+				    P2 *
+				A----*----------   Not crossing node
+				    *
+				   *
+				P1*
 
-			P2
-			A----------*--------------------  Crossing node
-			* *
-			*   *
-			*     *
-			*       *
-			P1*         * P3
+				     P2
+				A----*--------   Crossing node
+				    * *
+				   *   *
+				P1*     *P3
 			*/
 			v_subtract(B, A, &tmp1);
 			v_subtract(&P3, A, &tmp2);
@@ -2251,21 +2148,17 @@ start:
 				{
 					//P2 = A
 					/*
-					P2
-					A*--------------------      There is an
-					* *                         intersection at P2
-					*   *      INSIDE
-					*     *
-					*       *
-					P1*         * P3
+						    P2
+						    A*--------------   There is an
+						    * *                intersection at P2
+						   *   *    INSIDE
+						P1*     *P3
 
-					P2
-					A*--------------------      There is no
-					* *                         intersection at P2
-					*   *     OUTSIDE
-					*     *
-					*       *
-					P3*         * P1
+						    P2
+						    A*--------------   There is no
+						    * *                intersection at P2
+						   *   *    OUTSIDE
+						P3*     *P1
 					*/
 					if (NodeTest(&tmp1, &P1, &P2, &P3))
 						goto intersection;
@@ -2277,21 +2170,17 @@ start:
 				{
 					//P2 = B
 					/*
-					P2
-					A--------B*                          There is an
-					* *                         intersection at P2
-					*   *      INSIDE
-					*     *
-					*       *
-					P1*         * P3
+						    P2
+						A---B*       There is an intersection at P2
+						    * *
+						   *   *     INSIDE
+						P1*     * P3
 
-					P2
-					A---------B*                          There is no
-					* *                         intersection at P2
-					*   *     OUTSIDE
-					*     *
-					*       *
-					P3*         * P1
+						    P2
+						A---B*       There is no intersection at P2
+						    * *
+						   *   *     OUTSIDE
+						P3*     * P1
 					*/
 					v_subtract(A, B, &tmp1);
 					if (NodeTest(&tmp1, &P1, &P2, &P3))
@@ -2300,21 +2189,17 @@ start:
 						goto getnextnode;
 				}
 				/*
-				P2
-				A----------*--------------------      There is an
-				* *                         intersection at P2
-				*   *      INSIDE
-				*     *
-				*       *
-				P1*         * P3
+					    P2
+					A----*-----  There is an intersection at P2
+					    * *
+					   *   *     INSIDE
+					P1*     * P3
 
-				P2
-				A----------*--------------------      There is no
-				* *                         intersection at P2
-				*   *     OUTSIDE
-				*     *
-				*       *
-				P3*         * P1
+					    P2
+					A----*-----  There is no intersection at P2
+					    * *
+					   *   *     OUTSIDE
+					P3*     * P1
 				*/
 				v_subtract(A, &P2, &tmp1);
 				if (NodeTest(&tmp1, &P1, &P2, &P3))
@@ -2326,56 +2211,45 @@ start:
 			{
 				//Crossing node using known inside determine if there is an intersection.
 				/*
-				*P3
-				*
-				INSIDE          *
-				*
-				P2 *
-				A----------*--------------------      There is an
-				*                           intersection at P2
-				*
-				*
-				*
-				P1*
+					           *P3
+					INSIDE   *
+					    P2 *
+					A----*---------  There is an intersection at P2
+					    *
+					   *
+					P1*
 
-				P3*
-				*
-				*     OUTSIDE
-				INSIDE    *                           There is no
-				P2*A--------------B            intersection at P2
-				*
-				*
-				*
-				P1*
+					        P3*
+					         *    OUTSIDE
+					INSIDE  *
+					     P2*A-----B   There is no intersection at P2
+					       *
+					       *
+					     P1*
 
-				P3*
-				*
-				*     OUTSIDE
-				INSIDE    *                     There is an
-				B----------P2*A                     intersection at P2
-				*
-				*
-				*
-				P1*
+					            P3*
+					             *    OUTSIDE
+					  INSIDE    *
+					B--------P2*A     There is an intersection at P2
+					           *
+					           *
+					         P1*
 
-				P3*
-				*
-				*     OUTSIDE
-				INSIDE    *                           There is no
-				P2*B--------------A            intersection at P2
-				*
-				*
-				*
-				P1*
-				P3*
-				*
-				*     OUTSIDE
-				INSIDE    *                     There is an
-				A----------P2*B                     intersection at P2
-				*
-				*
-				*
-				P1*
+					        P3*
+					         *     OUTSIDE
+					INSIDE  *
+					     P2*B----------A    There is no intersection at P2
+					       *
+					       *
+					     P1*
+
+					           P3*
+					            *     OUTSIDE
+					  INSIDE   *
+					A-------P2*B          There is anintersection at P2
+					          *
+					          *
+					        P1*
 				*/
 				v_subtract(&P2, A, &tmp4);
 				if (v_dot(&tmp4, &tmp4) <= 2L)
@@ -2405,29 +2279,23 @@ start:
 		//If intersection is at A then see if leaving or entering polygon.
 		//For example:
 		/*
-		*P2
-		*
-		*
-		*
-		INSIDE    *   OUTSIDE
-		*
-		*
-		*A-------------------      There is no
-		*                           intersection at P2
-		*
-		*
-		*
-		P1*         *P2
-		*
-		*
-		INSIDE   *    OUTSIDE
-		*
-		-----------*A                         There is an
-		*                           intersection at P2
-		*
-		*
-		*
-		P1*
+			         *P2
+			        *
+			INSIDE *   OUTSIDE
+			      *
+			     *A-----------    There is no intersection at P2
+			    *
+			   *
+			P1*
+
+			         *P2
+			        *
+			INSIDE *    OUTSIDE
+			      *
+			-----*A   There is an intersection at P2
+			    *
+			   *
+			P1*
 		*/
 		if (t1 == INTERSECT + INTERSECTA)
 		{
@@ -2440,28 +2308,23 @@ start:
 		//If intersection is at B then see if leaving or entering polygon.
 		//For example:
 		/*
-		*P2
-		*
-		*
-		*
-		INSIDE    *   OUTSIDE
-		*
-		*
-		*B-------------------      There is no
-		*                           intersection at P2
-		*
-		*
-		*
-		P1*         *P2
-		*
-		*
-		INSIDE   *    OUTSIDE
-		*
-		-----------*B                         There is an
-		*                           intersection at P2
-		*
-		*
-		*
+		         *P2
+		        *
+		INSIDE *  OUTSIDE
+		      *
+		     *B---------   There is no intersection at P2
+		    *
+		   *
+		P1*
+
+		          *P2
+		         *
+		        *
+		INSIDE *  OUTSIDE
+		      *
+		-----*B            There is an intersection at P2
+		    *
+		   *
 		P1*
 		*/
 		if (t1 == INTERSECT + INTERSECTB)
@@ -2498,22 +2361,19 @@ static int near NodeTest(AvdPoint *tmp1, AvdPoint *P1, AvdPoint *P2, AvdPoint *P
 	AvdPoint tmp2, tmp3;
 
 	/*
-	P2              tmp1
-	*------------------->      There is no
-	* *                         intersection at P2
-	*   *     OUTSIDE
-	*     *
-	*       *
-	P3*         * P1
+		     P2         tmp1
+		      *------------->  There is no
+		     * *               intersection at P2
+		    *   *   OUTSIDE
+		   *     *
+		P3*       * P1
 
-
-	tmp1    P2
-	<---------*                          There is an
-	* *                         intersection at P2
-	*   *      INSIDE
-	*     *
-	*       *
-	P1*         * P3
+		 tmp1    P2
+		<---------*            There is an
+		         * *           intersection at P2
+		        *   * INSIDE
+		       *     *
+		    P1*       * P3
 	*/
 	v_subtract(P3, P2, &tmp2);
 	v_subtract(P2, P1, &tmp3);
@@ -2760,4 +2620,3 @@ static long near v_sizesqrd(AvdPoint *X, AvdPoint *Y)
 	y = (((long)X->y) - ((long)Y->y)) * (((long)X->y) - ((long)Y->y));
 	return (x + y);
 }
-
