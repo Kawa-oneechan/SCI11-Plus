@@ -87,7 +87,7 @@ bool RespondsTo(Obj *obj, uint selector)
 
 	//is 'selector' a property?
 	if (GetPropAddr(obj, selector))
-		return TRUE;
+		return true;
 
 	//search the method dictionary hierarchy
 	do
@@ -96,11 +96,11 @@ bool RespondsTo(Obj *obj, uint selector)
 		methodDict = (word far*)(*sp->hunk + obj->methDict);
 		for (nMethods = *methodDict++; nMethods--; methodDict += 2)
 			if (*methodDict == (signed)selector) //KAWA WAS HERE
-				return TRUE;
+				return true;
 		obj = (Obj*)Native(obj->super);
 	} while (obj);
 
-	return FALSE;
+	return false;
 }
 
 

@@ -23,7 +23,7 @@ typedef struct
 	uint paletteSize;
 	char danPaltitle[9];
 	byte sysPalNum;			//Tells which single palette in syspal we expect
-	byte startOffset ;
+	byte startOffset;
 	byte nCycles;			//number of cycling ranges following header
 	uint dummy2;
 	uint nColors;			//number of "colors" defined in this palette

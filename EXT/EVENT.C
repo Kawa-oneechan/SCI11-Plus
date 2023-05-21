@@ -102,7 +102,7 @@ bool RGetNextEvent(word mask, REventRecord *event)
 	{
 		MakeNullEvent(event); //use his storage
 	}
-	return(ret);
+	return ret;
 }
 
 
@@ -146,7 +146,7 @@ bool REventAvail(word mask, REventRecord *event)
 			MakeNullEvent(event);
 	}
 
-	return(ret);
+	return ret;
 }
 
 

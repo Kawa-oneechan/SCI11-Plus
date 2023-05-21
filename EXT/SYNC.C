@@ -28,7 +28,7 @@ PURPOSE :'Lip'-sync animation to audio
 #include "sync.h"
 
 static bool near sync36, qsync36[MAXQ];
-static bool near syncing = FALSE;
+static bool near syncing = false;
 static Handle near syncHandle = NULL, qsyncHandle[MAXQ];
 static uint near syncNum, qsyncNum[MAXQ], syncIndex, locCnt, qndx, qnum;
 
@@ -76,12 +76,12 @@ global void StartSync(Obj *theSync, uint num)
 	IndexedProp(theSync, syncCue) = -1;
 	if ((syncHandle = ResLoad(RES_SYNC, num)) != NULL)
 	{
-		ResLock(RES_SYNC, syncNum = num, TRUE);
+		ResLock(RES_SYNC, syncNum = num, true);
 		LockHandle(syncHandle);
 		IndexedProp(theSync, syncCue) = 0;
 		syncIndex = 0;
-		syncing = TRUE;
-		sync36 = FALSE;
+		syncing = true;
+		sync36 = false;
 	}
 }
 
@@ -92,9 +92,9 @@ global void QueueSync(Obj *theSync, uint num)
 		IndexedProp(theSync, syncCue) = -1;
 	if (qndx < MAXQ && (qsyncHandle[qndx] = ResLoad(RES_SYNC, num)) != NULL)
 	{
-		ResLock(RES_SYNC, qsyncNum[qndx] = num, TRUE);
+		ResLock(RES_SYNC, qsyncNum[qndx] = num, true);
 		LockHandle(qsyncHandle[qndx]);
-		qsync36[qndx++] = FALSE;
+		qsync36[qndx++] = false;
 		if (theSync)
 			IndexedProp(theSync, syncCue) = 0;
 	}
@@ -131,8 +131,8 @@ global void StartSync36(Obj *theSync, uint module, byte noun, byte verb, byte co
 			ReadDos(fd, (byte far*)(*syncHandle), len - 2);
 			IndexedProp(theSync, syncCue) = 0;
 			syncIndex = 0;
-			syncing = TRUE;
-			sync36 = TRUE;
+			syncing = true;
+			sync36 = true;
 		}
 	}
 	if (fd == audVolFd)
@@ -171,7 +171,7 @@ global void QueueSync36(Obj *theSync, uint module, byte noun, byte verb, byte co
 		if (typeHdrlen == RES_SYNC)
 		{
 			ReadDos(fd, (byte far*)(*qsyncHandle[qndx]), len - 2);
-			qsync36[qndx++] = TRUE;
+			qsync36[qndx++] = true;
 			if (theSync)
 				IndexedProp(theSync, syncCue) = 0;
 		}
@@ -191,10 +191,10 @@ ulong FindSync36Entry(uint module, byte noun, byte verb, byte cond, byte sequ, u
 	ResAud36Entry far *entry36;
 
 	if (audVolFd == CLOSED)
-		return((ulong)-1); //KAWA WAS HERE -- why was this -1L when the return type is ulong?
+		return (ulong)-1; //KAWA WAS HERE -- why was this -1L when the return type is ulong?
 
 	if (!ResCheck(RES_MAP, module))
-		return((ulong)-1); //KAWA WAS HERE
+		return (ulong)-1; //KAWA WAS HERE
 	map = ResLoad(RES_MAP, module);
 
 	ptr36 = (char far*)*map;
@@ -206,7 +206,7 @@ ulong FindSync36Entry(uint module, byte noun, byte verb, byte cond, byte sequ, u
 		offset += ((ulong)entry36->offsetMSB << 16) + (ulong)entry36->offsetLSW;
 		if (entry36->noun == noun && entry36->verb == verb && entry36->cond == cond && (entry36->flag.sequ & SEQUMASK) == sequ)
 			if ((entry36->flag.sync & SYNCMASK) && (*len = GetWord(entry36->syncLen)))
-				return(offset);
+				return offset;
 			else
 				break;
 		ptr36 += sizeof(ResAud36Entry);
@@ -215,7 +215,7 @@ ulong FindSync36Entry(uint module, byte noun, byte verb, byte cond, byte sequ, u
 		if (!(entry36->flag.rave & RAVEMASK))
 			ptr36 -= sizeof(entry36->raveLen);
 	}
-	return((ulong)-1); //KAWA WAS HERE
+	return (ulong)-1; //KAWA WAS HERE
 }
 
 
@@ -261,6 +261,6 @@ global void StopSync()
 	else
 		ResUnLoad(RES_SYNC, syncNum);
 	syncHandle = NULL;
-	syncing = FALSE;
+	syncing = false;
 }
 

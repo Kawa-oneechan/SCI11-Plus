@@ -188,7 +188,7 @@ global KERNEL(UnLoad)
 
 
 //Lock or UnLock a resource
-//pass resource type, resoure number and TRUE or FALSE to LOCK or UNLOCK
+//pass resource type, resoure number and true or false to LOCK or UNLOCK
 global KERNEL(Lock)
 {
 	byte resType = (byte)arg(1);
@@ -301,7 +301,7 @@ global KERNEL(SetCursor)
 			PackHandles();
 			magPicNum = arg(9);
 			magPic = ResLoad(RES_VIEW, magPicNum);
-			ResLock(RES_VIEW, magPicNum, TRUE);
+			ResLock(RES_VIEW, magPicNum, true);
 			LockHandle(magPic);
 			bigViewData = (Hunkptr)GetCelPointer((Handle)magPic, 0, 0);
 			celPtr = (aCel far*)bigViewData;
@@ -324,7 +324,7 @@ global KERNEL(SetCursor)
 	 		//load the magnifier cursor in hunk
 			pCursorNum = arg(6);
 			cursor = ResLoad(RES_VIEW,	pCursorNum);
-			ResLock(RES_VIEW, pCursorNum, TRUE);
+			ResLock(RES_VIEW, pCursorNum, true);
 			LockHandle(cursor);
 
 			bigViewData = (Hunkptr)GetCelPointer((Handle)cursor, 0, 0);
@@ -367,7 +367,7 @@ KERNEL(DrawPic)
 	Handle BTargetPalette;
 
 	//defaults for optional arguments
-	word clear = TRUE;
+	word clear = true;
 
 	++palStamp;
 	if(!palStamp)
@@ -596,8 +596,8 @@ global KERNEL(Display)
 
 	width = colorIt = -1;
 	mode = TEJUSTLEFT;
-	saveIt = FALSE;
-	showIt = TRUE;
+	saveIt = false;
+	showIt = true;
 
 	lastArg = (args + arg(0));
 
@@ -653,7 +653,7 @@ global KERNEL(Display)
 				width = *args++;
 				break;
 			case p_save:
-				saveIt = TRUE;
+				saveIt = true;
 				break;
 			case p_noshow:
 				showIt = 0;
@@ -707,20 +707,20 @@ global KERNEL(Display)
 	//KAWA
 	if (stroke)
 	{
-		ROffsetRect(&r, 1, 0); if (stroke &   1) RTextBox(text, FALSE, &r, mode, -1); //right...
-		ROffsetRect(&r, 0, 1); if (stroke &   2) RTextBox(text, FALSE, &r, mode, -1); //bottom right...
-		ROffsetRect(&r,-1, 0); if (stroke &   4) RTextBox(text, FALSE, &r, mode, -1); //bottom...
-		ROffsetRect(&r,-1, 0); if (stroke &   8) RTextBox(text, FALSE, &r, mode, -1); //bottom left...
-		ROffsetRect(&r, 0,-1); if (stroke &  16) RTextBox(text, FALSE, &r, mode, -1); //left...
-		ROffsetRect(&r, 0,-1); if (stroke &  32) RTextBox(text, FALSE, &r, mode, -1); //top left...
-		ROffsetRect(&r, 1, 0); if (stroke &  64) RTextBox(text, FALSE, &r, mode, -1); //top...
-		ROffsetRect(&r, 1, 0); if (stroke & 128) RTextBox(text, FALSE, &r, mode, -1); //top right...
+		ROffsetRect(&r, 1, 0); if (stroke &   1) RTextBox(text, false, &r, mode, -1); //right...
+		ROffsetRect(&r, 0, 1); if (stroke &   2) RTextBox(text, false, &r, mode, -1); //bottom right...
+		ROffsetRect(&r,-1, 0); if (stroke &   4) RTextBox(text, false, &r, mode, -1); //bottom...
+		ROffsetRect(&r,-1, 0); if (stroke &   8) RTextBox(text, false, &r, mode, -1); //bottom left...
+		ROffsetRect(&r, 0,-1); if (stroke &  16) RTextBox(text, false, &r, mode, -1); //left...
+		ROffsetRect(&r, 0,-1); if (stroke &  32) RTextBox(text, false, &r, mode, -1); //top left...
+		ROffsetRect(&r, 1, 0); if (stroke &  64) RTextBox(text, false, &r, mode, -1); //top...
+		ROffsetRect(&r, 1, 0); if (stroke & 128) RTextBox(text, false, &r, mode, -1); //top right...
 		ROffsetRect(&r,-1, 1); //and center.
 	}
 	PenColor(penColor);
 
 	//now draw the text and show the rectangle it is in
-	RTextBox(text, FALSE, &r, mode, -1);
+	RTextBox(text, false, &r, mode, -1);
 
 	//don't show if the picture is not valid
 	if ((!picNotValid) && (showIt))
@@ -733,7 +733,7 @@ global KERNEL(Display)
 }
 
 
-//return TRUE if we have a mouse available
+//return true if we have a mouse available
 global KERNEL(HaveMouse)
 {
 	acc = haveMouse; //public in eventasm
@@ -813,17 +813,17 @@ static strptr getstr(strptr str)
 		if(!sci_fgets(str, RECSTRLEN, recordFd))
 		{
 			recordState = STOP;
-			return(NULL);
+			return NULL;
 		}
 	} while(*str == ';');
-	return(str);
+	return str;
 }
 
 static uint getint(void)
 {
 	char str[RECSTRLEN];
-	if(!getstr(str)) return(0);
-	return(atoi(str));
+	if(!getstr(str)) return 0;
+	return atoi(str);
 }
 
 static ulong getlong(void)
@@ -832,7 +832,7 @@ static ulong getlong(void)
 	char *str = saveStr;
 	ulong n;
 
-	if(!getstr(str)) return(0L);
+	if(!getstr(str)) return 0L;
 
 	//Scan off spaces
 	for (; isspace(*str); str++);
@@ -843,7 +843,7 @@ static ulong getlong(void)
 	while (isdigit(*str))
 		n = 10*n + *str++ - '0';
 
-	return(n);
+	return n;
 }
 
 //(Record flag <filename>)
@@ -966,9 +966,9 @@ global KERNEL(IsItSkip)
 	viewHandle = ResLoad(RES_VIEW,arg(1));
 
 	if(RIsItSkip(viewHandle, arg(2), arg(3), arg(4), arg(5))) //View,loop,cel,vOffset,hOffset
-		acc = TRUE;
+		acc = true;
 	else
-		acc = FALSE;
+		acc = false;
 }
 
 
@@ -1141,7 +1141,7 @@ global KERNEL(NewWindow)
 	else
 		underR = NULL;
 
-	acc = Pseudo(RNewWindow(&r, underR, Native(arg(9)), arg(10), arg(11), FALSE));
+	acc = Pseudo(RNewWindow(&r, underR, Native(arg(9)), arg(10), arg(11), false));
 
 	//set port characteristics based on remainder of args
 	rThePort->fgColor = arg(12);
@@ -1285,12 +1285,12 @@ global KERNEL(Random)
 	{
 		//Set seed to argument
 		lcgSeed = *(long*)Native(arg(1));
-		acc = FALSE;
+		acc = false;
 	}
 	else if (argCount == 3)
 	{
 		*(long*)Native(arg(3)) = lcgSeed;
-		acc = FALSE;
+		acc = false;
 	}
 	else
 	{
@@ -1807,7 +1807,7 @@ global KERNEL(MemorySegment)
 }
 
 
-/* if three args only are passed, then this function just returns TRUE or FALSE
+/* if three args only are passed, then this function just returns true or false
  * indicating if the x,y were in the polygon (arg(3)), else it returns the full
  *	path (either optimized or unoptimized) around the list of polygons passed.
 */
@@ -1944,7 +1944,7 @@ global KERNEL(ListOps)
 					return;
 				}
 			}
-			acc = FALSE;
+			acc = false;
 			break;
 		case LAllTrue:
 			for (it = FirstNode((List*)Native(arg(2))); it; it = NextNode(it))
@@ -1952,11 +1952,11 @@ global KERNEL(ListOps)
 				him = (Obj*)Native(((KNode*)Native(it))->nVal);
 				if (!(InvokeMethod((Obj*)Native(((KNode*)Native(it))->nVal), arg(3), argCount - 3 , arg(4), arg(5), arg(6), arg(7), arg(8), arg(9), arg(10))))
 				{
-					acc = FALSE;
+					acc = false;
 					return;
 				}
 			}
-			acc = TRUE;
+			acc = true;
 			break;
 	}
 }
@@ -2003,7 +2003,7 @@ global KERNEL(FileIO)
 	char kawaByte;
 #endif
 
-	diskIOCritical = FALSE;
+	diskIOCritical = false;
 
 	switch (arg(1))
 	{
@@ -2112,7 +2112,7 @@ global KERNEL(FileIO)
 #endif
 	}
 
-	diskIOCritical = TRUE;
+	diskIOCritical = true;
 }
 
 
@@ -2218,7 +2218,7 @@ global KERNEL(PalVary)
 				targetPalette = ResLoad(RES_MEM, sizeof(RPalette));
 				startPalette = ResLoad(RES_MEM, sizeof(RPalette));
 				newPalette = ResLoad(RES_MEM, sizeof(RPalette));
-				palVaryOn = TRUE;
+				palVaryOn = true;
 				paletteDir = 1;
 				paletteStop = 64;
 				paletteRes = arg(2);
@@ -2359,7 +2359,7 @@ global KERNEL(PalVary)
 			ResUnLoad(RES_MEM, (uword)startPalette);
 			ResUnLoad(RES_MEM, (uword)newPalette);
 			ResUnLoad(RES_MEM, (uword)targetPalette);
-			palVaryOn = FALSE;
+			palVaryOn = false;
 			break;
 
 		case PALVARYTARGET:
@@ -2387,13 +2387,13 @@ global KERNEL(PalVary)
 
 		case PALVARYPAUSE:
 			/* input:
-				arg2 = TRUE or FALSE (required)
-				TRUE:  Pause the palette change.
-				FALSE  Restart the palette change.
+				arg2 = true or false (required)
+				true:  Pause the palette change.
+				false  Restart the palette change.
 			*/
 			/* Note:
-				If PalVary is paused n times with TRUE it will require
-				n calls to PalVary pause with FALSE to restart the palette
+				If PalVary is paused n times with true it will require
+				n calls to PalVary pause with false to restart the palette
 				changing.
 			*/
 			if (palVaryOn)
@@ -2437,7 +2437,7 @@ global KERNEL(ShowMovie)
 	RunMovie(handle, bufferHandle, arg(2)); //arg2 = frame rate
 	close(handle);
 
-	picNotValid = FALSE;
+	picNotValid = false;
 	ResUnLoad(RES_MEM, (uword)bufferHandle);
 }
 
@@ -2473,11 +2473,11 @@ global KERNEL(SetVideoMode)
 				*ptr++ = 0;
 			}
 
-			SetCLUT((RPalette far*)*workPalette, TRUE); //force clear of palette
+			SetCLUT((RPalette far*)*workPalette, true); //force clear of palette
 			ResUnLoad(RES_MEM, (uword)workPalette);
-			SetCLUT((RPalette far*)&sysPalette, TRUE); //put palette back to sysPalette
+			SetCLUT((RPalette far*)&sysPalette, true); //put palette back to sysPalette
 
-			picNotValid = TRUE;
+			picNotValid = true;
 			RShowCursor(); //cursor can now be on
 			currentVideoMode = 0;
 			break;
@@ -2673,7 +2673,7 @@ KERNEL(Kawa)
 				sysPalette.gun[i].g = 255 - sysPalette.gun[i].g;
 				sysPalette.gun[i].b = 255 - sysPalette.gun[i].b;
 			}
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
+			SetCLUT((RPalette far*)&sysPalette, false);
 			break;
 		case 2: //KAWA_SETTITLECOLORS
 			//(Kawa 2 back text) ;Sets color of syswindow title bars.

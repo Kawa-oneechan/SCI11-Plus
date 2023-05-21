@@ -52,7 +52,7 @@ void KawaEnsureFormat()
 	unsigned char sci0check[6];
 	unsigned long size;
 
-	int couldBeSCI1 = TRUE, couldBeSCI2 = FALSE, remainingEntries = 7;
+	int couldBeSCI1 = true, couldBeSCI2 = false, remainingEntries = 7;
 
 	unsigned char type;
 	unsigned int offsets[16];
@@ -82,13 +82,13 @@ void KawaEnsureFormat()
 			break;
 		else if (type < 0x80)
 		{
-			couldBeSCI1 = FALSE;
-			couldBeSCI2 = TRUE;
+			couldBeSCI1 = false;
+			couldBeSCI2 = true;
 			break;
 		}
 		else if ((type < 0x80) || (type > 0x91))
 		{
-			couldBeSCI1 = FALSE;
+			couldBeSCI1 = false;
 			break;
 		}
 		remainingEntries--;
@@ -254,7 +254,7 @@ static void ReadCommandLineArgs(int argc, char *argv[])
 				switch (*argv[i])
 				{
 					case 'a':
-						useAltResMem = FALSE;
+						useAltResMem = false;
 						break;
 					case 'c':
 						++argv[i];
@@ -272,7 +272,7 @@ static void ReadCommandLineArgs(int argc, char *argv[])
 						break;
 
 					case 'm':
-						mouseIsDebug = TRUE;
+						mouseIsDebug = true;
 						break;
 					case 'u':
 					case 'U':
@@ -296,7 +296,7 @@ static void ReadCommandLineArgs(int argc, char *argv[])
 						 * the loadlinks and the number of loadlinks is tracked. This
 						 * prevents loadlink from getting over written.
 						 */
-						checkingLoadLinks = TRUE;
+						checkingLoadLinks = true;
 						// Reduce the number of handles so we don't run out of Heap space
 						numHandles = numHandles / 2;
 						break;

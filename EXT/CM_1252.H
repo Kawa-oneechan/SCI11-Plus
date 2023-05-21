@@ -1,4 +1,4 @@
-static byte near euroToLowerTbl[]=
+static byte near euroToLowerTbl[] =
 {
 	0x80, //euro sign
 	0x81, //
@@ -129,7 +129,7 @@ static byte near euroToLowerTbl[]=
 	0xFE, //thorn
 	0xFF, //y-dia
 };
-static byte near euroToUpperTbl[]=
+static byte near euroToUpperTbl[] =
 {
 	0x80, //euro sign
 	0x81, //

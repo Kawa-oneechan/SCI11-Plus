@@ -20,16 +20,16 @@
 #include "io.h"
 
 #ifndef SCI
-	//per Microsoft
-	#define FILE struct _iobuf
+//per Microsoft
+#define FILE struct _iobuf
 #endif
 
 extern void puts(strptr str);
-extern int sprintf(char*,char*, ...);
-extern int vsprintf(char*,char*, va_list);
+extern int sprintf(char*, char*, ...);
+extern int vsprintf(char*, char*, va_list);
 
 #ifndef SCI
-	extern char* fgets(char*, int, FILE*);
+extern char* fgets(char*, int, FILE*);
 #endif
 
 #endif

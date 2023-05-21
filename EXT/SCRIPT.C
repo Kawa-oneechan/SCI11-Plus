@@ -99,7 +99,7 @@ Script* LoadScript(int n)
 	//Load the heap and hunk resources.
 	heap = ResLoad(RES_HEAP, n);
 	hunk = ResLoad(RES_SCRIPT, n);
-	ResLock(RES_SCRIPT, n, TRUE);
+	ResLock(RES_SCRIPT, n, true);
 	InitHeapRes(heap, sp);
 	InitHunkRes(hunk, sp);
 
@@ -114,7 +114,7 @@ void ReloadScript(Script *sp)
 
 	n = ScriptNumber(sp);
 	hunk = ResLoad(RES_SCRIPT, n);
-	ResLock(RES_SCRIPT, n, TRUE);
+	ResLock(RES_SCRIPT, n, true);
 	InitHunkRes(hunk, sp);
 }
 
@@ -216,7 +216,7 @@ void DisposeAllScripts()
 	Script *sp;
 
 	for (sp = (Script*)Native(FirstNode(&scriptList)); !EmptyList((List*)&scriptList); sp = (Script*)Native(FirstNode(&scriptList)))
-		TossScript(sp, FALSE);
+		TossScript(sp, false);
 }
 
 
@@ -226,7 +226,7 @@ void DisposeScript(int n)
 	Script *sp;
 
 	if ((sp = FindScript(n))!= NULL)
-		TossScript(sp, TRUE);
+		TossScript(sp, true);
 }
 
 
@@ -236,7 +236,7 @@ static void near TossScript(Script *sp, bool checkClones)
 
 	//Undo the fixups in the hunk resource and then unlock it.
 	ResetHunk((HunkRes _far*)*sp->hunk);
-	ResLock(RES_SCRIPT, n, FALSE);
+	ResLock(RES_SCRIPT, n, false);
 
 	//Dispose the heap resource.
 	TossScriptClasses(n);

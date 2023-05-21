@@ -29,7 +29,7 @@ extern KERNEL(ShowFree);
 extern KERNEL(InspectObj);
 
 extern void ShowSends(bool);
-extern void WriteResUse(int,int);
+extern void WriteResUse(int, int);
 extern void SetDebug(bool);
 extern void CheckHunkUse(uint);
 extern void Debug(Hunkptr, uword*);

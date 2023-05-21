@@ -52,7 +52,7 @@ int vsprintf(char *str, char *fp, va_list ap)
 		{
 			++fp;
 			fieldWidth = 0;
-			leadingZeros = FALSE;
+			leadingZeros = false;
 
 			//Check for justification in a field.
 			switch (*fp)

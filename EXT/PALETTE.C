@@ -58,10 +58,10 @@ void CopyNew2OldPalette(RPalette far *destPal, danPalette far *thePal)
 	switch(thePal->type)
 	{
 		case 0:
-			hasFlag = TRUE;
+			hasFlag = true;
 			break;
 		case 1:
-			hasFlag = FALSE;
+			hasFlag = false;
 			theFlag = thePal->defaultFlag;
 			break;
 		case 2:
@@ -180,10 +180,10 @@ void SubmitPalette(danPalette far *thePal)
 	switch(thePal->type)
 	{
 		case 0:
-			hasFlag = TRUE;
+			hasFlag = true;
 			break;
 		case 1:
-			hasFlag = FALSE;
+			hasFlag = false;
 			theFlag = thePal->defaultFlag;
 			break;
 		case 2:
@@ -213,7 +213,7 @@ void SubmitPalette(danPalette far *thePal)
 	if (palChanged)
 	{
 		if (!picNotValid)
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
+			SetCLUT((RPalette far*)&sysPalette, false);
 
 		thePal->valid = palStamp;
 		sysPalette.valid = thePal->valid; //???
@@ -274,8 +274,8 @@ global KERNEL(Palette)
 			break;
 		case PALIntensity: //gets a start, end and intensity
 			SetPalIntensity((RPalette far*)&sysPalette, arg(2), arg(3), arg(4));
-			if (argCount < 5 || arg(5) == FALSE)
-				SetCLUT((RPalette far*)&sysPalette, TRUE);
+			if (argCount < 5 || arg(5) == false)
+				SetCLUT((RPalette far*)&sysPalette, true);
 			break;
 		case PALMatch: //given R/G/B values, returns the index of this color
 			aGun.r = (byte)arg(2);
@@ -335,7 +335,7 @@ global KERNEL(Palette)
 				}
 			}
 			//actually set the palette
-			SetCLUT((RPalette far*)&sysPalette, TRUE);
+			SetCLUT((RPalette far*)&sysPalette, true);
 			break;
 		case PALSave: //copies systemPalette into a new pointer and returns pointer
 			if (acc = Pseudo(RNewPtr(sizeof(RPalette))))
@@ -417,7 +417,7 @@ global void RSetPalette(RPalette far *srcPal, int mode)
 		{
 			InsertPalette((RPalette far *) srcPal,(RPalette far *) *startPalette);
 			//calculate the new palette
-			PaletteUpdate(TRUE,1);
+			PaletteUpdate(true, 1);
 		}
 		else
 		{
@@ -425,7 +425,7 @@ global void RSetPalette(RPalette far *srcPal, int mode)
 			//validate the source palette
 			srcPal->valid = sysPalette.valid;
 			if (valid != sysPalette.valid && !picNotValid)
-				SetCLUT((RPalette far *) &sysPalette, FALSE);
+				SetCLUT((RPalette far *) &sysPalette, false);
 		}
 	}
 }
@@ -465,7 +465,7 @@ void InsertPalette(RPalette far *srcPal, RPalette far *dstPal)
 
 static int near Match(Guns far *theGun, RPalette far *pal, unsigned long leastDist)
 {
-	return(FastMatch(pal, theGun->r, theGun->g, theGun->b, PAL_CLUT_SIZE, (uword) leastDist));
+	return FastMatch(pal, theGun->r, theGun->g, theGun->b, PAL_CLUT_SIZE, (uword) leastDist);
 }
 
 

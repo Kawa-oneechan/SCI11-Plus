@@ -86,7 +86,7 @@ AvdPoint* GetPath(AvdPoint *A, AvdPoint *B, polygon *polylist, int opt)
 	{
 		if (
 			(polylist[i].type >= MTP) ||
-			((polylist[i].type == TAP) && (opt == FALSE))
+			((polylist[i].type == TAP) && (opt == false))
 			)
 		{
 			DeletePolygon(polylist, i);
@@ -100,7 +100,7 @@ AvdPoint* GetPath(AvdPoint *A, AvdPoint *B, polygon *polylist, int opt)
 			PointInterior(A, polylist[i].polyPoints, polylist[i].n) ||
 			(
 			(polylist[i].type == CAP) &&
-			(NearPoint(A, polylist[i].polyPoints, polylist[i].n, &I2, TRUE) < 2)
+			(NearPoint(A, polylist[i].polyPoints, polylist[i].n, &I2, true) < 2)
 				)
 			)
 		{
@@ -113,13 +113,13 @@ AvdPoint* GetPath(AvdPoint *A, AvdPoint *B, polygon *polylist, int opt)
 			case NAP:
 				pathStart = fromAtoEXIT;
 				if (opt)
-					NearPoint(A, polylist[i].polyPoints, polylist[i].n, &exitPoint, TRUE);
+					NearPoint(A, polylist[i].polyPoints, polylist[i].n, &exitPoint, true);
 				else
 					DeletePolygon(polylist, i);
 				break;
 			case BAP:
 				pathStart = fromBAPtoEXIT;
-				NearPoint(A, polylist[i].polyPoints, polylist[i].n, &exitPoint, TRUE);
+				NearPoint(A, polylist[i].polyPoints, polylist[i].n, &exitPoint, true);
 				break;
 			case CAP:
 				if (!PointInterior(B, polylist[i].polyPoints, polylist[i].n))
@@ -129,7 +129,7 @@ AvdPoint* GetPath(AvdPoint *A, AvdPoint *B, polygon *polylist, int opt)
 					//Find the last exit point
 					if (opt)
 					{
-						NearPoint(B, polylist[i].polyPoints, polylist[i].n, &entryPoint, FALSE);
+						NearPoint(B, polylist[i].polyPoints, polylist[i].n, &entryPoint, false);
 					}
 					else
 					{
@@ -166,7 +166,7 @@ AvdPoint* GetPath(AvdPoint *A, AvdPoint *B, polygon *polylist, int opt)
 			case NAP:
 				pathEnd = toENTRYtoB;
 				if (opt)
-					NearPoint(B, polylist[i].polyPoints, polylist[i].n, &entryPoint, TRUE);
+					NearPoint(B, polylist[i].polyPoints, polylist[i].n, &entryPoint, true);
 				else
 					DeletePolygon(polylist, i);
 				break;
@@ -175,7 +175,7 @@ AvdPoint* GetPath(AvdPoint *A, AvdPoint *B, polygon *polylist, int opt)
 				if (pathEnd != toENTRY)
 				{
 					pathEnd = toENTRY;
-					NearPoint(B, polylist[i].polyPoints, polylist[i].n, &entryPoint, TRUE);
+					NearPoint(B, polylist[i].polyPoints, polylist[i].n, &entryPoint, true);
 				}
 				break;
 			}
@@ -410,7 +410,7 @@ static long near NearPoint(AvdPoint *P, AvdPoint *polygon, int n, AvdPoint *R, i
 			}
 		}
 	}
-	return(d);
+	return d;
 }
 
 static void near InvertPolygon(AvdPoint *points, int n)
@@ -459,7 +459,7 @@ static int near TestColinear(AvdPoint *P, int *n)
 		}
 		P3 = P[i % nodes];
 	}
-	return (ret_value);
+	return ret_value;
 }
 
 /* PATH AROUND ALL OBSTACLE POLYGONS
@@ -476,9 +476,9 @@ static int near TestColinear(AvdPoint *P, int *n)
 *  AVOIDPATH(A, B, opt, polyList); polyList = pathM, pathN (any order)
 *
 *  returns path:
-*   NO OPTIMIZATION: opt = FALSE
+*   NO OPTIMIZATION: opt = false
 *    A, I1, N4, N3, N2, I2, I3, M5, M4, M3, M2, I4, B
-*   WITH OPTIMIZATION: opt = TRUE
+*   WITH OPTIMIZATION: opt = true
 *    A, N4, M5, M4, B
 
 												M7 ********* M8
@@ -645,7 +645,7 @@ static AvdPoint* near CopyPath(AvdPoint *path)
 	{
 		P[i] = path[i];
 	} while (path[i++].x != ENDOFPATH);
-	return(P);
+	return P;
 }
 
 static polyNode* near AvoidPolygons(AvdPoint *A, AvdPoint *B, polygon *polylist)
@@ -684,7 +684,7 @@ static polyNode* near AvoidPolygons(AvdPoint *A, AvdPoint *B, polygon *polylist)
 				else
 				{
 					//insert path node so that the list is ordered from A to B
-					for (node = nodePath; TRUE; node = node->next)
+					for (node = nodePath; true; node = node->next)
 					{
 						if (
 							(
@@ -722,7 +722,7 @@ static polyNode* near AvoidPolygons(AvdPoint *A, AvdPoint *B, polygon *polylist)
 			}
 		}
 	}
-	return(nodePath);
+	return nodePath;
 }
 
 static void near ReducePolyList(polygon *polylist, polyNode *nodePath)
@@ -810,7 +810,7 @@ static int near GetPolyDirections(polyNode *nodePath)
 		polyDirections += (d << i);
 		node = node->next;
 	}
-	return(polyDirections);
+	return polyDirections;
 }
 
 static int near GetPolyDistance(AvdPoint* path)
@@ -820,8 +820,8 @@ static int near GetPolyDistance(AvdPoint* path)
 	for (i = 0; path[i + 1].x != ENDOFPATH; ++i)
 		distance += DistanceEstimate(&path[i], &path[i + 1], &offScreen);
 	if (offScreen)
-		return(MAXVALUEINT);
-	return(distance);
+		return MAXVALUEINT;
+	return distance;
 }
 
 static void near SetPolyDirections(polyNode *nodePath, int polyDirections, int totalNodes)
@@ -920,7 +920,7 @@ static void near OptimizePath(AvdPoint *A, AvdPoint *B, AvdPoint* path, polyNode
 		P0 = 0;
 		for (PG = 0, PN = M - 1; P0 < M - 2; PG = 0)
 		{
-			x = FALSE;
+			x = false;
 			for (; polylist[PG].n != 0; ++PG)
 			{
 				if (IntersectPolygon(&path[P0],
@@ -933,7 +933,7 @@ static void near OptimizePath(AvdPoint *A, AvdPoint *B, AvdPoint* path, polyNode
 					&nodeI2)
 					)
 				{
-					x = TRUE;
+					x = true;
 					break;
 				}
 			}
@@ -1024,7 +1024,7 @@ AvdPoint* MergePolygons(AvdPoint *poly, polygon *polylist)
 	newPoly[i].x = ENDOFPATH;
 	newPoly[i].y = ENDOFPATH;
 
-	return (newPoly);
+	return newPoly;
 }
 
 static void near MergePolygon(AvdPoint *P, int n, polygon *poly)
@@ -1122,7 +1122,7 @@ static void near MergePolygon(AvdPoint *P, int n, polygon *poly)
 								Patch[patches].P_j = (P_j + n) % n;
 								Patch[patches].Q_j = (Q_j + m) % m;
 								Patch[patches].Q_U = Q_U;
-								Patch[patches++].deleteIt = FALSE;
+								Patch[patches++].deleteIt = false;
 							}
 							else
 							{
@@ -1143,10 +1143,10 @@ static void near MergePolygon(AvdPoint *P, int n, polygon *poly)
 									Patch[patches].P_j = (P_j + n) % n;
 									Patch[patches].Q_j = (Q_j + m) % m;
 									Patch[patches].Q_U = Q_U;
-									Patch[patches++].deleteIt = FALSE;
+									Patch[patches++].deleteIt = false;
 									for (p = 0; p < patches - 1; p++)
 										if (Dominates(&newPatch, &Patch[p], P))
-											Patch[p].deleteIt = TRUE;
+											Patch[p].deleteIt = true;
 								}
 							}
 						}
@@ -1164,15 +1164,15 @@ static void near MergePolygon(AvdPoint *P, int n, polygon *poly)
 		for (P_i = 0; P_i < n; ++P_i)
 		{
 			//if P_i is not in a patch add node
-			for (i = 0, addNode = TRUE; (i < patches) && (addNode == TRUE); ++i)
-				if (Patch[i].deleteIt == FALSE)
+			for (i = 0, addNode = true; (i < patches) && (addNode == true); ++i)
+				if (Patch[i].deleteIt == false)
 					if (PatchNode(&Patch[i], P_i, P))
-						addNode = FALSE;
+						addNode = false;
 			if (addNode) Result[j++] = P[P_i];
 			//if at a patch, add the patch
 			for (i = 0; i < patches; ++i)
 			{
-				if (Patch[i].deleteIt == FALSE)
+				if (Patch[i].deleteIt == false)
 				{
 					if (P_i == Patch[i].P_i)
 					{
@@ -1203,14 +1203,14 @@ static int near PatchNode(polyPatch *Patch, int theNode, AvdPoint *thePoly)
 	int offScreen;
 	if (Patch->P_i < Patch->P_j)
 		if ((Patch->P_i < theNode) && (theNode <= Patch->P_j))
-			return (TRUE);
+			return true;
 	if (Patch->P_j < Patch->P_i)
 		if ((Patch->P_i < theNode) || (theNode <= Patch->P_j))
-			return (TRUE);
+			return true;
 	if (Patch->P_i == Patch->P_j)
 		if (DistanceEstimate(&Patch->P_U, &thePoly[Patch->P_i], &offScreen) > DistanceEstimate(&Patch->Q_U, &thePoly[Patch->P_i], &offScreen))
-			return (TRUE);
-	return (FALSE);
+			return true;
+	return false;
 }
 
 static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
@@ -1223,7 +1223,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 	Bpj = B->P_j;
 	if ((A->P_U.x == B->P_U.x) && (A->P_U.y == B->P_U.y) && (A->Q_U.x == B->Q_U.x) && (A->Q_U.y == B->Q_U.y))
 		//The same patch!
-		return(TRUE);
+		return true;
 
 	if (Api != Apj)
 	{
@@ -1249,7 +1249,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 				      *                 *
 				      ******************
 			*/
-			return(TRUE);
+			return true;
 
 		if (((Api<Apj) && ((Api < Bpj) && (Bpj < Apj))) || ((Api>Apj) && ((Api < Bpj) || (Bpj < Apj))))
 			/*
@@ -1273,7 +1273,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 				      *                 *
 				      ******************
 			*/
-			return(TRUE);
+			return true;
 	}
 	if (Bpi != Bpj)
 	{
@@ -1299,7 +1299,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 				      *                 *
 				      ******************
 			*/
-			return(FALSE);
+			return false;
 		if (((Bpi<Bpj) && ((Bpi < Apj) && (Apj < Bpj))) || ((Bpi>Bpj) && ((Bpi < Apj) || (Apj < Bpj))))
 			/*
 				     patch B
@@ -1322,7 +1322,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 				      *                 *
 				      ******************
 			*/
-			return(FALSE);
+			return false;
 	}
 	if (Api != Apj)
 	{
@@ -1354,7 +1354,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 						|                                 |
 						*---------------------------------*
 					*/
-					return(TRUE);
+					return true;
 				else
 					/*
 						  patch A
@@ -1382,7 +1382,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 						|                                 |
 						*---------------------------------*
 					*/
-					return(FALSE);
+					return false;
 			if (Apj == Bpi)
 				if (DistanceEstimate(&poly[A->P_j], &A->Q_U, &offScreen) > DistanceEstimate(&poly[A->P_j], &B->P_U, &offScreen))
 					/*
@@ -1408,7 +1408,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 						|                             |
 						*-----------------------------*
 					*/
-					return(TRUE);
+					return true;
 				else
 					/*
 						  patch A
@@ -1433,7 +1433,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 						|                             |
 						*-----------------------------*
 					*/
-					return(FALSE);
+					return false;
 		}
 		if (Api != Bpi)
 			/*
@@ -1454,7 +1454,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 				      *                 *-----*          *                 *-----*
 				      ******************                 ******************
 			*/
-			return(FALSE);
+			return false;
 		if (DistanceEstimate(&poly[A->P_i], &A->P_U, &offScreen) < DistanceEstimate(&poly[A->P_i], &B->P_U, &offScreen))
 			/*
 				  patch A
@@ -1477,7 +1477,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 				      *                 *
 				      ******************
 			*/
-			return(TRUE);
+			return true;
 		else
 			/*
 				  patch B
@@ -1500,7 +1500,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 				      *                 *
 				      ******************
 			*/
-			return(FALSE);
+			return false;
 	}
 	if ((Api == Apj) && (Api != Bpi))
 	{
@@ -1525,7 +1525,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 				|                                |
 				*--------------------------------*
 			*/
-			return(TRUE);
+			return true;
 	}
 
 	//if either patches wrap around then there can not be a dominance.
@@ -1549,7 +1549,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 			|                             |
 			*-----------------------------*
 		*/
-		return(FALSE);
+		return false;
 	if (DistanceEstimate(&poly[B->P_i], &B->P_U, &offScreen) > DistanceEstimate(&poly[B->P_i], &B->Q_U, &offScreen))
 		/*
 			  patch B
@@ -1570,7 +1570,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 			|                             |
 			*-----------------------------*
 		*/
-		return(FALSE);
+		return false;
 
 	if (DistanceEstimate(&poly[B->P_i], &B->P_U, &offScreen) > DistanceEstimate(&poly[B->P_i], &A->P_U, &offScreen))
 		if (DistanceEstimate(&poly[B->P_i], &A->Q_U, &offScreen) > DistanceEstimate(&poly[B->P_i], &B->P_U, &offScreen))
@@ -1588,7 +1588,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 				  *------------*                 *
 				               ******************
 			*/
-			return(TRUE);
+			return true;
 	/*
 		               ********                          ********
 		               *       *                         *       *
@@ -1603,7 +1603,7 @@ static int near Dominates(polyPatch *A, polyPatch *B, AvdPoint *poly)
 		  *------------*            *       *------------*            *
 		               *************                     *************
 	*/
-	return(FALSE);
+	return false;
 }
 
 int PointInterior(AvdPoint *M, AvdPoint *P, int n)
@@ -1627,7 +1627,7 @@ start:
 		v_subtract(M, &P1, &tmp1);
 		v_subtract(M, &P2, &tmp2);
 		if (v_cross3rd_comp(&tmp1, &tmp2) == 0)
-			return(TRUE);
+			return true;
 	}
 
 	//The alogorithm counts the number of intersections with the
@@ -1695,9 +1695,9 @@ start:
 	if ((P3.x == N3.x) && (P3.y == N3.y))
 	{
 		if (intr & 1)
-			return(TRUE);
+			return true;
 		else
-			return(FALSE);
+			return false;
 	}
 	else
 		P4 = P[(++nextnode) % n];
@@ -1741,12 +1741,12 @@ start:
 static int near PolygonPath(AvdPoint *A, AvdPoint *B, AvdPoint *points, int n, AvdPoint *I1, AvdPoint *I2, int *nodeI1, int *nodeI2)
 {
 	int distA, distB;
-	int offScreenA = FALSE, offScreenB = FALSE;
+	int offScreenA = false, offScreenB = false;
 
 	if (IntersectPolygon(A, B, points, n, I1, I2, nodeI1, nodeI2) == 0)
-		return(0);
+		return 0;
 	if (*nodeI1 == *nodeI2)
-		return(0);
+		return 0;
 	//nodeI1 = P[0]; first node
 	//nodeI2 = P[n - i]; last node
 	distA = DistanceSquared(1, *nodeI1 + 1, *nodeI2, points, n, I1, I2, &offScreenA);
@@ -1754,22 +1754,22 @@ static int near PolygonPath(AvdPoint *A, AvdPoint *B, AvdPoint *points, int n, A
 	if (offScreenA && (!offScreenB))
 	{
 		*nodeI2 = (*nodeI2 + 1) % n;
-		return(-1);
+		return -1;
 	}
 	if ((!offScreenA) && offScreenB)
 	{
 		*nodeI1 = (*nodeI1 + 1) % n;
-		return(1);
+		return 1;
 	}
 	if (distA < distB)
 	{
 		*nodeI1 = (*nodeI1 + 1) % n;
-		return(1);
+		return 1;
 	}
 	else
 	{
 		*nodeI2 = (*nodeI2 + 1) % n;
-		return(-1);
+		return -1;
 	}
 }
 
@@ -1777,7 +1777,7 @@ static int near PolygonPath(AvdPoint *A, AvdPoint *B, AvdPoint *points, int n, A
 * nodeF = first node
 * nodeL = last node
 * P = polygon
-* offScreen = pointer to offscreen TRUE or FALSE
+* offScreen = pointer to offscreen true or false
 */
 static int near DistanceSquared(int direction, int nodeF, int nodeL, AvdPoint *points, int n, AvdPoint *I1, AvdPoint *I2, int *offScreen)
 {
@@ -1808,15 +1808,15 @@ static int near DistanceSquared(int direction, int nodeF, int nodeL, AvdPoint *p
 		distance += DistanceEstimate(I1, &points[nodeF], offScreen);
 		distance += DistanceEstimate(&points[nodeL], I2, offScreen);
 	}
-	return(distance);
+	return distance;
 }
 
 static int near DistanceEstimate(AvdPoint *P2, AvdPoint *P1, int *offScreen)
 {
 	int deltaX, deltaY, temp;
-	//if line lies on screen edge offScreen set to TRUE
+	//if line lies on screen edge offScreen set to true
 	if (LineOnScreenEdge(P1, P2))
-		*offScreen = TRUE;
+		*offScreen = true;
 	/* estimate distance by the formula:
 	* If max(deltaX, deltaY) <= (10*min(deltaX, deltaY))/6)
 	* then use (13*max(deltaX, deltaY))/10
@@ -1833,9 +1833,9 @@ static int near DistanceEstimate(AvdPoint *P2, AvdPoint *P1, int *offScreen)
 		deltaY = temp;
 	}
 	if (((deltaX * 10) / 6) >= deltaY)
-		return(((13 * deltaY) / 10));
+		return (13 * deltaY) / 10;
 	else
-		return(deltaY);
+		return deltaY;
 }
 
 static int near LineOnScreenEdge(AvdPoint *p1, AvdPoint *p2)
@@ -1848,7 +1848,7 @@ static int near LineOnScreenEdge(AvdPoint *p1, AvdPoint *p2)
 				(p1->x == picWindPoly[1].x)
 				)
 			)
-		return(1);
+		return 1;
 	if
 		(
 		(p1->y == p2->y) && (p1->x != p2->x) &&
@@ -1857,8 +1857,8 @@ static int near LineOnScreenEdge(AvdPoint *p1, AvdPoint *p2)
 				(p1->y == picWindPoly[2].y)
 				)
 			)
-		return(1);
-	return(0);
+		return 1;
+	return 0;
 }
 
 /* INTPOLY.C INTERSECT LINE SEGMENT AND A POLYGON
@@ -1907,7 +1907,7 @@ start:
 			{
 				*INT1 = I1;
 				*INT2 = I2;
-				return(i);
+				return i;
 			}
 			else if (P3.x == N1.x && P3.y == N1.y)
 			{
@@ -2380,13 +2380,13 @@ static int near NodeTest(AvdPoint *tmp1, AvdPoint *P1, AvdPoint *P2, AvdPoint *P
 	if (v_cross3rd_comp(&tmp2, &tmp3) > 0)
 	{
 		if (v_cross3rd_comp(&tmp2, tmp1) > 0)
-			return (TRUE);
+			return true;
 		else
 		{
 			if (v_cross3rd_comp(tmp1, &tmp3) < 0)
-				return (TRUE);
+				return true;
 			else
-				return (FALSE);
+				return false;
 		}
 	}
 	else
@@ -2394,13 +2394,13 @@ static int near NodeTest(AvdPoint *tmp1, AvdPoint *P1, AvdPoint *P2, AvdPoint *P
 		if (v_cross3rd_comp(&tmp2, tmp1) > 0)
 		{
 			if (v_cross3rd_comp(tmp1, &tmp3) < 0)
-				return (TRUE);
+				return true;
 			else
-				return (FALSE);
+				return false;
 		}
 		else
 		{
-			return (FALSE);
+			return false;
 		}
 	}
 }
@@ -2439,9 +2439,9 @@ static int near IntersectSegments(AvdPoint *A, AvdPoint *B, AvdPoint *C, AvdPoin
 
 	//check for colinear
 	if (x1 == 0 && x2 == 0)
-		return(COLINEAR); //COLINEAR LINE SEGMENTS
+		return COLINEAR; //COLINEAR LINE SEGMENTS
 
-						  //check for intersection at C
+	//check for intersection at C
 	if (x1 == 0)
 		//C lies on the line through A-B find out if it is in the line segment A-B.
 		if (A->x == B->x)
@@ -2449,7 +2449,7 @@ static int near IntersectSegments(AvdPoint *A, AvdPoint *B, AvdPoint *C, AvdPoin
 			if (((A->y <= C->y) && (C->y <= B->y)) || ((B->y <= C->y) && (C->y <= A->y)))
 			{
 				*interpt = *C;
-				return(INTERSECT + INTERSECTC);
+				return INTERSECT + INTERSECTC;
 			}
 		}
 		else
@@ -2457,7 +2457,7 @@ static int near IntersectSegments(AvdPoint *A, AvdPoint *B, AvdPoint *C, AvdPoin
 			if (((A->x <= C->x) && (C->x <= B->x)) || ((B->x <= C->x) && (C->x <= A->x)))
 			{
 				*interpt = *C;
-				return(INTERSECT + INTERSECTC);
+				return INTERSECT + INTERSECTC;
 			}
 		}
 
@@ -2469,7 +2469,7 @@ static int near IntersectSegments(AvdPoint *A, AvdPoint *B, AvdPoint *C, AvdPoin
 			if (((A->y <= D->y) && (D->y <= B->y)) || ((B->y <= D->y) && (D->y <= A->y)))
 			{
 				*interpt = *D;
-				return(INTERSECT + INTERSECTD);
+				return INTERSECT + INTERSECTD;
 			}
 		}
 		else
@@ -2477,7 +2477,7 @@ static int near IntersectSegments(AvdPoint *A, AvdPoint *B, AvdPoint *C, AvdPoin
 			if (((A->x <= D->x) && (D->x <= B->x)) || ((B->x <= D->x) && (D->x <= A->x)))
 			{
 				*interpt = *D;
-				return(INTERSECT + INTERSECTD);
+				return INTERSECT + INTERSECTD;
 			}
 		}
 
@@ -2505,7 +2505,7 @@ static int near IntersectSegments(AvdPoint *A, AvdPoint *B, AvdPoint *C, AvdPoin
 	if (d <= CLOSETOSQR)
 	{
 		*interpt = *A;
-		return(INTERSECT + INTERSECTA);
+		return INTERSECT + INTERSECTA;
 	}
 
 	//check for intersection at B
@@ -2526,18 +2526,18 @@ static int near IntersectSegments(AvdPoint *A, AvdPoint *B, AvdPoint *C, AvdPoin
 	if (d <= CLOSETOSQR)
 	{
 		*interpt = *B;
-		return(INTERSECT + INTERSECTB);
+		return INTERSECT + INTERSECTB;
 	}
 
 	//check that C, D on opposite side of line through A-B
 	if (x1 * x2 >= 0)
-		return(NOINTERSECT);
+		return NOINTERSECT;
 
 	//check that A, B on opposite side of line through C-D
 	x1 = v_cross3rd_comp(&tmp2, &tmp4);
 	x2 = v_cross3rd_comp(&tmp4, &tmp5);
 	if (x1 * x2 >= 0)
-		return(NOINTERSECT);
+		return NOINTERSECT;
 
 	//intersection interior to both line segments
 	//calculate intersection point
@@ -2574,7 +2574,7 @@ static int near IntersectSegments(AvdPoint *A, AvdPoint *B, AvdPoint *C, AvdPoin
 		V = *C;
 	}
 	*interpt = V;
-	return(INTERSECT + INTERSECTI);
+	return INTERSECT + INTERSECTI;
 }
 
 
@@ -2597,7 +2597,7 @@ static void near v_add(AvdPoint *X, AvdPoint *Y, AvdPoint *Res)
 //2 component dot product
 static long near v_dot(AvdPoint *X, AvdPoint *Y)
 {
-	return (((long)X->x) * ((long)Y->x) + ((long)X->y) * ((long)Y->y));
+	return ((long)X->x) * ((long)Y->x) + ((long)X->y) * ((long)Y->y);
 }
 
 //return the third component of a cross product
@@ -2606,10 +2606,10 @@ static int near v_cross3rd_comp(AvdPoint *X, AvdPoint *Y)
 	long direction;
 	direction = ((((long)X->x) * ((long)Y->y)) - (((long)X->y) * ((long)Y->x)));
 	if (direction < 0)
-		return(-1);
+		return -1;
 	if (direction > 0)
-		return(1);
-	return(0);
+		return 1;
+	return 0;
 }
 
 //return the magnitude (squared) of vector X
@@ -2618,5 +2618,5 @@ static long near v_sizesqrd(AvdPoint *X, AvdPoint *Y)
 	long x, y;
 	x = (((long)X->x) - ((long)Y->x)) * (((long)X->x) - ((long)Y->x));
 	y = (((long)X->y) - ((long)Y->y)) * (((long)X->y) - ((long)Y->y));
-	return (x + y);
+	return x + y;
 }

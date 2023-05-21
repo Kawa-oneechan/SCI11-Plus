@@ -138,7 +138,7 @@ global KERNEL(InitBresen)
 		if (abs(DX) >= abs(DY))
 		{
 			//Then motion will be along the x-axis.
-			xAxis = TRUE;
+			xAxis = true;
 			if (DX < 0)
 				dx = -dx;
 			dy = (DX)? dx*DY/DX : 0;
@@ -146,7 +146,7 @@ global KERNEL(InitBresen)
 		else
 		{
 			//Our major motion is along the y-axis.
-			xAxis = FALSE;
+			xAxis = false;
 			if (DY < 0)
 				dy = -dy;
 			dx = (DY)? dy*DX/DY : 0;

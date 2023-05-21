@@ -98,7 +98,7 @@ global KERNEL(CheckFreeSpace)
 }
 
 
-/* Return TRUE if the passed path is valid, FALSE otherwise.
+/* Return true if the passed path is valid, false otherwise.
  * Implementation is to do a firstfile() for the directory, specifying
  * directory only.
  */
@@ -113,13 +113,13 @@ global KERNEL(ValidPath)
 	strcpy(file, path);
 	CleanDir(file);
 
-	//diskIOCritical = FALSE;
+	//diskIOCritical = false;
 	//if critical error occurs -- don't display fail/retry message
 	diskIOCritical = 5586;
 
 	if (strlen(file) == 0)
 		//Current directory is valid.
-		acc = TRUE;
+		acc = true;
 	else if (file[strlen(file)-1] == ':')
 	{
 		//Current directory on a specified drive is same as validity of drive.
@@ -127,16 +127,16 @@ global KERNEL(ValidPath)
 		if (acc = existdrive(c))
 			RGetFreeSpace(c);
 		if (criticalError)
-			acc = FALSE;
+			acc = false;
 	}
 	else if (firstfile(file, F_HIDDEN | F_SYSTEM | F_SUBDIR, &dta))
 		//Check to see if the path is a subdirectory.
 		acc = (dta.atr | F_SUBDIR);
 	else
 		//Not valid.
-		acc = FALSE;
+		acc = false;
 
-	diskIOCritical = TRUE;
+	diskIOCritical = true;
 }
 
 
@@ -209,7 +209,7 @@ global strptr GetCurDevice(strptr device)
 global void ExitThroughDebug()
 {
 #ifdef DEBUG
-	SetDebug(TRUE);
+	SetDebug(true);
 	Debug(ip, pmsp);
 #else
 	exit(1);

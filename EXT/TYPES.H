@@ -32,8 +32,8 @@ typedef	byte*			memptr;
 
 typedef	int				bool;
 
-typedef	void			(*fptr)(void);
-typedef	bool			(*boolfptr)();
+typedef	void(*fptr)(void);
+typedef	bool(*boolfptr)();
 
 typedef	void _far*		farptr;
 typedef	byte _far*		Hunkptr;
@@ -87,11 +87,11 @@ typedef	Hunkptr	    	*Handle;
 //Pseudo-machine object (or other address) references
 typedef	uword			ObjID;
 */
-#define	TRUE			1
-#define	FALSE			0
+#define	true			1
+#define	false			0
 
 #ifdef NULL
-	#undef NULL
+#undef NULL
 #endif
 #define	NULL			0
 #define	LNULL			0L

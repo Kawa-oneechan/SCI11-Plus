@@ -79,7 +79,7 @@ word FAddToFront(FList *list, word node)
 }
 
 
-//Delete 'node' from the list.  Return TRUE if the list still has elements.
+//Delete 'node' from the list.  Return true if the list still has elements.
 bool FDeleteNode(FList *list, word node)
 {
 	FNodePtr np;

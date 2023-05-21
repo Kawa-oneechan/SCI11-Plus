@@ -420,7 +420,7 @@ static char* DoReadErrMsg(int errnum, char *textBuf, int msgfile)
 					{
 						//terminate the string
 						*(textPtr - 1) = 0;
-						return(textBuf);
+						return textBuf;
 					}
 
 					//advance to next line while copying to textBuf
@@ -445,7 +445,7 @@ static char* DoReadErrMsg(int errnum, char *textBuf, int msgfile)
 		}
 		linePtr = filePtr;
 	}
-	return(NULL);
+	return NULL;
 }
 
 
@@ -460,9 +460,9 @@ static int OpenErrMsgFile(void)
 		strcat(path, errMsgFile);
 
 		//read string #errnum from message file and return pointer to it
-		return(open(path, 0));
+		return open(path, 0);
 	}
-	return(msgfile);
+	return msgfile;
 }
 
 
@@ -477,19 +477,19 @@ char* ReadErrMsg(int errnum, char *textBuf)
 	{
 		for(j = 1; j < errnum; j++)
 			while (*tmpBuf++) ;
-		return(tmpBuf);
+		return tmpBuf;
 	}
 	else
 	{
 		if ((fd = OpenErrMsgFile()) == -1)
 		{
 			sprintf(textBuf, "Can't find %s", errMsgFile);
-			return(textBuf);
+			return textBuf;
 		}
 		if (!DoReadErrMsg(errnum, textBuf, fd))
 			sprintf(textBuf, "Error #%d not found in file %s", errnum, errMsgFile);
 		close(fd);
-		return(textBuf);
+		return textBuf;
 	}
 }
 #endif

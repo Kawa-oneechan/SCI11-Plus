@@ -54,7 +54,7 @@ struct aView
 							//bit6 indicates that the view is not RLE compressed
 	word mirrorBits;		//if set, requires mirror of cel in loop
 	word equalBits;			//if set, indicates that loop data is shared
-	word viewText;			//null if no text invloved
+	word viewText;			//null if no text involved
 	word loopOff[MAXLOOPS];	//offsets to the loops
 };
 typedef struct aView aView;

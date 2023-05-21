@@ -42,7 +42,7 @@
 #define ANYVALUE -1
 
 int newRoomNum;
-bool trackResUse = FALSE;
+bool trackResUse = false;
 
 #define DBGTOP 2
 #define DBGWIDTH 140
@@ -52,7 +52,7 @@ bool trackResUse = FALSE;
 #ifdef DEBUG
 global bool traceOn;
 global bool trace;
-global bool findRet=FALSE;
+global bool findRet = false;
 global uword *lastSp;
 
 global Handle proBuffer;
@@ -60,7 +60,7 @@ global bool proOn;
 global uint proIndex;
 global uint proBufSize;
 
-global bool trackHunkUse = FALSE;
+global bool trackHunkUse = false;
 
 global bool isDebugVersion = 1;
 global int debugWinX = 319-DBGWIDTH;
@@ -115,7 +115,7 @@ global RWindow* DebugWindow(strptr str, strptr title, int size, int x, int y, bo
 
 	//Bring screen intensity up to max so that message can be seen.
 	SetPalIntensity((RPalette far*)&sysPalette, 0, 255, 100);
-	SetCLUT((RPalette far*)&sysPalette,FALSE);
+	SetCLUT((RPalette far*)&sysPalette, false);
 
 	RTextSize(&sr, str, DEBUGFONT, size);
 	if (sr.right < titleWidth)
@@ -132,7 +132,7 @@ global RWindow* DebugWindow(strptr str, strptr title, int size, int x, int y, bo
 	else
 	{
 		while (!RGetNextEvent(mouseDown | keyDown, &dbgEvent));
-		RDisposeWindow(w, TRUE);
+		RDisposeWindow(w, true);
 		return (NULL);
 	}
 }
@@ -177,7 +177,7 @@ global void PError(char *ip, uword *sp, int errCode, uint arg1, uint arg2)
 	arg1 = 0;
 	arg2 = 0;
 	sprintf(msg, ReadErrMsg(E_OOPS_TXT, msgTxt), errCode, version);
-	SizedWindow(msg, ReadErrMsg(E_OOPS, title), TRUE);
+	SizedWindow(msg, ReadErrMsg(E_OOPS, title), true);
 	exit(1);
 }
 #else
@@ -258,7 +258,7 @@ void PError(memptr ip, uword *sp, int errCode, uint arg1, uint arg2)
 			break;
 	}
 	sprintf(msg, "The programmer did something that we weren't expecting.\n\n%s", str);
-	SizedWindow(msg, "Oops!", TRUE);
+	SizedWindow(msg, "Oops!", true);
 	exit(1);
 }
 #endif
@@ -371,12 +371,12 @@ global strptr ArgNameRead(strptr arg)
 	switch (*arg)
 	{
 		case 'U':
-			trackHunkUse = TRUE;
+			trackHunkUse = true;
 			s = hunkUseName;
 			strcpy(s, "hunk.use"); //default name
 			break;
 		case 'u':
-			trackResUse = TRUE;
+			trackResUse = true;
 			s = useName;
 			strcpy(s, "resource.use"); //default name
 			break;
@@ -400,14 +400,14 @@ global void ToggleDebug()
 {
 	if (!trace)
 	{
-		PauseSnd(NULL_OBJ, TRUE);
-		trace = TRUE;
+		PauseSnd(NULL_OBJ, true);
+		trace = true;
 		DebugOn();
 	}
 	else
 	{
-		trace = FALSE;
-		PauseSnd(NULL_OBJ, FALSE);
+		trace = false;
+		PauseSnd(NULL_OBJ, false);
 	}
 }
 
@@ -432,7 +432,7 @@ static void near LoseDebugBuf()
 
 global KERNEL(SetDebug)
 {
-	SetDebug(TRUE);
+	SetDebug(true);
 	//Return a value if one was passed.
 	if (argCount) acc = arg(1);
 }
@@ -443,7 +443,7 @@ global void SetDebug(bool on)
 	trace = on;
 	if (trace)
 	{
-		PauseSnd(NULL_OBJ, TRUE);
+		PauseSnd(NULL_OBJ, true);
 		DebugOn();
 	}
 	else
@@ -454,7 +454,7 @@ global void SetDebug(bool on)
 			DebugOff();
 
 		LoseDebugBuf();
-		PauseSnd(NULL_OBJ, FALSE);
+		PauseSnd(NULL_OBJ, false);
 	}
 }
 
@@ -474,7 +474,7 @@ global void Debug(Hunkptr ip, uword *sp)
 	{
 		if (sp > bpSp || IsObjBreakpoint())
 			return;
-		skipCurrent = FALSE;
+		skipCurrent = false;
 	}
 	if(trace || IsScrBreakpoint(ip) || IsObjBreakpoint() || IsWatchHeapBreakpoint() || IsWatchHunkBreakpoint() || IsWatchKernelBreakpoint(ip) || findRet || ((bpHndle == scriptHandle) && (bpOfs == (uint)((long)ip & (long)0xffff))))
 	{
@@ -484,14 +484,14 @@ global void Debug(Hunkptr ip, uword *sp)
 			if((opCode & ~OP_BYTE) != OP_return)
 				return;
 			else
-				findRet = FALSE;
+				findRet = false;
 		}
 
 		//If we didn't turn debug on, it's on now!
-		trace=TRUE;
+		trace = true;
 
 		if (IsObjBreakpoint())
-			PauseSnd(NULL_OBJ, TRUE);
+			PauseSnd(NULL_OBJ, true);
 		bpHndle = 0;
 		bpOfs = 0;
 		bpObj = NULL_OBJ;
@@ -501,13 +501,13 @@ global void Debug(Hunkptr ip, uword *sp)
 		//test if we just broke at a sticky obj/method breakpoint
 		if (IsObjBreakpoint())
 		{
-			skipCurrent = TRUE;
+			skipCurrent = true;
 			bpSp = sp;
 		}
 
 		DebugInfo(ip, sp);
 		if (showSends)
-			ShowSends(FALSE);
+			ShowSends(false);
 
 		//Do commands.
 		forever
@@ -529,9 +529,9 @@ global void Debug(Hunkptr ip, uword *sp)
 					sbpSelect = -1;
 					sbpScriptOff = 0;
 					WatchKernelMany = 0;
-					WatchHeap = FALSE;
-					WatchHunk = FALSE;
-					SetDebug(FALSE);
+					WatchHeap = false;
+					WatchHunk = false;
+					SetDebug(false);
 					return;
 
 				case 'b':
@@ -557,7 +557,7 @@ global void Debug(Hunkptr ip, uword *sp)
 						*theBpSelect = GetSelectorNum(argStr);
 						if (*theBpSelect == -1 || !RespondsTo(*theBpObj, *theBpSelect))
 						{
-							DebugWindow("not selector for object", 0, -1, -1, -1, TRUE);
+							DebugWindow("not selector for object", 0, -1, -1, -1, true);
 							goto GetSelect;
 						}
 					}
@@ -565,14 +565,14 @@ global void Debug(Hunkptr ip, uword *sp)
 						*theBpSelect = -1;
 					if (IsObjBreakpoint())
 					{
-						skipCurrent = TRUE;
+						skipCurrent = true;
 						bpSp = sp;
 					}
 					else
-						skipCurrent = FALSE;
+						skipCurrent = false;
 					if(cmd == 'b')
 					{
-						SetDebug(FALSE);
+						SetDebug(false);
 						return;
 					}
 					else
@@ -591,7 +591,7 @@ global void Debug(Hunkptr ip, uword *sp)
 					break;
 
 				case 'D':
-					SetDebug(FALSE);
+					SetDebug(false);
 					return;
 
 				case 'e':
@@ -623,13 +623,13 @@ global void Debug(Hunkptr ip, uword *sp)
 					break;
 
 				case 'k':
-					WatchKernelOnce = TRUE;
+					WatchKernelOnce = true;
 					WatchKernelNumb = (int)atoi(argStr);
-					SetDebug(FALSE);
+					SetDebug(false);
 					return;
 
 				case 'K':
-					WatchKernelMany = TRUE;
+					WatchKernelMany = true;
 					WatchKernelNumb = (int)atoi(argStr);
 					break;
 
@@ -644,7 +644,7 @@ global void Debug(Hunkptr ip, uword *sp)
 					if (GetInput(argStr, "Script offset", 6))
 						bpScriptOff = atoi(argStr);
 					if (!bpScriptOff)bpScriptOff = (unsigned)ANYVALUE; //KAWA WAS HERE
-						SetDebug(FALSE);
+						SetDebug(false);
 					return;
 
 				case 'N':
@@ -669,18 +669,18 @@ global void Debug(Hunkptr ip, uword *sp)
 					break;
 
 				case 'R':
-					findRet = TRUE;
-					SetDebug(FALSE);
+					findRet = true;
+					SetDebug(false);
 					return;
 
 				case 's':
 					showSends = !showSends;
 					if (showSends)
-						ShowSends(FALSE);
+						ShowSends(false);
 					else
 					{
 						lastSp = 0;
-						RDisposeWindow(sendWin, TRUE);
+						RDisposeWindow(sendWin, true);
 						sendWin = NULL;
 					}
 					break;
@@ -690,13 +690,13 @@ global void Debug(Hunkptr ip, uword *sp)
 					break;
 
 				case 't':
-					WatchHeap = TRUE;
+					WatchHeap = true;
 					WatchHeapAddr = (int*)atoi(argStr);
 					WatchHeapValue = *WatchHeapAddr;
 					break;
 
 				case 'T':
-					WatchHunk = TRUE;
+					WatchHunk = true;
 					if (arg == 0)
 						break;
 					WatchHunkAddr = (char far*)((long)atoi(argStr) << 16);
@@ -712,7 +712,7 @@ global void Debug(Hunkptr ip, uword *sp)
 					bpHndle = scriptHandle;
 					opCode = *ip;
 					//turn debug off temporarily and set breakpoint
-					trace = FALSE;
+					trace = false;
 					switch (opCode & ~OP_BYTE)
 					{
 						case OP_self:
@@ -732,7 +732,7 @@ global void Debug(Hunkptr ip, uword *sp)
 
 						default:
 							//Go to next opcode
-							trace = TRUE;
+							trace = true;
 							break;
 					}
 					return;
@@ -742,7 +742,7 @@ global void Debug(Hunkptr ip, uword *sp)
 					break;
 
 				case 'w':
-					RDisposeWindow(debugWin, TRUE);
+					RDisposeWindow(debugWin, true);
 					debugWin = NULL;
 					if (debugWinY == 10)
 						debugWinY = 189 - DBGHEIGHT;
@@ -775,7 +775,7 @@ global void Debug(Hunkptr ip, uword *sp)
 
 global KERNEL(ShowSends)
 {
-	ShowSends(TRUE);
+	ShowSends(true);
 	if (argCount)
 		acc = arg(1);
 }
@@ -808,7 +808,7 @@ global void ShowSends(bool wait)
 		else
 		{
 			lastSp = sp;
-			RDisposeWindow(sendWin, TRUE);
+			RDisposeWindow(sendWin, true);
 			sendWin = NULL;
 		}
 	}
@@ -849,7 +849,7 @@ static void near ShowVersion(void)
 	char str[200];
 
 	sprintf(str, "Version %s\nMade on %s at %s\nin %s\nby %s\n%s", version, makeDate, makeTime, makeLocation, maker, makeComment);
-	SizedWindow(str, "Version Info", TRUE);
+	SizedWindow(str, "Version Info", true);
 }
 
 
@@ -871,7 +871,7 @@ void PError(memptr ip, uword *sp, int errCode, uint arg1, uint arg2)
 			sprintf(str, "Bad opcode: $%x", arg1);
 			break;
 		case E_BAD_KERNAL:
-			sprintf(str, "Kernal entry # too large: %d", arg1);
+			sprintf(str, "Kernel entry # too large: %d", arg1);
 			break;
 		case E_LOAD_CLASS:
 			sprintf(str, "Can't load class %d", arg1);
@@ -917,8 +917,8 @@ void PError(memptr ip, uword *sp, int errCode, uint arg1, uint arg2)
 			sprintf(str, "Invalid property %d", arg1);
 			break;
 	}
-	trace = TRUE;
-	errorWin = SizedWindow(str, "PMachine", TRUE);
+	trace = true;
+	errorWin = SizedWindow(str, "PMachine", true);
 	Debug(ip, sp);
 	exit(1);
 }
@@ -930,7 +930,7 @@ global KERNEL(ShowFree)
 	str = MakeDebugBuf();
 	str[0] = '\0';
 	ShowFreeList(str);
-	errorWin = DebugWindow(str, "Free Heap", BIGWINDOW, -1, -1, TRUE);
+	errorWin = DebugWindow(str, "Free Heap", BIGWINDOW, -1, -1, true);
 	LoseDebugBuf();
 }
 
@@ -1047,7 +1047,7 @@ static char near GetCommand(register strptr str)
 			return ('D');
 		if (varWin != NULL)
 		{
-			RDisposeWindow(varWin, TRUE);
+			RDisposeWindow(varWin, true);
 			varWin = NULL;
 		}
 		if (event.type == mouseDown)
@@ -1058,22 +1058,22 @@ static char near GetCommand(register strptr str)
 			switch (c)
 			{
 				case 2: //<ctrl>B
-					DebugWindow("Clearing sticky object/method breakpoint", 0, -1, -1, -1, TRUE);
+					DebugWindow("Clearing sticky object/method breakpoint", 0, -1, -1, -1, true);
 					sbpObj = (Obj*)0;
 					sbpSelect = -1;
 					break;
 				case 11: //<ctrl>K
-					DebugWindow("Clearing sticky kernel breakpoint", 0, -1, -1, -1, TRUE);
+					DebugWindow("Clearing sticky kernel breakpoint", 0, -1, -1, -1, true);
 					WatchKernelMany = 0;
 					break;
 				case 14: //<ctrl>N
-					DebugWindow("Clearing sticky script/offset breakpoint", 0, -1, -1, -1, TRUE);
+					DebugWindow("Clearing sticky script/offset breakpoint", 0, -1, -1, -1, true);
 					sbpScriptOff = 0;
 					break;
 				case 20: //<ctrl>T
-					DebugWindow("Clearing trace words for HEAP and HUNK", 0, -1, -1, -1, TRUE);
-					WatchHeap = FALSE;
-					WatchHunk = FALSE;
+					DebugWindow("Clearing trace words for HEAP and HUNK", 0, -1, -1, -1, true);
+					WatchHeap = false;
+					WatchHunk = false;
 					break;
 			}
 		}
@@ -1190,11 +1190,11 @@ static bool near IsWatchHeapBreakpoint()
 	{
 		if (WatchHeapValue != *WatchHeapAddr)
 		{
-			WatchHeap = FALSE;
-			return TRUE;
+			WatchHeap = false;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 
@@ -1204,11 +1204,11 @@ static bool near IsWatchHunkBreakpoint()
 	{
 		if (WatchHunkValue != *WatchHunkAddr)
 		{
-			WatchHunk = FALSE;
-			return TRUE;
+			WatchHunk = false;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 
@@ -1225,21 +1225,21 @@ static bool near IsWatchKernelBreakpoint(Hunkptr ip)
 				case OP_callk:
 					if (*(int far*)(ip+1) == WatchKernelNumb)
 					{
-						WatchKernelOnce = FALSE;
-						return TRUE;
+						WatchKernelOnce = false;
+						return true;
 					}
 					break;
 				case OP_callk+1:
 					if ((int)*(ip+1) == WatchKernelNumb)
 					{
-						WatchKernelOnce = FALSE;
-						return TRUE;
+						WatchKernelOnce = false;
+						return true;
 					}
 					break;
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 
@@ -1264,7 +1264,7 @@ static bool near GetInput(register strptr str, strptr title, int length)
 	RSetFont(DEBUGFONT);
 	RMoveTo(0, 1);
 	ShowString(str);
-	done = FALSE;
+	done = false;
 	cursor = strlen(str);
 	RCopyRect(&rThePort->portRect, &box);
 	RInsetRect(&box, 1, 1);
@@ -1279,12 +1279,12 @@ static bool near GetInput(register strptr str, strptr title, int length)
 			{
 				case ESC:
 					*str = '\0';
-					retVal = FALSE;
-					done = TRUE;
+					retVal = false;
+					done = true;
 					break;
 				case CR:
-					retVal = TRUE;
-					done = TRUE;
+					retVal = true;
+					done = true;
 					break;
 			}
 		}
@@ -1293,7 +1293,7 @@ static bool near GetInput(register strptr str, strptr title, int length)
 		cursor = EditText(&box, str, cursor, length, &evt);
 	}
 	EraseCursor();
-	RDisposeWindow(wind, TRUE);
+	RDisposeWindow(wind, true);
 	while (*str == ' ')
 		strcpy(str, str+1);
 	RSetFont(oldFont);
@@ -1446,7 +1446,7 @@ static void near ShowObjects(bool showAddresses)
 	{
 		printedObjs += numObjs;
 		sprintf(winTitle, "Objects: %d", printedObjs);
-		errorWin = DebugWindow(str, winTitle, BIGWINDOW, -1, -1, TRUE);
+		errorWin = DebugWindow(str, winTitle, BIGWINDOW, -1, -1, true);
 		if (dbgEvent.message == ESC)
 			break;
 	}
@@ -1471,7 +1471,7 @@ static void near ShowStackUsage()
 		StackUsage(PROC_SIZE), StackUsage(PROC_MAX), StackUsage(PROC_CUR),
 		StackUsage(PM_SIZE), StackUsage(PM_MAX), StackUsage(PM_CUR)
 	);
-	SizedWindow(str, "Stack", TRUE);
+	SizedWindow(str, "Stack", true);
 }
 
 
@@ -1520,7 +1520,7 @@ static bool near InspectObj(register Obj *obj)
 		strcat(data, "\n");
 		strcat(data, &data[500]);
 		sprintf(title, "Inspect :: $%04x", Pseudo(obj));
-		win = DebugWindow(data, title, INSPECTWINDOW, -1, top, FALSE);
+		win = DebugWindow(data, title, INSPECTWINDOW, -1, top, false);
 	}
 	else
 	{
@@ -1546,16 +1546,16 @@ static bool near InspectObj(register Obj *obj)
 		}
 		sprintf(title, "Inspect :: %s ($%x)", GetObjName(obj), Pseudo(obj));
 		if (numProps > 50)
-			win = DebugWindow(data, title, BIGGESTWINDOW, -1, top, FALSE);
+			win = DebugWindow(data, title, BIGGESTWINDOW, -1, top, false);
 		else
-			win = DebugWindow(data, title, BIGWINDOW, -1, top, FALSE);
+			win = DebugWindow(data, title, BIGWINDOW, -1, top, false);
 	}
-	for (done = FALSE, ret = FALSE; !done; )
+	for (done = false, ret = false; !done; )
 	{
 		while (!RGetNextEvent(keyDown | mouseDown, &event))
 			;
 		if (event.type == mouseDown)
-			done = TRUE;
+			done = true;
 		else
 		{
 			switch (event.message)
@@ -1584,39 +1584,39 @@ static bool near InspectObj(register Obj *obj)
 					if (tmpObj != NULL)
 					{
 						obj = tmpObj;
-						RDisposeWindow(win, TRUE);
+						RDisposeWindow(win, true);
 						--inspectLevel;
 						goto ReInspect;
 					}
 					break;
 				case UPARROW:
 					obj = (Obj*)((int*)obj - 8);
-					RDisposeWindow(win, TRUE);
+					RDisposeWindow(win, true);
 					--inspectLevel;
 					goto ReInspect;
 				case DOWNARROW:
 					obj = (Obj*)((int*)obj + 8);
-					RDisposeWindow(win, TRUE);
+					RDisposeWindow(win, true);
 					--inspectLevel;
 					goto ReInspect;
 				case LEFTARROW:
 					obj = (Obj*)((int*)obj - 1);
-					RDisposeWindow(win, TRUE);
+					RDisposeWindow(win, true);
 					--inspectLevel;
 					goto ReInspect;
 				case RIGHTARROW:
 					obj = (Obj*)((int*)obj + 1);
-					RDisposeWindow(win, TRUE);
+					RDisposeWindow(win, true);
 					--inspectLevel;
 					goto ReInspect;
 				case PAGEDOWN:
 					obj = (Obj*)((int*)obj + 32);
-					RDisposeWindow(win, TRUE);
+					RDisposeWindow(win, true);
 					--inspectLevel;
 					goto ReInspect;
 				case PAGEUP:
 					obj = (Obj*)((int*)obj - 32);
-					RDisposeWindow(win, TRUE);
+					RDisposeWindow(win, true);
 					--inspectLevel;
 					goto ReInspect;
 				case '?':
@@ -1624,19 +1624,19 @@ static bool near InspectObj(register Obj *obj)
 						DebugHelp(2);
 					break;
 				case CR:
-					done = TRUE;
+					done = true;
 					break;
 				case ESC:
-					done = TRUE;
-					ret = TRUE;
+					done = true;
+					ret = true;
 					break;
 			}
 		}
 	}
-	RDisposeWindow(win, TRUE);
+	RDisposeWindow(win, true);
 	--inspectLevel;
 	LoseDebugBuf();
-	return (ret);
+	return ret;
 }
 
 
@@ -1673,7 +1673,7 @@ static void near InspectHunk(char far *essiHunk)
 	(int)((long)essiHunk & (long)0xffff));
 	top = TOPOFS + inspectLevel * 12;
 	++inspectLevel;
-	win = DebugWindow(data, title, INSPECTWINDOW, -1, top, FALSE);
+	win = DebugWindow(data, title, INSPECTWINDOW, -1, top, false);
 	while (!RGetNextEvent(keyDown | mouseDown, &event))
 		;
 	if (event.type == mouseDown)
@@ -1682,32 +1682,32 @@ static void near InspectHunk(char far *essiHunk)
 	{
 		case UPARROW:
 			essiHunk -= 16;
-			RDisposeWindow(win, TRUE);
+			RDisposeWindow(win, true);
 			--inspectLevel;
 			goto ReInspect;
 		case DOWNARROW:
 			essiHunk += 16;
-			RDisposeWindow(win, TRUE);
+			RDisposeWindow(win, true);
 			--inspectLevel;
 			goto ReInspect;
 		case LEFTARROW:
 			--essiHunk;
-			RDisposeWindow(win, TRUE);
+			RDisposeWindow(win, true);
 			--inspectLevel;
 			goto ReInspect;
 		case RIGHTARROW:
 			++essiHunk;
-			RDisposeWindow(win, TRUE);
+			RDisposeWindow(win, true);
 			--inspectLevel;
 			goto ReInspect;
 		case PAGEDOWN:
 			essiHunk += 64;
-			RDisposeWindow(win, TRUE);
+			RDisposeWindow(win, true);
 			--inspectLevel;
 			goto ReInspect;
 		case PAGEUP:
 			essiHunk -= 64;
-			RDisposeWindow(win, TRUE);
+			RDisposeWindow(win, true);
 			--inspectLevel;
 			goto ReInspect;
 		case CR:
@@ -1715,7 +1715,7 @@ static void near InspectHunk(char far *essiHunk)
 		case ESC:
 			break;
 	}
-	RDisposeWindow(win, TRUE);
+	RDisposeWindow(win, true);
 	--inspectLevel;
 	LoseDebugBuf();
 	return;
@@ -1749,12 +1749,12 @@ static void near InspectList(register Obj *obj)
 	}
 
 	if (elements == NULL || theList == NULL)
-		SizedWindow(msg, objName, TRUE);
+		SizedWindow(msg, objName, true);
 	else
 	{
 		for (theNode = FirstNode(theList); theNode && IsObject((Obj*)Native(GetKey(theNode))); theNode = NextNode(theNode))
 			if (InspectObj((Obj*)Native(GetKey(theNode))))break;
-				SizedWindow("end", objName, TRUE);
+				SizedWindow("end", objName, true);
 	}
 }
 
@@ -1793,7 +1793,7 @@ static void near EditValue(register int *addr, strptr s1, strptr s2, byte edit)
 					strcat(data, "\n");
 					strcat(data, (strptr)objAddr);
 				}
-				SizedWindow(data, title, TRUE);
+				SizedWindow(data, title, true);
 			}
 			break;
 		case 'e':
@@ -1822,10 +1822,10 @@ static void near EditValue(register int *addr, strptr s1, strptr s2, byte edit)
 			}
 			break;
 		case 't':
-			WatchHeap = TRUE;
+			WatchHeap = true;
 			WatchHeapAddr = addr;
 			WatchHeapValue = value;
-			DebugWindow("Setting Watch word breakpoint on property", 0, -1, -1, -1, TRUE);
+			DebugWindow("Setting Watch word breakpoint on property", 0, -1, -1, -1, true);
 			break;
 	}
 }
@@ -1839,16 +1839,16 @@ static int* near RequestPropAddr(Obj *obj, strptr objName, strptr selStr)
 
 	selStr[0] = '\0';
 	if (!GetInput(selStr, "Selector", 40))
-		return (NULL);
+		return NULL;
 	selNum = GetSelectorNum(selStr);
 	propAddr = GetPropAddr(obj, selNum);
 	if (selNum == -1 || propAddr == 0)
 	{
 		sprintf(title, "%s: not selector for %s.", selStr, objName);
-		SizedWindow(title, "Property", TRUE);
-		return (NULL);
+		SizedWindow(title, "Property", true);
+		return NULL;
 	}
-	return (propAddr);
+	return propAddr;
 }
 
 
@@ -1883,24 +1883,24 @@ static int near DebugHelp(int n)
 		sprintf(helpStr, "Could not find help file %s", name);
 	}
 	PenColor(BLACK);
-	w=SizedWindow(helpStr, "Help", FALSE);
+	w=SizedWindow(helpStr, "Help", false);
 	PenColor(BLACK);
 	while (!RGetNextEvent(mouseDown | keyDown, &event))
 		;
-	RDisposeWindow(w, TRUE);
+	RDisposeWindow(w, true);
 	LoseDebugBuf();
 	if(event.message == ESC || fd == -1)
-		return FALSE;
+		return false;
 	else
-		return TRUE;
+		return true;
 }
 
 
 static void near DisposeDebugWin()
 {
-	if (debugWin != NULL)RDisposeWindow(debugWin, TRUE);
+	if (debugWin != NULL)RDisposeWindow(debugWin, true);
 		debugWin = NULL;
-	if (sendWin != NULL)RDisposeWindow(sendWin, TRUE);
+	if (sendWin != NULL)RDisposeWindow(sendWin, true);
 		sendWin = NULL;
 }
 
@@ -1947,12 +1947,12 @@ global void Resources(void)
 	for (type = 0; type < NRESTYPES; type++)
 		sizes[type] = 0;
 	for (type = 0; type < NARMTYPES; type++)
-		arm[type] = FALSE;
+		arm[type] = false;
 
 	for (loadLink = (LoadLink far**)Native(FFirstNode(&loadList)); loadLink; loadLink = (LoadLink far**)Native(FNextNode(Pseudo(loadLink))))
 	{
 		sizes[(*loadLink)->type - RES_BASE] += (*loadLink)->size;
-		arm[(*loadLink)->altResMem] = TRUE;
+		arm[(*loadLink)->altResMem] = true;
 	}
 
 	nResourceTypes = 0;
@@ -1970,7 +1970,7 @@ global void Resources(void)
 	maxResourceLines = maxLines - nResourceSummaryLines - NMEMORY_SUMMARY_LINES - nARMTypes;
 	--maxResourceLines; //allow one line for slop
 
-	first = TRUE;
+	first = true;
 	loadLink = (LoadLink far**)Native(FFirstNode(&loadList));
 	while (loadLink)
 	{
@@ -2061,10 +2061,10 @@ global void Resources(void)
 				AltResMemDebugKey(buf + strlen(buf));
 		}
 
-		DebugWindow(buf, title, BIGWINDOW, -1, -1, TRUE);
+		DebugWindow(buf, title, BIGWINDOW, -1, -1, true);
 		if (dbgEvent.message == ESC)
 			break;
-		first = FALSE;
+		first = false;
 
 		maxResourceLines = maxLines - NARM_KEY_LINES;
 		//allow one line for slop
@@ -2090,9 +2090,9 @@ global int CheckLoadLinks()
 	for (scan = (LoadLink far**)Native(FFirstNode(&loadList)); scan; scan = (LoadLink far**)Native(FNextNode(Pseudo(scan))))
 	{
 		if ((*scan)->checkSum != 0x44)
-			return FALSE;
+			return false;
 	}
-	return TRUE;
+	return true;
 }
 
 

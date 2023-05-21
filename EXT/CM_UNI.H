@@ -1,4 +1,4 @@
-static short near euroToLowerTbl[]=
+static short near euroToLowerTbl[] =
 {
 	//C1 Controls, not Win-1252!
 	0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
@@ -311,7 +311,7 @@ static short near euroToLowerTbl[]=
 #endif
 };
 
-static short near euroToUpperTbl[]=
+static short near euroToUpperTbl[] =
 {
 	//C1 Controls, not Win-1252!
 	0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,

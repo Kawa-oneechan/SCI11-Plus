@@ -8,7 +8,7 @@
 * NAME            DATE     WHAT
 *
 * Richard Rayl    08/23/88 Moved all definitions from VM_GLOBS.H
-* M Edwards       10/17/88 Added FLIP defs, changed TRUE/FALSE defs,
+* M Edwards       10/17/88 Added FLIP defs, changed true/false defs,
 *                          and moved key defs to vm_keys.h
 * M Edwards       11/30/8  Added equates from grafix.inc.
 * ME              03/07/89 Added def's for MCGA, AMIGAVM, ATARIST.

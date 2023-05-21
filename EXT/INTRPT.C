@@ -34,7 +34,7 @@ void InstallServer(fptr proc, word ticks)
 	freeSlot->freq = ticks;
 	freeSlot->count = ticks;
 	freeSlot->function = proc;
-	freeSlot->inUse = TRUE;
+	freeSlot->inUse = true;
 }
 
 
@@ -47,7 +47,7 @@ void DisposeServer(fptr proc)
 	{
 		if (cur->inUse && cur->function == proc)
 		{
-			cur->inUse = FALSE;
+			cur->inUse = false;
 			break;
 		}
 	}

@@ -125,7 +125,7 @@ typedef struct
 	} lData;
 	uword size;
 	byte altResMem;
-	byte checkSum;		//also used when checkingLoadLinks is TRUE
+	byte checkSum;		//also used when checkingLoadLinks is true
 } LoadLink;
 
 #define	PARAGRAPHSIZE		16

@@ -27,7 +27,7 @@
 
 #define	MAXQ	10
 
-bool audioRdy = FALSE;
+bool audioRdy = false;
 int audFd = CLOSED;
 int audVolFd = CLOSED;
 int sfxVolFd = CLOSED;
@@ -103,10 +103,10 @@ global bool InitAudioDriver()
 	}
 
 	if (newSize == (uint) -1)
-		audNone = TRUE;
+		audNone = true;
 	else
 	{
-		audNone = FALSE;
+		audNone = false;
 		if (newSize & 0x8000) ///Disney Dac flag bit
 		{
 			SetDisneyInt();
@@ -154,7 +154,7 @@ global bool InitAudioDriver()
 		else
 			audVolDrive = 0;
 	}
-	return (TRUE);
+	return true;
 }
 
 
@@ -211,10 +211,10 @@ global KERNEL(DoAudio)
 				wSelect = ((noun + verb * 256L) * 256 + cond) * 256 + sequ;
 				savelen = acc;
 				AudioWPlay(); //play sample once only
-				audioRdy = TRUE;
+				audioRdy = true;
 			}
 			else
-				audioRdy = FALSE;
+				audioRdy = false;
 			break;
 		case PLAY: //audio playback begins
 			audQndx = 0;
@@ -234,14 +234,14 @@ global KERNEL(DoAudio)
 				acc = savelen;
 			}
 			audQcnt[0] = acc;
-			audioRdy = FALSE;
+			audioRdy = false;
 			break;
 		case STOP:
 			audQndx = 0;
 			if (argCount > 1 && arg(2) != (int)playingNum) //KAWA WAS HERE
 				break;
 			playingNum = (uint)-1; //KAWA WAS HERE
-			audioRdy = FALSE;
+			audioRdy = false;
 			AudioStop();
 			break;
 		case PAUSE:
@@ -345,7 +345,7 @@ global bool CDAudioPlay(word *args)
 	} audArgs;
 
 	if (argCount < 3)
-		return(FALSE);
+		return false;
 	audArgs.track = arg(3);
 	if (argCount >= 4)
 		audArgs.start = arg(4) * 75L;
@@ -356,9 +356,9 @@ global bool CDAudioPlay(word *args)
 	else
 		audArgs.len = 0L;
 	if (CDAudioDrv(A_SELECT, (uint)(&audArgs)) != 0)
-		return(FALSE);
+		return false;
 	CDAudioDrv(A_PLAY, 0);
-	return(TRUE);
+	return true;
 }
 
 
@@ -371,7 +371,7 @@ global int CDAudioLoc()
 	} audArgs;
 
 	CDAudioDrv(A_LOC, (uint)(&audArgs));
-	return(audArgs.ticks);
+	return audArgs.ticks;
 }
 
 
@@ -386,7 +386,7 @@ global bool InitCDAudioDriver()
 	} audArgs;
 
 	if (cdaudioDrv != NULL)
-		return(TRUE);
+		return true;
 
 	//Load the cd-audio driver.
 	strcpy(filename,audioDriver);
@@ -396,7 +396,7 @@ global bool InitCDAudioDriver()
 	filename[++t] = '\0';
 	strcat(filename, "AUDCDROM.DRV");
 	if ((cdaudioDrv = LoadHandle(filename)) == NULL)
-		return (FALSE);
+		return false;
 	LockHandle(cdaudioDrv);
 
 	//Initialize the cd-audio driver
@@ -409,11 +409,11 @@ global bool InitCDAudioDriver()
 	{
 		DisposeHandle(cdaudioDrv);
 		cdaudioDrv = NULL;
-		return (FALSE);
+		return false;
 	}
 	ReallocateHandle(cdaudioDrv, newSize);
 
-	return (TRUE);
+	return true;
 }
 
 
@@ -485,7 +485,7 @@ global int AudioLoc()
 	} audArgs;
 
 	AudioDrv(A_LOC, (uint)(&audArgs));
-	return(audArgs.ticks);
+	return audArgs.ticks;
 }
 
 
@@ -498,7 +498,7 @@ global uint AudioRate(uint hertz)
 
 	audArgs.rate = hertz;
 	AudioDrv(A_RATE, (uint)(&audArgs));
-	return(audArgs.rate);
+	return audArgs.rate;
 }
 
 
@@ -531,7 +531,7 @@ global bool SelectAudio(char queue)
 
 	acc = 0; // initial condition: sample is not found
 	if (!audBuffKSize)
-		return(FALSE);	// no audio buffer
+		return false;	// no audio buffer
 
 	audARMROffset = audARMWOffset = 0;
 	if (audFd != CLOSED)
@@ -581,7 +581,7 @@ global bool SelectAudio(char queue)
 		}
 		// AUD/WAV resource NOT FOUND!
 		else
-			return(FALSE);
+			return false;
 	}
 	else
 	{
@@ -596,7 +596,7 @@ global bool SelectAudio(char queue)
 			audArgs.fd = audVolFd;
 		// @ resource NOT FOUND!
 		else
-			return(FALSE);
+			return false;
 	}
 
 	audArgs.len = filelength(audArgs.fd);
@@ -616,10 +616,10 @@ ulong FindAudEntry(uint id)
 	ResAudEntry far *entry;
 
 	if (sfxVolFd == CLOSED)
-		return((ulong)-1L); //KAWA WAS HERE
+		return (ulong)-1L; //KAWA WAS HERE
 
 	if (!ResCheck(RES_MAP, AUDMODNUM))
-		return((ulong)-1L); //KAWA WAS HERE
+		return (ulong)-1L; //KAWA WAS HERE
 	map = ResLoad(RES_MAP, AUDMODNUM);
 
 	offset = 0L;
@@ -627,9 +627,9 @@ ulong FindAudEntry(uint id)
 	{
 		offset += ((ulong)entry->offsetMSB << 16) + (ulong)entry->offsetLSW;
 		if	(entry->id == id)
-			return(offset);
+			return offset;
 	}
-	return((ulong)-1L); //KAWA WAS HERE
+	return (ulong)-1L; //KAWA WAS HERE
 }
 
 
@@ -641,10 +641,10 @@ ulong FindAud36Entry(uint module, byte noun, byte verb, byte cond, byte sequ)
 	ResAud36Entry far *entry36;
 
 	if (audVolFd == CLOSED)
-		return((ulong)-1L); //KAWA WAS HERE
+		return (ulong)-1L; //KAWA WAS HERE
 
 	if (!ResCheck(RES_MAP, module))
-		return((ulong)-1L); //KAWA WAS HERE
+		return (ulong)-1L; //KAWA WAS HERE
 	map = ResLoad(RES_MAP, module);
 
 	ptr36 = (char far *)*map;
@@ -662,7 +662,7 @@ ulong FindAud36Entry(uint module, byte noun, byte verb, byte cond, byte sequ)
 				if (entry36->flag.rave & RAVEMASK)
 					offset += (long)GetWord(entry36->raveLen);
 			}
-			return(offset);
+			return offset;
 		}
 		ptr36 += sizeof(ResAud36Entry);
 		if (!(entry36->flag.sync & SYNCMASK))
@@ -670,23 +670,23 @@ ulong FindAud36Entry(uint module, byte noun, byte verb, byte cond, byte sequ)
 		if (!(entry36->flag.rave & RAVEMASK))
 			ptr36 -= sizeof(entry36->raveLen);
 	}
-	return((ulong)-1L); //KAWA WAS HERE
+	return (ulong)-1L; //KAWA WAS HERE
 }
 
 
 uint GetAudQCnt(int ndx)
 {
-	return(audQcnt[ndx]);
+	return audQcnt[ndx];
 }
 
 
 bool AudARMInit()
 {
 	if ((audARMHandle = AltResMemAlloc(AUDARMALOC,&audARMType)) == NO_MEMORY)
-		return FALSE;
+		return false;
 
 	audARMPtr = NeedHandle(AUDARMSIZE);
-	return TRUE;
+	return true;
 }
 
 
@@ -698,13 +698,13 @@ void AudARMTerm() {
 bool AudARMRead(uint len, void far *buff)
 {
 	if (ARMCritical() || (ulong)len > bytesBuffered)
-		return FALSE;
+		return false;
 	if (ARMRead(audARMType, audARMHandle, audARMROffset, len, buff) == NO_MEMORY)
-		return FALSE;
+		return false;
 	if ((audARMROffset += len) == AUDARMALOC)
 		audARMROffset = 0;
 	bytesBuffered -= len;
-	return TRUE;
+	return true;
 }
 
 
@@ -730,13 +730,13 @@ bool AudARMWrite(int fdIn, ulong runLen)
 				len = (uint)bytesToBuffer;
 			reset = lseek(fd, 0L, LSEEK_CUR);
 			if ((len = readfar(fd, audARMPtr, len)) == (uint) -1)
-				return FALSE;
+				return false;
 			if (len == 0)
-				return FALSE;
+				return false;
 			if (ARMWrite(audARMType, audARMHandle, audARMWOffset, len, (void far*)*audARMPtr) == NO_MEMORY)
 			{
 				lseek(fd, reset, LSEEK_BEG);
-				return FALSE;
+				return false;
 			}
 			if ((audARMWOffset += len) == AUDARMALOC)
 				audARMWOffset = 0;
@@ -744,5 +744,5 @@ bool AudARMWrite(int fdIn, ulong runLen)
 			bytesToBuffer -= len;
 		}
 	}
-	return TRUE;
+	return true;
 }

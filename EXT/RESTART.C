@@ -33,15 +33,15 @@ global KERNEL(RestartGame)
 	//Get rid of our internal stuff.
 	static int varyList[] = { 1, PALVARYKILL };
 
-	DoSound(SProcess,FALSE);
+	DoSound(SProcess, false);
 	gameRestarted = 1;
-	gameStarted = FALSE;
+	gameStarted = false;
 
 	//Turn off PalVary
 
 	if (palVaryOn)
 	{
-		palVaryOn = FALSE;
+		palVaryOn = false;
 		palettePercent = 0;
 		KPalVary(varyList);
 	}
@@ -49,7 +49,7 @@ global KERNEL(RestartGame)
 	KillAllSounds();
 	DisposeAllScripts();
 	DisposeLastCast();
-	//SetDebug(FALSE);
+	//SetDebug(false);
 	//free all memory
 	ResUnLoad(RES_MEM, ALL_IDS);
 
@@ -60,8 +60,8 @@ global KERNEL(RestartGame)
 	InitPatches();
 
 	InitMenu();
-	DoSound(SProcess,TRUE);
-	DoSound(SSetReverb,0);
+	DoSound(SProcess, true);
+	DoSound(SSetReverb, 0);
 	reverbDefault = 0;
 
 	//Now restore the stack and restart the PMachine.
@@ -72,7 +72,7 @@ global KERNEL(RestartGame)
 global KERNEL(GameIsRestarting)
 {
 	acc = gameRestarted;
-	if (argCount && arg(1) == FALSE)
-		gameRestarted = FALSE;
+	if (argCount && arg(1) == false)
+		gameRestarted = false;
 }
 

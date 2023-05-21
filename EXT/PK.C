@@ -76,7 +76,7 @@ uint pkImplode2Mem(byte far *dst, byte far *src, unsigned length)
 
 	DisposeHandle(workBuf);
 
-	return((uint)(pkWritePtr - dst));
+	return (uint)(pkWritePtr - dst);
 }
 
 
@@ -127,6 +127,6 @@ static unsigned far pascal pkReadFromMem(char far *buff, unsigned short int far 
 	pkReadPtr += theSize;
 	amountToRead -= theSize;
 
-	return(theSize);
+	return theSize;
 }
 
