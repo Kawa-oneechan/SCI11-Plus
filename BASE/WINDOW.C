@@ -52,7 +52,7 @@ global void EndWindow()
 
 global RWindow* RGetWmgrPort()
 {
-	return((RWindow*)wmgrPort);
+	return (RWindow*)wmgrPort;
 }
 
 
@@ -124,7 +124,7 @@ static void near SaveBackground(RWindow *wind)
 //return true if this is front window
 global bool RFrontWindow(RWindow *wind)
 {
-	return(wind == (RWindow*)Native(LastNode(&windowList)));
+	return (wind == (RWindow*)Native(LastNode(&windowList)));
 }
 
 
@@ -264,7 +264,7 @@ global RWindow* RNewWindow(register RRect *fr, register RRect *uFr, strptr title
 	RSetPort((RGrafPort*)wind);
 	RSetOrigin(rThePort->portRect.left, rThePort->portRect.top + wmgrPort->origin.v);
 	MoveRect(&rThePort->portRect, 0, 0);
-	return(wind);
+	return wind;
 }
 
 
@@ -426,7 +426,7 @@ global void RSetRect(RRect *rc, word l, word t, word r, word b)
 //return true if this is an empty rectangle
 global bool REmptyRect(RRect *r)
 {
-	return((r->right <= r->left) || (r->bottom <= r->top));
+	return ((r->right <= r->left) || (r->bottom <= r->top));
 }
 
 

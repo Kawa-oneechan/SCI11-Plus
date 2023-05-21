@@ -103,7 +103,7 @@ void RunMovie(int handle, Handle bufferHandle, int speed)
 	}
 
 	SetupMovieServer();
-	movieOn = TRUE;
+	movieOn = true;
 	currentPage = 0;
 
 	while (i < celCount)
@@ -129,12 +129,12 @@ void RunMovie(int handle, Handle bufferHandle, int speed)
 	//wait for all our filled buffers to be displayed
 	do
 	{
-		done = TRUE;
+		done = true;
 		for (i = 0; i < 4; i++)
 		{
 			if (pageStatus[i] == FILLED)
 			{
-				done = FALSE;
+				done = false;
 				break;
 			}
 		}
@@ -147,7 +147,7 @@ void RunMovie(int handle, Handle bufferHandle, int speed)
 	else
 		currentPage--;
 
-	movieOn = FALSE;
+	movieOn = false;
 	RemoveMovieServer();
 
 	for(i = 3; i >= 0; i--)
@@ -299,7 +299,7 @@ void LoadMoviePalette(int handle)
 
 void SetMoviePalette(void)
 {
-	picNotValid = FALSE;
+	picNotValid = false;
 	SubmitPalette((danPalette far *)*paletteHandle);
 	ResUnLoad(RES_MEM,(uword) paletteHandle);
 }

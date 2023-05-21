@@ -168,18 +168,18 @@ global strptr strlwr(strptr s)
 global bool IsPrintStr(strptr s)
 {
 	if (!s)
-		return (FALSE);
+		return false;
 
 	for (; *s; ++s)
 		if (*s < ' ' || *s > 0x7e)
-			return (FALSE);
+			return false;
 
-	return (TRUE);
+	return true;
 }
 
 
 /* usage: replace suffix or prefix in a string
- * strtrn("leaves","*ves","*f",rootstr); returns TRUE and sets rootstr to "leaf"
+ * strtrn("leaves","*ves","*f",rootstr); returns true and sets rootstr to "leaf"
  * strtrn("going","*ves","*f",rootstr); fails
  */
 global bool strtrn(strptr ins, strptr inpatt, strptr outpatt, strptr outs)
@@ -191,7 +191,7 @@ global bool strtrn(strptr ins, strptr inpatt, strptr outpatt, strptr outs)
 	for (; *ins && *inpatt != '*';) //match prefix to *
 	{
 		if (*inpatt++ != *ins++)
-			return FALSE;
+			return false;
 	}
 
 	for (i = 0; *outpatt && *outpatt != '*';)  //build new prefix
@@ -201,7 +201,7 @@ global bool strtrn(strptr ins, strptr inpatt, strptr outpatt, strptr outs)
 	//skip * and build "star" string
 
 	if (!(*inpatt++ == '*' && *outpatt++ == '*'))
-		return FALSE;
+		return false;
 
 	for (i = 0; *ins;)
 	{
@@ -214,7 +214,7 @@ global bool strtrn(strptr ins, strptr inpatt, strptr outpatt, strptr outs)
 	//match after *, "after" string is what's left of outpatt
 
 	if (strcmp(ins, inpatt) != 0)
-		return FALSE;
+		return false;
 
 
 	//finally, stuff it all into "outs" string parameter
@@ -225,7 +225,7 @@ global bool strtrn(strptr ins, strptr inpatt, strptr outpatt, strptr outs)
 	strbcat(outs,star,30);
 	strbcat(outs,outpatt,30);
 
-	return TRUE;
+	return true;
 }
 
 

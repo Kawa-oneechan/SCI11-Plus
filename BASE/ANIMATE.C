@@ -218,7 +218,7 @@ global void Animate(List* cast, word doit)
 		//a VIEWADDED is not drawn
 		if (!(signal & (VIEWADDED | NOUPDATE | HIDE)))
 		{
-			ResLock(RES_VIEW, theViewNum, TRUE);
+			ResLock(RES_VIEW, theViewNum, true);
 
 			scale = GetProperty(him,s_vm_signal);
 
@@ -284,7 +284,7 @@ global void Animate(List* cast, word doit)
 				);
 			}
 
-			ResLock(RES_VIEW, theViewNum, FALSE);
+			ResLock(RES_VIEW, theViewNum, false);
 			castShow[i] = 1;
 
 			//this actor was drawn so we must unHIDE him
@@ -464,7 +464,7 @@ global void AddToPic(List *cast)
 
 			theViewNum = GetProperty(him, s_view);
 			view = (Handle)ResLoad(RES_VIEW, theViewNum);
-			ResLock(RES_VIEW, theViewNum, TRUE);
+			ResLock(RES_VIEW, theViewNum, true);
 
 			if(( scale & VM_SCALABLE))
 			{
@@ -472,7 +472,7 @@ global void AddToPic(List *cast)
 				if (-1 == (priority = GetProperty(him, s_priority)))
 					priority = CoordPri(castY[i]);
 
-				doScale(him, (Handle)view, (word)IndexedProp(him,actLoop), (word)IndexedProp(him, actCel), NULL, (word)scale, (word)FALSE);
+				doScale(him, (Handle)view, (word)IndexedProp(him,actLoop), (word)IndexedProp(him, actCel), NULL, (word)scale, (word)false);
 			}
 			else
 			{
@@ -485,7 +485,7 @@ global void AddToPic(List *cast)
 				DrawCel((Handle)view, GetProperty(him, s_loop), GetProperty(him, s_cel), &r, priority);
 	  		}
 
-			ResLock(RES_VIEW, theViewNum, FALSE);
+			ResLock(RES_VIEW, theViewNum, false);
 
 			//if ignrAct bit is not set we draw a control box
 			if (!(signal & ignrAct))
@@ -632,7 +632,7 @@ static void near ReDoStopped(Obj* cast[], byte castShow[], int size)
 		{
 			theViewNum = IndexedProp(him, actView);
 			view =  ResLoad(RES_VIEW, theViewNum);
-			ResLock(RES_VIEW, theViewNum, TRUE);
+			ResLock(RES_VIEW, theViewNum, true);
 
 			scale = GetProperty(him,s_vm_signal);
 
@@ -649,7 +649,7 @@ static void near ReDoStopped(Obj* cast[], byte castShow[], int size)
 
 		  	castShow[i] = 1;
 
-			ResLock(RES_VIEW, theViewNum, FALSE);
+			ResLock(RES_VIEW, theViewNum, false);
 
 			signal &= (~(NOUPDATE | STOPUPD | STARTUPD | FORCEUPD));
 			RCopyRect((RRect*)IndexedPropAddr(him, actNS), &r);
@@ -699,7 +699,7 @@ static void near ReDoStopped(Obj* cast[], byte castShow[], int size)
 					view = ResLoad(RES_VIEW, theViewNum);
 					loopNum = IndexedProp(him, actLoop);
 					celNum = IndexedProp(him, actCel);
-					doScale(him, (Handle)view, (word)loopNum, (word)celNum, (Handle*)&scaledUnders, (word)scale, (word)TRUE);
+					doScale(him, (Handle)view, (word)loopNum, (word)celNum, (Handle*)&scaledUnders, (word)scale, (word)true);
 
 					IndexedProp(him, actUB) = Pseudo((Handle)scaledUnders);
 				}
@@ -712,7 +712,7 @@ static void near ReDoStopped(Obj* cast[], byte castShow[], int size)
 					view =  ResLoad(RES_VIEW, theViewNum);
 					loopNum = IndexedProp(him, actLoop);
 					celNum = IndexedProp(him, actCel);
-					doScale(him, (Handle)view, (word)loopNum, (word)celNum, (Handle*)&scaledUnders, (word)scale, (word)TRUE);
+					doScale(him, (Handle)view, (word)loopNum, (word)celNum, (Handle*)&scaledUnders, (word)scale, (word)true);
 
 					IndexedProp(him, actUB) = Pseudo((Handle)scaledUnders);
 				}
@@ -732,7 +732,7 @@ static void near ReDoStopped(Obj* cast[], byte castShow[], int size)
 		{
 			theViewNum = IndexedProp(him, actView);
 			view =  ResLoad(RES_VIEW, theViewNum);
-			ResLock(RES_VIEW, theViewNum, TRUE);
+			ResLock(RES_VIEW, theViewNum, true);
 
 			//get nowSeen into local and
 			RCopyRect((RRect*)IndexedPropAddr(him, actNS), &r);
@@ -746,7 +746,7 @@ static void near ReDoStopped(Obj* cast[], byte castShow[], int size)
 			{
 				doScale(him, (Handle)view, IndexedProp(him,actLoop), IndexedProp(him, actCel),
 				(Handle*)NULL, //KAWA WAS HERE
-				scale, (word)FALSE);
+				scale, (word)false);
 				//IndexedProp(him, actUB) = Pseudo(scaledUnders);
 			}
 			else
@@ -755,7 +755,7 @@ static void near ReDoStopped(Obj* cast[], byte castShow[], int size)
 			}
 			castShow[i] = 1;
 
-			ResLock(RES_VIEW, theViewNum, FALSE);
+			ResLock(RES_VIEW, theViewNum, false);
 
 			//if ignrAct bit is not set we draw a control box
 			if (!(signal & ignrAct))
@@ -808,12 +808,12 @@ global void ReAnimate(RRect* badRect)
 
 			//handle scaled views accordingly */
 			view = ResLoad(RES_VIEW, dupPtr->v);
-			ResLock(RES_VIEW, dupPtr->v, TRUE);
+			ResLock(RES_VIEW, dupPtr->v, true);
 
 			if((dupPtr->isScaled & VM_SCALABLE))
 			{
 				him = dupPtr->this;
-				doScale(him, view, dupPtr->l, dupPtr->c,&dupPtr->u, dupPtr->isScaled, (word) TRUE);
+				doScale(him, view, dupPtr->l, dupPtr->c,&dupPtr->u, dupPtr->isScaled, (word)true);
 			}
 			else
 			{
@@ -821,7 +821,7 @@ global void ReAnimate(RRect* badRect)
 				DrawCel(view, dupPtr->l, dupPtr->c, &dupPtr->r, dupPtr->p);
 			}
 
-			ResLock(RES_VIEW, dupPtr->v, FALSE);
+			ResLock(RES_VIEW, dupPtr->v, false);
 		}
 
 		//Show the disturbed rectangle

@@ -133,7 +133,7 @@ ObjID AddAfter(List *list, ObjID node, ObjID element, ...)
 
 	((Node*)Native(element))->key = va_arg(key, uint);
 
-	return (element);
+	return element;
 }
 
 
@@ -158,7 +158,7 @@ ObjID AddBefore(List *list, ObjID node, ObjID element, ...)
 
 	((Node *)Native(element))->key = va_arg(key, uint);
 
-	return (element);
+	return element;
 }
 
 
@@ -183,7 +183,7 @@ ObjID AddToFront(List *list, ObjID element, ...)
 
 	((Node *)Native(element))->key = va_arg(key, uint);
 
-	return (element);
+	return element;
 }
 
 
@@ -205,7 +205,7 @@ global ObjID MoveToFront(List *list, ObjID node)
 		PrevNode(node) = NULL;
 	}
 
-	return (node);
+	return node;
 }
 
 ObjID AddToEnd(List *list, ObjID element, ...)
@@ -229,7 +229,7 @@ ObjID AddToEnd(List *list, ObjID element, ...)
 
 	((Node *)Native(element))->key = va_arg(key, uint);
 
-	return (element);
+	return element;
 }
 
 
@@ -251,7 +251,7 @@ global ObjID MoveToEnd(List *list, ObjID node)
 		NextNode(node) = NULL;
 	}
 
-	return (node);
+	return node;
 }
 
 
@@ -260,11 +260,11 @@ global ObjID FindKey(List *list, ObjID key)
 	ObjID node;
 
 	if (list == NULL)
-		return(NULL);
+		return NULL;
 	for (node = FirstNode(list); node != NULL && GetKey(node) != key; node = NextNode(node))
 		;
 
-	return (node);
+	return node;
 }
 
 
@@ -275,6 +275,6 @@ global ObjID DeleteKey(List *list, ObjID key)
 	if ((node = FindKey(list, key)) != NULL)
 		DeleteNode(list, node);
 
-	return (node);
+	return node;
 }
 

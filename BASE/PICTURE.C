@@ -65,72 +65,72 @@ global void ShowPic(word mapSet, word style)
 	{
 		case PIXELDISSOLVE:
 			if(style & BLACKOUT)
-				Dissolve((mapSet | PDFLAG | PDBOFLAG), TRUE);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
-			Dissolve((mapSet | PDFLAG), FALSE);
+				Dissolve((mapSet | PDFLAG | PDBOFLAG), true);
+			SetCLUT((RPalette far*)&sysPalette, false);
+			Dissolve((mapSet | PDFLAG), false);
 			break;
 			//else fall through and do DISSOLVE
 		case DISSOLVE:
 			if(style & BLACKOUT)
-				Dissolve(mapSet, TRUE);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
-			Dissolve(mapSet, FALSE);
+				Dissolve(mapSet, true);
+			SetCLUT((RPalette far*)&sysPalette, false);
+			Dissolve(mapSet, false);
 			break;
 
 		case IRISOUT:
 			if(style & BLACKOUT)
-				Iris(-1, mapSet, TRUE);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
+				Iris(-1, mapSet, true);
+			SetCLUT((RPalette far*)&sysPalette, false);
 			Iris(1, mapSet, 0);
 		break;
 
 		case IRISIN:
 			if(style & BLACKOUT)
-				Iris(1, mapSet, TRUE);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
+				Iris(1, mapSet, true);
+			SetCLUT((RPalette far*)&sysPalette, false);
 			Iris(-1, mapSet, 0);
 			break;
 
 		case WIPERIGHT:
 			if(style & BLACKOUT)
-				HWipe(-WIPEWIDE, mapSet, TRUE);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
-			HWipe(WIPEWIDE, mapSet, FALSE);
+				HWipe(-WIPEWIDE, mapSet, true);
+			SetCLUT((RPalette far*)&sysPalette, false);
+			HWipe(WIPEWIDE, mapSet, false);
 			break;
 
 		case WIPELEFT:
 			if(style & BLACKOUT)
-				HWipe(WIPEWIDE, mapSet, TRUE);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
-			HWipe(-WIPEWIDE, mapSet, FALSE);
+				HWipe(WIPEWIDE, mapSet, true);
+			SetCLUT((RPalette far*)&sysPalette, false);
+			HWipe(-WIPEWIDE, mapSet, false);
 			break;
 
 		case WIPEDOWN:
 			if(style & BLACKOUT)
-				VWipe(-WIPEHIGH, mapSet, TRUE);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
-			VWipe(WIPEHIGH, mapSet, FALSE);
+				VWipe(-WIPEHIGH, mapSet, true);
+			SetCLUT((RPalette far*)&sysPalette, false);
+			VWipe(WIPEHIGH, mapSet, false);
 			break;
 
 		case WIPEUP:
 			if(style & BLACKOUT)
-				VWipe(WIPEHIGH, mapSet, TRUE);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
-			VWipe(-WIPEHIGH, mapSet, FALSE);
+				VWipe(WIPEHIGH, mapSet, true);
+			SetCLUT((RPalette far*)&sysPalette, false);
+			VWipe(-WIPEHIGH, mapSet, false);
 			break;
 
 		case HSHUTTER:
 			if(style & BLACKOUT)
-				Shutter(-WIPEWIDE, 0, mapSet, TRUE);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
-			Shutter(WIPEWIDE, 0, mapSet, FALSE);
+				Shutter(-WIPEWIDE, 0, mapSet, true);
+			SetCLUT((RPalette far*)&sysPalette, false);
+			Shutter(WIPEWIDE, 0, mapSet, false);
 			break;
 
 		case VSHUTTER:
 			if(style & BLACKOUT)
-				Shutter(0, -WIPEHIGH, mapSet, TRUE);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
-			Shutter(0, WIPEHIGH, mapSet, FALSE);
+				Shutter(0, -WIPEHIGH, mapSet, true);
+			SetCLUT((RPalette far*)&sysPalette, false);
+			Shutter(0, WIPEHIGH, mapSet, false);
 			break;
 
 		case FADEOUT:
@@ -139,12 +139,12 @@ global void ShowPic(word mapSet, word style)
 			for (i = 100; i >= 0; i -= 10)
 			{
 				SetPalIntensity((RPalette far*)&workPalette, 1, 255, i);
-				SetCLUT((RPalette far*)&workPalette, FALSE);
+				SetCLUT((RPalette far*)&workPalette, false);
 			}
 
 			//change the visible data
 			SetPalIntensity((RPalette far*)&sysPalette, 0, 256, 0);
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
+			SetCLUT((RPalette far*)&sysPalette, false);
 			RSetRect(&r, 0, 0, rThePort->portRect.right, rThePort->portRect.bottom);
 			ShowBits(&r, mapSet);
 
@@ -152,7 +152,7 @@ global void ShowPic(word mapSet, word style)
 			for (i = 10; i <= 100; i += 10)
 			{
 				SetPalIntensity((RPalette far *) &sysPalette, 0, 256, i);
-				SetCLUT((RPalette far*)&sysPalette, FALSE);
+				SetCLUT((RPalette far*)&sysPalette, false);
 			}
 			break;
 
@@ -160,7 +160,7 @@ global void ShowPic(word mapSet, word style)
 		case SCROLLLEFT:
 		case SCROLLUP:
 		case SCROLLDOWN:
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
+			SetCLUT((RPalette far*)&sysPalette, false);
 			ShiftScreen(rThePort->portRect.top + rThePort->origin.v,
 				rThePort->portRect.left   + rThePort->origin.h,
 				rThePort->portRect.bottom + rThePort->origin.v,
@@ -169,7 +169,7 @@ global void ShowPic(word mapSet, word style)
 			break;
 
 		default: //Simply draw the whole screen
-			SetCLUT((RPalette far*)&sysPalette, FALSE);
+			SetCLUT((RPalette far*)&sysPalette, false);
 			RSetRect(&r, 0, 0, rThePort->portRect.right, rThePort->portRect.bottom);
 			ShowBits(&r, mapSet);
 			break;
@@ -185,7 +185,7 @@ global word CoordPri(int y)
 {
 	if (y >= priBottom)
 		y = priBottom - 1;
-	return((int)priTable[y]);
+	return (int)priTable[y];
 }
 
 
@@ -195,14 +195,14 @@ global word PriCoord(int p)
 	word i;
 
 	if (p >= 15)
-		return(priBottom);
+		return priBottom;
 
 	for (i = 0 ; i < priBottom; i++)
 	{
 		if (priTable[i] >= (byte) p)
 			break;
 	}
-	return(i);
+	return i;
 }
 
 

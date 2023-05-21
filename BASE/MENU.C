@@ -557,7 +557,7 @@ static word near KeySelect()
 	}
 
 	RSetPort(oldPort);
-	return(ret);
+	return ret;
 }
 
 
@@ -628,7 +628,7 @@ static word near MouseSelect()
 	if (item)
 		item |= (menu << 8);
 
-	return(item);
+	return item;
 }
 
 
@@ -646,11 +646,9 @@ static word near FindTitle(RPoint *mp)
 		RCopyRect(&menu->bar, &r);
 		++r.bottom;
 		if (RPtInRect(mp, &r))
-		{
-			return(m);
-		}
+			return m;
 	}
-	return(0);
+	return 0;
 }
 
 
@@ -670,10 +668,10 @@ static word near FindItem(word m, RPoint *mp)
 		{
 			item = menu->item[i];
 			if ((dActive & item->state) && RPtInRect(mp, &item->bar))
-				return(i);
+				return i;
 		}
 	}
-	return(0);
+	return 0;
 }
 
 
@@ -875,7 +873,7 @@ static strptr near GetKeyStr(strptr str, word key)
 			}
 		}
 	}
-	return(str);
+	return str;
 }
 
 
@@ -906,11 +904,11 @@ static word near PickUp(word m, word i)
 				//select current and exit
 				RInvertRect(&item->bar);
 				ShowBits(&item->bar, VMAP);
-				return(i);
+				return i;
 			}
 		}
 	}
-	return(i);
+	return i;
 }
 
 
@@ -944,11 +942,11 @@ static word near PickDown(word m, word i)
 				//select current and exit
 				RInvertRect(&item->bar);
 				ShowBits(&item->bar, VMAP);
-				return(i);
+				return i;
 			}
 		}
 	}
-	return(i);
+	return i;
 }
 #endif
 

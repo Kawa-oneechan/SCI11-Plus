@@ -7,7 +7,7 @@
 #include "graph.h"
 #include "mouse.h"
 
-bool mouseIsDebug = FALSE;
+bool mouseIsDebug = false;
 word buttonState = 0;
 
 

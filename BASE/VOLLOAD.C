@@ -131,7 +131,7 @@ global Handle LoadResMap(char *mapName)
 		}
 		close(fd);
 	}
-	return(buffer);
+	return buffer;
 }
 
 
@@ -155,18 +155,18 @@ global bool ResCheck(byte resType, uint resId)
 	pathName[0] = '\0';
 
 	if (FindDirEntry(&dumylong, resType, resId, &dumy))
-		return(TRUE);
+		return true;
 	if (FindPatchEntry(resType, resId) != -1)
-		return TRUE;
+		return true;
 	if ((dumy = ROpenResFile(resType, resId, pathName)) != CLOSED)
 	{
 		close(dumy);
-		return TRUE;
+		return true;
 	}
 	if ((resType == RES_AUDIO || resType == RES_WAVE) && FindAudEntry(resId) != -1L)
-		return TRUE;
+		return true;
 
-	return(FALSE);
+	return false;
 }
 
 
@@ -180,24 +180,24 @@ global bool ResCheck36(byte resType, uint module, byte noun, byte verb, byte con
 	if (resType == RES_AUDIO36)
 	{
 		if (FindAud36Entry(module, noun, verb, cond, sequ) != -1L)
-			return(TRUE);
+			return true;
 		if ((dumy = ROpenResFile(RES_AUDIO, 0, pathName)) == (uint) CLOSED)
-			return(FALSE);
+			return false;
 		close(dumy);
-		return(TRUE);
+		return true;
 	}
 
 	if (resType == RES_SYNC36)
 	{
 		if (FindSync36Entry(module, noun, verb, cond, sequ, &dumy) != -1L)
-			return(TRUE);
+			return true;
 		if ((dumy = ROpenResFile(RES_SYNC, 0, pathName)) == (uint) CLOSED)
-			return(FALSE);
+			return false;
 		close(dumy);
-		return(TRUE);
+		return true;
 	}
 
-	return(FALSE);
+	return false;
 }
 
 
@@ -207,7 +207,7 @@ global Handle DoLoad(byte resType, uint resId)
 	ulong offset;
 	char fileName[64];
 	byte typeLen;
-	bool loadedFromFile = FALSE;
+	bool loadedFromFile = false;
 	long seek;
 	int fd, n;
 	Handle outHandle;
@@ -227,7 +227,7 @@ global Handle DoLoad(byte resType, uint resId)
 
 	if ((fd = ROpenResFile(resType, resId, fileName)) != CLOSED)
 	{
-		loadedFromFile = TRUE;
+		loadedFromFile = true;
 		dataInfo.compressUsed = 0;
 		dataInfo.length = (uword) filelength(fd) - 2;
 
@@ -315,7 +315,7 @@ global Handle DoLoad(byte resType, uint resId)
 	AudioResume();
 
 	//return pointer/handle or 0 for error
-	return(outHandle);
+	return outHandle;
 }
 
 
@@ -326,14 +326,14 @@ global bool FindDirEntry(ulong *offset, byte resType, uword resId, int *resFd)
 	if (altVolFd != CLOSED && alternateMap && FindDirEntryMap(offset, resType, resId, alternateMap))
 	{
 		*resFd = altVolFd;
-		return(TRUE);
+		return true;
 	}
 	if (resVolFd != CLOSED && resourceMap && FindDirEntryMap(offset, resType, resId, resourceMap))
 	{
 		*resFd = resVolFd;
-		return(TRUE);
+		return true;
 	}
-	return(FALSE);
+	return false;
 }
 
 
@@ -344,13 +344,13 @@ global bool FindDirEntryMap(ulong *offset, byte resType, uword resId, Handle res
 	register ResDirHdrEntry far *header;
 
 	if (!resMap)
-		return(FALSE);
+		return false;
 
 	//find the resource type in the resource map header
 	header = (ResDirHdrEntry far*)*resMap;
 	while (header->resType != resType)
 		if (header->resType == 255)
-			return(FALSE);
+			return false;
 		else
 			++header;
 	firstOffset = GetWord(header->resTypeOffset);
@@ -368,13 +368,13 @@ global bool FindDirEntryMap(ulong *offset, byte resType, uword resId, Handle res
 			*offset = ((ulong)entry->volWOffset1 << 1) +
 			((ulong)entry->volWOffset2 << 9) +
 			((ulong)entry->volWOffset3 << 17);
-			return(TRUE);
+			return true;
 		}
 		if (entry->resId < resId)
 			firstOffset = midOffset + sizeof(ResDirEntry);
 		else
 			lastOffset = midOffset - sizeof(ResDirEntry);
 	}
-	return(FALSE);
+	return false;
 }
 

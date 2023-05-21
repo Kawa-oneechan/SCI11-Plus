@@ -63,7 +63,7 @@ void AltResMemInit()
 			}
 		}
 		if (!nARMs)
-			useAltResMem = FALSE;
+			useAltResMem = false;
 	}
 }
 
@@ -130,7 +130,7 @@ bool AltResMemWrite(LoadLink far** loadLinkpp)
 			;
 
 		if (!purgee)
-			return FALSE;
+			return false;
 
 		armIndex = (*purgee)->altResMem;
 
@@ -150,7 +150,7 @@ bool AltResMemWrite(LoadLink far** loadLinkpp)
 				;
 
 			if (!purgee)
-				return FALSE;
+				return false;
 		}
 	}
 
@@ -170,7 +170,7 @@ bool AltResMemWrite(LoadLink far** loadLinkpp)
 	(*loadLinkpp)->lData.armHandle = armHandle;
 
 	SetResCursor(ArrowCursor);
-	return TRUE;
+	return true;
 }
 
 

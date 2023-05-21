@@ -59,7 +59,7 @@ global void InitDialog(boolfptr proc)
 	{
 		//load and lock FONT.000
 		ResLoad(RES_FONT, 0);
-		ResLock(RES_FONT, 0, TRUE);
+		ResLock(RES_FONT, 0, true);
 		//now set the alert procedure
 		SetAlertProc(proc);
 	}
@@ -82,7 +82,7 @@ global void DrawCursor(RRect *box, strptr textBuf, int cursor)
 
 		ToggleCursor();
 	}
-	curOn = TRUE;
+	curOn = true;
 	SetFlash();
 }
 
@@ -91,7 +91,7 @@ global void EraseCursor()
 {
 	if (curOn)
 		ToggleCursor();
-	curOn = FALSE;
+	curOn = false;
 	SetFlash();
 }
 
@@ -126,7 +126,7 @@ global word EditControl(Obj *item, Obj *evt)
 
 	//if this is a NULL control (zero) exit
 	if (!item)
-		return(0);
+		return 0;
 
 	switch (GetProperty(item, s_type))
 	{
@@ -167,7 +167,7 @@ global word EditControl(Obj *item, Obj *evt)
 			RSetFont(oldFont);
 			break;
 	}
-	return(0);
+	return 0;
 }
 
 
@@ -205,6 +205,7 @@ global word* DrawControl(Obj *item)
 	strptr text;
 	int font, oldFont, type, state;
 	word *nRect;
+	int back = -1, color = 0; //KAWA WAS HERE
 
 	nRect = NULL;
 
@@ -222,6 +223,11 @@ global word* DrawControl(Obj *item)
 	if (RespondsTo(item, s_font))
 		font = GetProperty(item, s_font);
 
+	//KAWA WAS HERE
+	if (RespondsTo(item, s_back)) back = GetProperty(item, s_back);
+	if (RespondsTo(item, s_color)) color = GetProperty(item, s_color);
+	if (color == back) color = 255;
+
 	//leave ur set to encompass the entire area affected
 	switch (type)
 	{
@@ -237,18 +243,21 @@ global word* DrawControl(Obj *item)
 			RInsetRect(&r, -1, -1);
 			REraseRect(&r);
 			//RFillRect(&r, VMAP, 8); Used to be green, now lt black
+			if (back != -1) RFillRect(&r, VMAP, back); //KAWA WAS HERE
 			RFrameRect(&r);
 			RCopyRect(&r, &ur);
 
 			//box is sized 1 larger in intrface
 			RInsetRect(&r, 2, 2);
-			PenColor(0);
+			//PenColor(0);
+			PenColor(color); //KAWA WAS HERE
 			if (dActive & state)
 				RTextFace(PLAIN);
 			else
 				RTextFace(DIM);
 			nRect = RTextBox(text, 0, &r, TEJUSTCENTER, font);
 			RTextFace(0);
+			PenColor(0);
 
 			//back it out for frame
 			RInsetRect(&r, -1, -1);
@@ -258,6 +267,7 @@ global word* DrawControl(Obj *item)
 			RInsetRect(&r, -1, -1);
 			REraseRect(&r);
 			RInsetRect(&r, 1, 1);
+			//PenColor(color); //KAWA WAS HERE
 			nRect = RTextBox(text, 0, &r, GetProperty(item, s_mode), font);
 			RCopyRect(&r, &ur);
 			break;
@@ -272,10 +282,12 @@ global word* DrawControl(Obj *item)
 		case dEdit:
 			//ensure that minimum control area is clear
 			REraseRect(&r);
+			if (back != -1) RFillRect(&r, VMAP, back); //KAWA WAS HERE
 			RInsetRect(&r, -1, -1);
 			RFrameRect(&r);
 			RCopyRect(&r, &ur);
 			RInsetRect(&r, 1, 1);
+			PenColor(color); //KAWA WAS HERE
 			nRect = RTextBox(text, 0, &r, TEJUSTLEFT, font);
 			break;
 
@@ -307,7 +319,7 @@ global word* DrawControl(Obj *item)
 	//show the item's complete rectangle if NOT picNotValid
 	if (!noShowBits)
 		ShowBits(&ur, VMAP);
-	return(nRect);
+	return nRect;
 }
 
 
@@ -413,8 +425,8 @@ int EditText(RRect *box, strptr text, int cursor, int max, REventRecord *evt)
 	int textLen;
 
 	oldCursor = cursor;
-	changed = FALSE;
-	delete = FALSE;
+	changed = false;
+	delete = false;
 	textLen = strlen(text);
 
 	switch(evt->type)
@@ -436,12 +448,12 @@ int EditText(RRect *box, strptr text, int cursor, int max, REventRecord *evt)
 					//clear line
 					cursor = 0;
 					*text = 0;
-					changed = TRUE;
+					changed = true;
 					break;
 
 				case BS:
 					//destructive backspace
-					delete = TRUE;
+					delete = true;
 					if (cursor)
 					--cursor;
 					break;
@@ -455,7 +467,7 @@ int EditText(RRect *box, strptr text, int cursor, int max, REventRecord *evt)
 				case DELETE:
 					//delete at cursor
 					if (cursor != textLen)
-						delete = TRUE;
+						delete = true;
 					break;
 
 				case RIGHTARROW:
@@ -471,7 +483,7 @@ int EditText(RRect *box, strptr text, int cursor, int max, REventRecord *evt)
 						//draw outside of our enclosing rectangle
 						if (textLen + 1 < max && RCharWidth((char) msg) + RStringWidth(text) < (box->right - box->left))
 						{
-							changed = TRUE;
+							changed = true;
 							//shift it up one
 							for (i = textLen ; i >= cursor; i--)
 								*(text + i + 1) = *(text + i);
@@ -485,7 +497,7 @@ int EditText(RRect *box, strptr text, int cursor, int max, REventRecord *evt)
 			//if delateAt, we delete the character at cursor
 			if (delete)
 			{
-				changed = TRUE;
+				changed = true;
 				//collapse the string from cursor on
 				for (i = cursor; i < textLen; i++)
 					*(text + i) = *(text + i + 1);

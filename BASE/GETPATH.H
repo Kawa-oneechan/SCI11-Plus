@@ -53,7 +53,6 @@ extern AvdPoint* MergePolygons(AvdPoint*, polygon*);
 
 #define sign(x) ((x) > 0 ? 1: (x) < 0 ? -1 : 0)
 #define ENDOFPATH	0x7777
-#define FALSE		0
 #define NOINTERSECT -1
 #define INTERSECT	1
 #define COLINEAR	0
@@ -66,19 +65,18 @@ extern AvdPoint* MergePolygons(AvdPoint*, polygon*);
 #define MAXPATH		100
 #define MAXVALUELONG	0x7FFFFFFF
 #define MAXVALUEINT		0x7FFF
-#define TRUE		1
 #define MAXPATCHES	8
 
 //Types of polygons
 #define TAP 0 //Total access polygon
 #define NAP 1 //Near point access polygon
 #define BAP 2 //Barred access polygon
-#define CAP 3 //Contained accessable polygon
+#define CAP 3 //Contained accessible polygon
 
 #define MTP 16 //Merged total access polygon
 #define MNP 17 //Merged near point access polygon
 #define MBP 18 //Merged barred access polygon
-#define MCP 19 //Merged contained accessable polygon
+#define MCP 19 //Merged contained accessible polygon
 
 #define PInPolygon 1
 #define MAXOPTIMIZEDNODES 3

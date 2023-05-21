@@ -29,7 +29,7 @@ static int near numberOfVoices;
 static int near numberOfDACs;
 static int near devID;
 
-global bool soundOn = TRUE;
+global bool soundOn = true;
 
 static struct
 {
@@ -50,8 +50,8 @@ global bool InitSoundDriver()
 #ifdef IBM
 	if ((soundDrv = LoadHandle(soundDriver)) == (Handle)NULL)
 	{
-		RAlert(E_CANT_FIND, soundDriver);
-		return (FALSE);
+		RAlert(E_NO_AUDIO_DRVR, soundDriver);
+		return false;
 	}
 	LockHandle(soundDrv);
 #endif
@@ -68,7 +68,7 @@ global bool InitSoundDriver()
 			patchHandle = ResLoad(RES_PATCH, (patchNum & 0x7f));
 		if (patchNum & 0x80)
 		{
-			ResLock(RES_PATCH, (patchNum & 0x7f), TRUE);
+			ResLock(RES_PATCH, (patchNum & 0x7f), true);
 			LockHandle(patchHandle);
 		}
 	}
@@ -79,16 +79,16 @@ global bool InitSoundDriver()
 	{
 		DisposeHandle(soundDrv);
 		RAlert(E_NO_MUSIC);
-		return(FALSE);
+		return false;
 	}
 #endif
 
 	InitList(&soundList);
 	InstallServer(SoundServer,1);
 
-	DoSound(SProcess, TRUE);
+	DoSound(SProcess, true);
 
-	return(TRUE);
+	return true;
 }
 
 
@@ -118,12 +118,12 @@ global void KillAllSounds()
 		else
 		{
 			DoSound(SEnd, (char far*)sn);
-			ResLock(RES_SOUND, sn->sNumber,FALSE);
+			ResLock(RES_SOUND, sn->sNumber, false);
 			if (theHandle = (Handle)Native(GetProperty((Obj*)Native(sn->sKey), s_handle)))
 			{
 				if ((int)theHandle != 1)
 				{
-					CriticalHandle(theHandle,FALSE);
+					CriticalHandle(theHandle, false);
 					UnlockHandle(theHandle);
 				}
 			}
@@ -159,8 +159,8 @@ global void RestoreAllSounds()
 			if (sn->sState)
 			{
 				sHandle = ResLoad(RES_SOUND, soundId);
-				CriticalHandle(sHandle, TRUE);
-				ResLock(RES_SOUND, soundId, TRUE);
+				CriticalHandle(sHandle, true);
+				ResLock(RES_SOUND, soundId, true);
 
 				SetProperty(soundObj, s_handle, (uint)Pseudo(sHandle));
 				sn->sPointer = (char far*)sHandle;
@@ -183,9 +183,9 @@ global void RestoreAllSounds()
 global byte GetSoundResType(uint resId)
 {
 	if (audioDrv && !audNone && (ResCheck(RES_AUDIO, resId) || ResCheck(RES_WAVE, resId)))
-		return(RES_AUDIO);
+		return RES_AUDIO;
 	else
-		return(RES_SOUND);
+		return RES_SOUND;
 }
 
 //Kernel Functions
@@ -271,7 +271,7 @@ global KERNEL(DoSound)
 
 
 //Use the SProcess function of MIDI.S to ignore or honor calls to SoundServer.
-//A TRUE value in onOff will cause sounds to be suspended, while a FALSE value will cause them to continue
+//A true value in onOff will cause sounds to be suspended, while a false value will cause them to continue
 global void SuspendSounds(int onOff)
 {
 	DoSound(SProcess, !onOff);
@@ -380,8 +380,8 @@ global void PlaySnd(Obj *soundObj, int how)
 			}
 			if ((sHandle = ResLoad(RES_SOUND, soundId)) == NULL)
 				return;
-			CriticalHandle(sHandle, TRUE);
-			ResLock(RES_SOUND, soundId, TRUE);
+			CriticalHandle(sHandle, true);
+			ResLock(RES_SOUND, soundId, true);
 		}
 		else
 		{
@@ -404,9 +404,9 @@ global void PlaySnd(Obj *soundObj, int how)
 		//KAWA WAS HERE again.
 		sn->sVolume = (char)GetProperty(soundObj, s_vol);
 		if (GetProperty(soundObj, s_loop) == -1)
-			sn->sLoop = TRUE;
+			sn->sLoop = true;
 		else
-			sn->sLoop = FALSE;
+			sn->sLoop = false;
 
 		//In the future, the volume property will be set to a value that will be passed into this function
 
@@ -472,12 +472,12 @@ global void StopSnd(Obj *soundObj)
 		{
 			Handle theHandle;
 
-			ResLock(RES_SOUND, sn->sNumber,FALSE);
+			ResLock(RES_SOUND, sn->sNumber, false);
 			if (theHandle = (Handle) Native(GetProperty(soundObj, s_handle)))
 			{
 				if ((int)theHandle != 1)
 				{
-					CriticalHandle(theHandle,FALSE);
+					CriticalHandle(theHandle, false);
 					UnlockHandle(theHandle);
 				}
 			}
@@ -561,12 +561,12 @@ global void SetSndPri(Obj *soundObj, int newPri)
 	{
 		if (newPri == -1)
 		{
-			sn->sFixedPri = FALSE;
+			sn->sFixedPri = false;
 			SetProperty(soundObj, s_flags, (GetProperty(soundObj, s_flags) & (-1 - mFIXEDPRI)));
 		}
 		else
 		{
-			sn->sFixedPri = TRUE;
+			sn->sFixedPri = true;
 			SetProperty(soundObj, s_flags, (GetProperty(soundObj, s_flags) | mFIXEDPRI));
 			DoSound(SChangePri, (char far*)sn,newPri);
 		}
@@ -584,12 +584,12 @@ global void SetSndLoop(Obj *soundObj, int newLoop)
 		if (newLoop == -1)
 		{
 			SetProperty(soundObj, s_loop, -1);
-			sn->sLoop = TRUE;
+			sn->sLoop = true;
 		}
 		else
 		{
 			SetProperty(soundObj, s_loop,1);
-			sn->sLoop = FALSE;
+			sn->sLoop = false;
 		}
 	}
 }

@@ -81,7 +81,7 @@ KERNEL(SaveGame)
 	desc = Native(arg(3));
 	gameVer = Native(arg(4));
 	ResetDisk();
-	diskIOCritical = FALSE;
+	diskIOCritical = false;
 
 	reverbDefault = DoSound(SSetReverb,254);
 
@@ -90,7 +90,7 @@ KERNEL(SaveGame)
 	if ((fd = creat(file, 0)) == -1)
 	{
 		acc = 0;
-		diskIOCritical = TRUE;
+		diskIOCritical = true;
 		return;
 	}
 	//Bailout point for errors during actual save.
@@ -98,7 +98,7 @@ KERNEL(SaveGame)
 	{
 		close(fd);
 		acc = 0;
-		diskIOCritical = TRUE;
+		diskIOCritical = true;
 		return;
 	}
 	//Write the lengths of saved variables and heap.  These will be used
@@ -127,7 +127,7 @@ KERNEL(SaveGame)
 
 	close(fd);
 	PutSaveFiles(name, desc, num);
-	diskIOCritical = TRUE;
+	diskIOCritical = true;
 	acc = 1;
 }
 
@@ -149,25 +149,25 @@ KERNEL(RestoreGame)
 
 	//Turn off sound processing, so that we don't get clobbered while
 	//reading in over the current sound list.
-	DoSound(SProcess,FALSE);
+	DoSound(SProcess, false);
 	KillAllSounds();
 
 	ResetDisk();
 	DisposeLastCast();
-	diskIOCritical = FALSE;
+	diskIOCritical = false;
 
 	//Open the savegame file and check its validity.  Bail out if not from
 	//this version of the game.
 	MakeFileName(file, Native(arg(1)), arg(2));
 	if ((fd = open(file, 0)) == -1)
 	{
-		diskIOCritical = TRUE;
+		diskIOCritical = true;
 		return;
 	}
 	if (!CheckSaveGame(Native(arg(3))))
 	{
 		close(fd);
-		diskIOCritical = TRUE;
+		diskIOCritical = true;
 		return;
 	}
 
@@ -243,8 +243,8 @@ KERNEL(RestoreGame)
 
 	//Set the flag indicating a restore.
 	gameRestarted = 2;
-	diskIOCritical = TRUE;
-	DoSound(SProcess,TRUE);
+	diskIOCritical = true;
+	DoSound(SProcess, true);
 
 	//Now restore the stack and restart the PMachine.
 	longjmp(restartBuf, 1);
@@ -262,15 +262,15 @@ KERNEL(CheckSaveGame)
 	char file[64];
 
 	MakeFileName(file, Native(arg(1)), arg(2));
-	diskIOCritical = FALSE;
+	diskIOCritical = false;
 	if ((fd = open(file, 0)) == -1)
-		acc = FALSE;
+		acc = false;
 	else
 	{
 		acc = CheckSaveGame(Native(arg(3)));
 		close(fd);
 	}
-	diskIOCritical = TRUE;
+	diskIOCritical = true;
 }
 
 
@@ -279,11 +279,11 @@ static bool near CheckSaveGame(strptr gameVer)
 	char vStr[20];
 	int saveSize, heapSize;
 
-	if (setjmp(saveErr) != 0) return FALSE;
+	if (setjmp(saveErr) != 0) return false;
 	saveSize = inword();
 	heapSize = inword();
 	sci_fgets(vStr, 20, fd);
-	return(
+	return (
 		(saveSize == (&saveEnd - &saveStart)) &&
 		(heapSize == (handleBase - heapBase)) &&
 		(strcmp(vStr, gameVer) == 0)
@@ -306,10 +306,10 @@ ulong GetSaveLength()
 	//Find out how much memory we need.
 	memNeeded = &saveEnd - &saveStart;
 	//if ((handleBase - heapBase) > (int)memNeeded) //KAWA WAS HERE
-	if ((handleBase - heapBase) > memNeeded)
+	if ((uint)(handleBase - heapBase) > memNeeded)
 		memNeeded = handleBase - heapBase;
 	//if ((&sysPalette.palIntensity[256] - &sysPalette.palIntensity[0]) > (int)memNeeded) //KAWA WAS HERE
-	if ((&sysPalette.palIntensity[256] - &sysPalette.palIntensity[0]) > memNeeded)
+	if ((uint)(&sysPalette.palIntensity[256] - &sysPalette.palIntensity[0]) > memNeeded)
 		memNeeded = &sysPalette.palIntensity[256] - &sysPalette.palIntensity[0];
 	if (sizeof(RPalette) > memNeeded)
 		memNeeded = sizeof(RPalette);
@@ -406,14 +406,14 @@ static int near GetSaveFiles(strptr name, strptr names, int *nums)
 	int n, tempNum, numSaves;
 
 	ResetDisk();
-	diskIOCritical = FALSE;
+	diskIOCritical = false;
 	//Open the directory.  If we can't do so, we'll fill in the arrays with defaults.
 	numSaves = 0;
 	MakeDirName(file, name);
 	fd = open(file, 0);
 	if (fd == -1)
 	{
-		diskIOCritical = TRUE;
+		diskIOCritical = true;
 		if (criticalError)
 			return (-1);
 	}
@@ -421,7 +421,7 @@ static int near GetSaveFiles(strptr name, strptr names, int *nums)
 	{
 		if (setjmp(saveErr) != 0)
 		{
-			diskIOCritical = TRUE;
+			diskIOCritical = true;
 			close(fd);
 			return -1;
 		}
@@ -442,8 +442,8 @@ static int near GetSaveFiles(strptr name, strptr names, int *nums)
 		close(fd);
 	}
 	*names = 0;
-	diskIOCritical = TRUE;
-	return (numSaves);
+	diskIOCritical = true;
+	return numSaves;
 }
 
 
@@ -460,7 +460,7 @@ static bool near PutSaveFiles(strptr name, strptr desc, int num)
 	//Open/create the directory.
 	MakeDirName(file, name);
 	if ((fd = creat(file, 0)) == -1)
-		return FALSE;
+		return false;
 	//Now re-write the directory with the requested file first.
 	outword(num);
 	outstr(desc);
@@ -474,6 +474,6 @@ static bool near PutSaveFiles(strptr name, strptr desc, int num)
 	}
 	outword(-1);
 	close(fd);
-	return TRUE;
+	return true;
 }
 

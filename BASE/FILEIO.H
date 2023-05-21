@@ -78,7 +78,7 @@ enum fileFuncs
 extern bool criticalError;
 
 size_t readfar(int handle, Handle buffer, size_t length);
-uint ReadDos (int fd, byte far *buffer, int len);
+uint ReadDos(int fd, byte far *buffer, int len);
 size_t WriteDos(int handle, void far *buffer, size_t length);
 ulong filelength(int handle);
 int unlink(strptr name);

@@ -125,12 +125,12 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 			if (lastCount &&  max < RTextWidth(first , 0, count, defaultFont))
 			{
 				*str = last;
-				return(lastCount);
+				return lastCount;
 			}
 			else
 			{
 				(*str)++; //so we don't see it later
-				return(count); //caller sees end of string
+				return count; //caller sees end of string
 			}
 		}
 		if (c == LF)
@@ -140,12 +140,12 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 			if (lastCount &&  max < RTextWidth(first , 0, count, defaultFont))
 			{
 				*str = last;
-				return(lastCount);
+				return lastCount;
 			}
 			else
 			{
 				(*str)++; //so we don't see it later
-				return(count); //caller sees end of string
+				return count; //caller sees end of string
 			}
 		}
 
@@ -154,11 +154,11 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 			if (lastCount && max < RTextWidth(first , 0, count, defaultFont))
 			{
 				*str = last;
-				return(lastCount);
+				return lastCount;
 			}
 			else
 			{
-				return(count); //caller sees end of string
+				return count; //caller sees end of string
 			}
 		}
 
@@ -176,7 +176,7 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 				//eliminate trailing spaces
 				while (**str == ' ')
 					++(*str);
-				return(lastCount);
+				return lastCount;
 			}
 		}
 
@@ -190,7 +190,7 @@ global int GetLongest(strptr *str, int max, int defaultFont)
 			{
 				last += --count;
 				*str = last;
-				return(count);
+				return count;
         	}
 		}
 	}
@@ -240,7 +240,7 @@ global int GetHighest(strptr str, int cnt, int defaultFont)
 		}
 	}
 	RSetFont(oldFont);
-	return(pointSize);
+	return pointSize;
 }
 
 
@@ -295,7 +295,7 @@ global word* RTextBox(strptr text, int show, RRect *box, word mode, word font)
 		height += pointSize;
 	}
 
-	/* restore old font */
+	//restore old font
 	RSetFont(oldFont);
 	for (i = 0; i < rectIndex; i++)
 	{
@@ -310,13 +310,13 @@ global word* RTextBox(strptr text, int show, RRect *box, word mode, word font)
 		DisposePtr(newRect);
 		newRect = NULL;
 	}
-	return(newRect);
+	return newRect;
 }
 
 
 global int RStringWidth(strptr str)
 {
-	return(RTextWidth(str, 0, strlen(str), GetFont()));
+	return RTextWidth(str, 0, strlen(str), GetFont());
 }
 
 

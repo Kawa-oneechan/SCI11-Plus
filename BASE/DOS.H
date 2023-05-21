@@ -39,7 +39,8 @@ extern void GetExecDir(strptr);
 #define dosFileDT		0x57
 
 #ifndef _FIND_T_DEFINED
-struct find_t {
+struct find_t
+{
 	char reserved[21];
 	char attrib;
 	unsigned wr_time;

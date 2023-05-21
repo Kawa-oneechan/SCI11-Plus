@@ -188,7 +188,7 @@ static void getNext(strptr buffer)
 	if (!buffer)
 		saveStack = stack;
 
-	msg = find(&stack, &indexEntry, TRUE);
+	msg = find(&stack, &indexEntry, true);
 
 	if (!msg)
 	{
@@ -237,12 +237,12 @@ static void showXlate()
 				;
 			//add one for trailing null
 			len++;
-			ResLock(RES_XLATE, curModule, TRUE);
+			ResLock(RES_XLATE, curModule, true);
 			LockHandle(xlateHandle);
 			bufferHandle = ResLoad(RES_MEM,len);
 			massageText((char far*)*bufferHandle, xmsg);
 			UnlockHandle(xlateHandle);
-			ResLock(RES_XLATE, curModule, FALSE);
+			ResLock(RES_XLATE, curModule, false);
 		}
 		else
 		{
@@ -265,7 +265,7 @@ static void getSize(uint module, byte noun, byte verb, byte cond, byte seq)
 	//use a local stack, since no need to save info across calls
 	initStack(&stack, module, noun, verb, cond, seq);
 
-	cp = find(&stack, NULL, TRUE);
+	cp = find(&stack, NULL, true);
 
 	if (!cp)
 		acc = 0;
@@ -279,7 +279,7 @@ static void getSize(uint module, byte noun, byte verb, byte cond, byte seq)
 	}
 }
 
-//set reference values for this message, returning FALSE if message not found.
+//set reference values for this message, returning false if message not found.
 static bool getRefValues(uint module, byte noun, byte verb, byte cond, byte seq, byte *refNoun, byte *refVerb, byte *refCond)
 {
 	IndexEntry far *indexEntry;
@@ -288,14 +288,14 @@ static bool getRefValues(uint module, byte noun, byte verb, byte cond, byte seq,
 	//use a local stack, since no need to save info across calls
 	initStack(&stack, module, noun, verb, cond, seq);
 
-	if (!find(&stack, &indexEntry, FALSE))
-		return FALSE;
+	if (!find(&stack, &indexEntry, false))
+		return false;
 
 	*refNoun = indexEntry->refNoun;
 	*refVerb = indexEntry->refVerb;
 	*refCond = indexEntry->refCond;
 
-	return TRUE;
+	return true;
 }
 
 

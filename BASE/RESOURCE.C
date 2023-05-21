@@ -35,11 +35,11 @@
 #include "volload.h"
 
 FList loadList;
-bool checkingLoadLinks = FALSE;
+bool checkingLoadLinks = false;
 word resourceCursorType = 0;
 
 static Handle patches = NULL;
-static bool getmemFailNonfatal = FALSE;
+static bool getmemFailNonfatal = false;
 
 #ifdef DEBUG
 
@@ -73,8 +73,8 @@ Handle ResLoad(byte resType, uint resId)
 			//if resType == RES_MEM, then resID is size of MEMORY needed
 			if (!((*scan)->lData.data = GetResHandle(resId)))
 			{
-				DisposeHandle( (Handle) scan);
-				return((Handle)0);
+				DisposeHandle((Handle)scan);
+				return (Handle)0;
 			}
 			//resId now becomes the resId for disposal purposes
 			resId = Pseudo((*scan)->lData.data);
@@ -111,7 +111,7 @@ Handle ResLoad(byte resType, uint resId)
 						CheckHunkUse(0);
 					else
 						CheckHunkUse((*scan)->size / 16);
-					return((*scan)->lData.data);
+					return (*scan)->lData.data;
 				}
 			}
 
@@ -216,7 +216,7 @@ void ResLock(byte resType, uword resId, bool yes)
 
 //Copy last UNLOCKED node in list to alternate memory
 //(don't purge resType:resId because thats what will be loaded into standard memory).
-//Return TRUE if nothing can be purged.
+//Return true if nothing can be purged.
 bool PurgeLast()
 {
 	LoadLink far **scan;
@@ -225,7 +225,7 @@ bool PurgeLast()
 	for (scan = (LoadLink far**)Native(FLastNode(&loadList)); scan && ((*scan)->lock || (*scan)->altResMem); scan = (LoadLink far**)Native(FPrevNode(Pseudo(scan))))
 		;
 	if (!scan)
-		return TRUE;
+		return true;
 
 	//if resource is RES_MEM, or no alternate memory available we have to simply purge it
 	if ((*scan)->type == RES_MEM || !useAltResMem || !AltResMemWrite(scan))
@@ -235,7 +235,7 @@ bool PurgeLast()
 		FDeleteNode(&loadList, Pseudo(scan));
 		DisposeHandle( (Handle) scan);
 	}
-	return FALSE;
+	return false;
 }
 
 
@@ -250,7 +250,7 @@ LoadLink far** FindResEntry(byte resType, uword resId)
 		if ((*scan)->type == resType && (uword)(*scan)->id == resId) //KAWA WAS HERE
 			break;
 	}
-	return(scan);
+	return scan;
 }
 
 
@@ -264,7 +264,7 @@ Handle GetResHandle(uword size)
 		if (PurgeLast())
 		{
 			if (getmemFailNonfatal)
-				return(hndl);
+				return hndl;
 			if (GetHandle())
 			{
 #ifdef DEBUG
@@ -292,7 +292,7 @@ Handle GetResHandle(uword size)
 			}
 		}
 	}
-	return(hndl);
+	return hndl;
 }
 
 
@@ -591,8 +591,8 @@ void ConvBase36(char *str, uint num10, int digits)
 char GetDigit36(int n)
 {
 	if (n <= 9)
-		return((char)('0' + n));
+		return (char)('0' + n);
 	else
-		return((char)('A' + n - 10));
+		return (char)('A' + n - 10);
 }
 

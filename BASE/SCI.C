@@ -182,7 +182,7 @@ static void ReadCommandLineArgs(int argc, char *argv[])
 				switch (*argv[i])
 				{
 					case 'a':
-						useAltResMem = FALSE;
+						useAltResMem = false;
 						break;
 					case 'c':
 						++argv[i];
@@ -200,7 +200,7 @@ static void ReadCommandLineArgs(int argc, char *argv[])
 						break;
 
 					case 'm':
-						mouseIsDebug = TRUE;
+						mouseIsDebug = true;
 						break;
 					case 'u':
 					case 'U':
@@ -224,7 +224,7 @@ static void ReadCommandLineArgs(int argc, char *argv[])
 						 * the loadlinks and the number of loadlinks is tracked. This
 						 * prevents loadlink from getting over written.
 						 */
-						checkingLoadLinks = TRUE;
+						checkingLoadLinks = true;
 						// Reduce the number of handles so we don't run out of Heap space
 						numHandles = numHandles / 2;
 						break;

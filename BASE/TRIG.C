@@ -87,7 +87,7 @@ global int ATan(int x1, int y1, int x2, int y2)
 		if (major == 360)
 			major = 0;
 	}
-	return(major);
+	return major;
 }
 
 
@@ -103,7 +103,7 @@ static int near getMajor(int x1, int y1, int x2, int y2)
 	//if (x1,y1) = (x2,y2) return 0
 
 	if ((deltaX == 0) && (deltaY == 0))
-		return(0);
+		return 0;
 
 	if (deltaY <= deltaX)
 	{
@@ -116,7 +116,7 @@ static int near getMajor(int x1, int y1, int x2, int y2)
 	else
 		major = 90 - getMajor(y1,x1,y2,x2);
 
-	return(major);
+	return major;
 }
 
 

@@ -13,7 +13,8 @@
 
 #define MessageMajorVersion	4000
 
-typedef struct {
+typedef struct
+{
 	byte noun;
 	byte verb;
 	byte cond;

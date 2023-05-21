@@ -12,7 +12,7 @@
 #include "selector.h"
 #include "start.h"
 
-bool gameStarted = FALSE;
+bool gameStarted = false;
 Obj *theGame;
 
 void PMachine()
@@ -50,7 +50,7 @@ void PMachine()
 
 	if (!gameStarted)
 	{
-		gameStarted = TRUE;
+		gameStarted = true;
 		startMethod = s_play;
 	}
 	else
