@@ -45,6 +45,7 @@ theMenuBar	word	?
 ip		memptr		?
 pmsp		wordPtr		?
 acc		word		?
+prev	word	?
 pStack		wordPtr		?
 pStackEnd	wordPtr		?
 theVars		label wordPtr

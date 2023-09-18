@@ -67,6 +67,7 @@ externdef	theGame:ObjPtr
 externdef	ip:memptr
 externdef	pmsp:wordPtr
 externdef	acc:word
+externdef	prev:word
 externdef	pStack:wordPtr
 externdef	pStackEnd:wordPtr
 externdef	theVars:wordPtr

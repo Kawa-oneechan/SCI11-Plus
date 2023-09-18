@@ -48,6 +48,7 @@ The `EXT` version of SCI11 adds the following tricks:
 *  **Color 255 works in views**. A logic bug prevents color #255 (usually pure white) from showing up in views — any color below 253 is considered "plain" instead of remapped, but they forgot to exclude 255, which ended up never drawn.
 *  **Correct hex escapes in message text**. You can use expressions like `\x64` in message text to insert that character. But the programmers messed up while writing their own decoder and accidentally put `01234567890ABCDEF`, with an extra zero, breaking most of the set you could insert that way. The fix can be easily toggled out by editing `KAWA.H`.
 *  **Allow digits in stage directions**. Message lines can contain stage directions in parenthesis, but these can only consist of letters. SCI32 also allowed numbers, and so does SCI11+. This feature can be easily toggled out by editing `KAWA.H`.
+*  **Secure `prev` handling** backported from SCI32 by lskovlun. This one's also in the `BASE` version.
 
 ![Demonstration of color hacks.](.assets/colorhaxdemo1.gif)
 ![Demonstration of stroked text.](.assets/dsstroke.png)

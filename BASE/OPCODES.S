@@ -484,6 +484,7 @@ OP_bnot:
 
 Comp	macro	cond
 	mov	cx, acc
+	mov prev, cx
 	cmp	cx, [bp]
 if	($-True1+1) LT 127
 	j&cond	True1
@@ -856,8 +857,8 @@ OP_self_TWO:
 
 
 OP_pprev:
-;Push previous value of _acc on the stack.  This is left in the cx after
-;a comparison.
+;Push previous value of _acc on the stack.
+	mov		cx, prev
 	ppush	cx
 	NextOpCode
 
